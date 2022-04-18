@@ -7,9 +7,10 @@ namespace DIMSApis.Models.Data
     {
         public User()
         {
-            BookedRooms = new HashSet<BookedRoom>();
+            Bookings = new HashSet<Booking>();
             Hotels = new HashSet<Hotel>();
             Qrs = new HashSet<Qr>();
+            staff = new HashSet<staff>();
         }
 
         public int UserId { get; set; }
@@ -28,8 +29,9 @@ namespace DIMSApis.Models.Data
         public string? UnlockKey { get; set; }
         public bool? Status { get; set; }
 
-        public virtual ICollection<BookedRoom> BookedRooms { get; set; }
+        public virtual ICollection<Booking> Bookings { get; set; }
         public virtual ICollection<Hotel> Hotels { get; set; }
         public virtual ICollection<Qr> Qrs { get; set; }
+        public virtual ICollection<staff> staff { get; set; }
     }
 }

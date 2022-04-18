@@ -49,7 +49,7 @@ namespace DIMSApis.Controllers
             }
         }
 
-        [HttpPost("login")]
+        [HttpPost("login-user")]
         public async Task<IActionResult> Login(LoginInput userIn)
         {
             var user = await _auth.Login(userIn);
@@ -67,7 +67,62 @@ namespace DIMSApis.Controllers
             return Ok(login);
         }
 
+        [HttpPost("login-admin")]
+        public async Task<IActionResult> LoginAdmin(LoginInput userIn)
+        {
+            var user = await _auth.LoginAdmin(userIn);
 
+            if (user == null)
+                return Unauthorized();
+
+            LoginOutput login = new()
+            {
+                UserId = user.UserId,
+                UserName = user.UserName,
+                Email = user.Email,
+                Token = _tokenService.CreateToken(user)
+            };
+            return Ok(login);
+        }
+
+        [HttpPost("forgot-code-mail")]
+        public async Task<IActionResult> ForgotCodeMailSend(ForgotCodeMailInput mail)
+        {
+            if (await _auth.GetForgotCodeMailSend(mail))
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("forgot-code-vertify")]
+        public async Task<IActionResult> ForgotCodeVertify(ForgotCodeVertifyInput code)
+        {
+            if (await _auth.ForgotCodeVertify(code))
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("forgot-pass-change")]
+        public async Task<IActionResult> ForgoPassChange(ForgotPassInput pass)
+        {
+            if (await _auth.UpdateNewPass(pass))
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
 
     }   
 }

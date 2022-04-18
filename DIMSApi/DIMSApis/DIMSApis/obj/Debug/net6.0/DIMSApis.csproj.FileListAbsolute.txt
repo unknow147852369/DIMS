@@ -280,3 +280,6 @@ D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Debug\net6.0\refint\DI
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Debug\net6.0\DIMSApis.pdb
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Debug\net6.0\DIMSApis.genruntimeconfig.cache
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Debug\net6.0\ref\DIMSApis.dll
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\MailKit.dll
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\MimeKit.dll
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\BouncyCastle.Crypto.dll

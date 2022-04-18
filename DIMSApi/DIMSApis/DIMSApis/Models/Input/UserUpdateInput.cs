@@ -17,7 +17,6 @@ namespace DIMSApis.Models.Input
         [RegularExpression("(84|0[3|5|7|8|9])+([0-9]{8})", ErrorMessage = "Wrong phone fomat")]
         public string PhoneNumber { get; set; }
 
-        public string WorkPlace { get; set; }
         public DateTime Birthday { get; set; }
 
     }

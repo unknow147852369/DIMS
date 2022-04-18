@@ -16,7 +16,8 @@ namespace DIMSApis.Models.Data
         {
         }
 
-        public virtual DbSet<BookedRoom> BookedRooms { get; set; } = null!;
+        public virtual DbSet<Booking> Bookings { get; set; } = null!;
+        public virtual DbSet<BookingDetail> BookingDetails { get; set; } = null!;
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<District> Districts { get; set; } = null!;
         public virtual DbSet<Hotel> Hotels { get; set; } = null!;
@@ -24,8 +25,10 @@ namespace DIMSApis.Models.Data
         public virtual DbSet<Province> Provinces { get; set; } = null!;
         public virtual DbSet<Qr> Qrs { get; set; } = null!;
         public virtual DbSet<Room> Rooms { get; set; } = null!;
+        public virtual DbSet<RoomRequest> RoomRequests { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Ward> Wards { get; set; } = null!;
+        public virtual DbSet<staff> staff { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -37,49 +40,61 @@ namespace DIMSApis.Models.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<BookedRoom>(entity =>
+            modelBuilder.Entity<Booking>(entity =>
             {
-                entity.HasKey(e => e.BookedId);
-
-                entity.Property(e => e.BookedId).HasColumnName("BookedID");
+                entity.Property(e => e.BookingId).HasColumnName("BookingID");
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
-                entity.Property(e => e.EndDate).HasColumnType("datetime");
+                entity.Property(e => e.Email).HasMaxLength(100);
+
+                entity.Property(e => e.FullName).HasMaxLength(100);
 
                 entity.Property(e => e.HotelId).HasColumnName("HotelID");
 
-                entity.Property(e => e.RoomId).HasColumnName("RoomID");
+                entity.Property(e => e.PhoneNumber).HasMaxLength(15);
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
                 entity.HasOne(d => d.Hotel)
-                    .WithMany(p => p.BookedRooms)
+                    .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.HotelId)
                     .HasConstraintName("FK_BookedRooms_Hotels");
 
-                entity.HasOne(d => d.Room)
-                    .WithMany(p => p.BookedRooms)
-                    .HasForeignKey(d => d.RoomId)
-                    .HasConstraintName("FK_BookedRooms_Room");
-
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.BookedRooms)
+                    .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_BookedRooms_Users1");
+            });
+
+            modelBuilder.Entity<BookingDetail>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.BookingId).HasColumnName("BookingID");
+
+                entity.Property(e => e.EndDate).HasColumnType("datetime");
+
+                entity.Property(e => e.RoomId).HasColumnName("RoomID");
+
+                entity.Property(e => e.StartDate).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Booking)
+                    .WithMany(p => p.BookingDetails)
+                    .HasForeignKey(d => d.BookingId)
+                    .HasConstraintName("FK_BookingDetails_Bookings");
+
+                entity.HasOne(d => d.Room)
+                    .WithMany(p => p.BookingDetails)
+                    .HasForeignKey(d => d.RoomId)
+                    .HasConstraintName("FK_BookedRoom_Rooms");
             });
 
             modelBuilder.Entity<Category>(entity =>
             {
                 entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
 
-                entity.Property(e => e.CategoryName)
-                    .HasMaxLength(10)
-                    .IsFixedLength();
-
-                entity.Property(e => e.Status)
-                    .HasMaxLength(10)
-                    .IsFixedLength();
+                entity.Property(e => e.CategoryName).HasMaxLength(100);
             });
 
             modelBuilder.Entity<District>(entity =>
@@ -226,6 +241,31 @@ namespace DIMSApis.Models.Data
                     .HasConstraintName("FK_Rooms_Hotels");
             });
 
+            modelBuilder.Entity<RoomRequest>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.BookingId).HasColumnName("BookingID");
+
+                entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
+
+                entity.Property(e => e.EndDate).HasColumnType("datetime");
+
+                entity.Property(e => e.StartDate).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Booking)
+                    .WithMany(p => p.RoomRequests)
+                    .HasForeignKey(d => d.BookingId)
+                    .HasConstraintName("FK_RoomRequests_Bookings");
+
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.RoomRequests)
+                    .HasForeignKey(d => d.CategoryId)
+                    .HasConstraintName("FK_RoomRequests_Categories");
+            });
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(e => e.UserId).HasColumnName("UserID");
@@ -271,6 +311,32 @@ namespace DIMSApis.Models.Data
                     .WithMany(p => p.Wards)
                     .HasForeignKey(d => d.DistrictId)
                     .HasConstraintName("FK_level3s_level2s");
+            });
+
+            modelBuilder.Entity<staff>(entity =>
+            {
+                entity.ToTable("Staff");
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(10)
+                    .HasColumnName("ID")
+                    .IsFixedLength();
+
+                entity.Property(e => e.HotelId).HasColumnName("HotelID");
+
+                entity.Property(e => e.Job).HasMaxLength(50);
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.HasOne(d => d.Hotel)
+                    .WithMany(p => p.staff)
+                    .HasForeignKey(d => d.HotelId)
+                    .HasConstraintName("FK_Staff_Hotels");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.staff)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Staff_Users");
             });
 
             OnModelCreatingPartial(modelBuilder);

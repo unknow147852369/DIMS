@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Configuration;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 //Add more<
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Swagger  Solution", Version = "v1" });
@@ -63,9 +66,12 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<DIMSContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("concac")));
 
 builder.Services.AddScoped<IAuth, AuthRepository>();
+builder.Services.AddScoped<IUserManage, UserManageRepository> ();
+builder.Services.AddScoped<IUserBookingManage, UserBookingManageRepository> ();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IOtherService, OtherService>();
+builder.Services.AddScoped<IMail, MailService>();
 
 //>Add more
 
@@ -79,11 +85,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
 //Add more<
+//PAHI NAM TRC HAN app.UseAuthorization();
 app.UseAuthentication();
 //>Add more
+app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();

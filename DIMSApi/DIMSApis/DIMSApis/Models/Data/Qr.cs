@@ -13,7 +13,7 @@ namespace DIMSApis.Models.Data
         public DateTime? ExpireDate { get; set; }
         public int? Status { get; set; }
 
-        public virtual BookedRoom? Booked { get; set; }
+        public virtual Booking? Booked { get; set; }
         public virtual User? User { get; set; }
     }
 }

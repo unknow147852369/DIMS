@@ -21,7 +21,7 @@ namespace DIMSApis.Services
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Email,u.Email),
-                //new Claim(ClaimTypes.Role,u.Role.ToString()),
+                new Claim(ClaimTypes.Role,u.Role.ToString()),
                 new Claim(ClaimTypes.NameIdentifier,u.UserId.ToString())
             };
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);

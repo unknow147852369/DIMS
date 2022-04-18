@@ -7,7 +7,12 @@ namespace DIMSApis.Interfaces
     {
         Task<bool> Register(RegisterInput user);
         Task<User> Login(LoginInput user);
+        Task<User> LoginAdmin(LoginInput user);
         Task<bool> UserExists(string email);
+
+        Task<bool> GetForgotCodeMailSend(ForgotCodeMailInput mail);
+        Task<bool> ForgotCodeVertify(ForgotCodeVertifyInput code);
+        Task<bool> UpdateNewPass(ForgotPassInput pass);
 
     }
 }
