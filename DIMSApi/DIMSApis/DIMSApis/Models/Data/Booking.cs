@@ -18,8 +18,12 @@ namespace DIMSApis.Models.Data
         public string? FullName { get; set; }
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string? Description { get; set; }
         public double? TotalPrice { get; set; }
         public DateTime? CreateDate { get; set; }
+        public string? Condition { get; set; }
         public int? Status { get; set; }
 
         public virtual Hotel? Hotel { get; set; }

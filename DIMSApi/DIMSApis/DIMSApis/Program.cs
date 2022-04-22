@@ -19,6 +19,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 //Add more<
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -67,7 +68,7 @@ builder.Services.AddDbContext<DIMSContext>(options => options.UseSqlServer(build
 
 builder.Services.AddScoped<IAuth, AuthRepository>();
 builder.Services.AddScoped<IUserManage, UserManageRepository> ();
-builder.Services.AddScoped<IUserBookingManage, UserBookingManageRepository> ();
+builder.Services.AddScoped<IBookingManage, BookingManageRepository> ();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IOtherService, OtherService>();

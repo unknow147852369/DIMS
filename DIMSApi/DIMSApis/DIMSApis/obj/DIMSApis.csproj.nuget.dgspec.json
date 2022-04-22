@@ -56,6 +56,14 @@
               "target": "Package",
               "version": "[6.4.4, )"
             },
+            "FireSharp": {
+              "target": "Package",
+              "version": "[2.0.4, )"
+            },
+            "FirebaseAdmin": {
+              "target": "Package",
+              "version": "[2.3.0, )"
+            },
             "MailKit": {
               "target": "Package",
               "version": "[3.2.0, )"

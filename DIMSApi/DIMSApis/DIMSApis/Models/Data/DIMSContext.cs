@@ -44,15 +44,21 @@ namespace DIMSApis.Models.Data
             {
                 entity.Property(e => e.BookingId).HasColumnName("BookingID");
 
+                entity.Property(e => e.Condition).HasMaxLength(50);
+
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Email).HasMaxLength(100);
+
+                entity.Property(e => e.EndDate).HasColumnType("datetime");
 
                 entity.Property(e => e.FullName).HasMaxLength(100);
 
                 entity.Property(e => e.HotelId).HasColumnName("HotelID");
 
                 entity.Property(e => e.PhoneNumber).HasMaxLength(15);
+
+                entity.Property(e => e.StartDate).HasColumnType("datetime");
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
@@ -230,6 +236,8 @@ namespace DIMSApis.Models.Data
 
                 entity.Property(e => e.HotelId).HasColumnName("HotelID");
 
+                entity.Property(e => e.RoomName).IsUnicode(false);
+
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Rooms)
                     .HasForeignKey(d => d.CategoryId)
@@ -243,17 +251,11 @@ namespace DIMSApis.Models.Data
 
             modelBuilder.Entity<RoomRequest>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("ID");
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.BookingId).HasColumnName("BookingID");
 
                 entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
-
-                entity.Property(e => e.EndDate).HasColumnType("datetime");
-
-                entity.Property(e => e.StartDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Booking)
                     .WithMany(p => p.RoomRequests)

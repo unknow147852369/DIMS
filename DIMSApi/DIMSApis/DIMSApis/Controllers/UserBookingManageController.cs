@@ -8,27 +8,56 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DIMSApis.Models.Data;
 using System.Security.Claims;
+using DIMSApis.Models.Input;
+using DIMSApis.Models.Output;
+using DIMSApis.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
 
 namespace DIMSApis.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserBookingManageController : ControllerBase
     {
-        private readonly DIMSContext _context;
+        private readonly IBookingManage _book;
+        private readonly IMapper _mapper;
 
-        public UserBookingManageController(DIMSContext context)
-        {
-            _context = context;
+        public UserBookingManageController(IBookingManage book, IMapper mapper)
+        { 
+            _book = book;
+            _mapper = mapper;
         }
 
-        //[HttpPost("user_request")]
-        //public async Task<IActionResult> SendRentRequest(RentRequest rent)
-        //{
-        //    int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        //    //var rooms = await _repo.SendRentRequest(rent, userId);
-        //    //var returnRoom = _mapper.Map<IEnumerable<ListRoom>>(rooms);
-        //    return Ok(returnRoom);
-        //}
+        [HttpPost("user_request")]
+        public async Task<IActionResult> SendBookingRequest(BookingRequestInput bookinginput)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            int check = await _book.SendBookingRequest(bookinginput, userId);
+            if (check == 1)
+            {
+                return Ok();
+            }
+            else if (check == 3)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("user_Booking_list")]
+        public async Task<IActionResult> GetBooking()
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var Booking = await _book.GetListBookingInfo(userId);
+            var returnBooking = _mapper.Map<IEnumerable<BookingInfoOutput>>(Booking);
+            return Ok(returnBooking);
+        }
+
+
     }
 }
