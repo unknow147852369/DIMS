@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace DIMSApis.Models.Data
+﻿namespace DIMSApis.Models.Output
 {
-    public partial class Qr
+    public class QrOutput
     {
         public int QrId { get; set; }
         public int? BookingDetailId { get; set; }
@@ -12,6 +9,5 @@ namespace DIMSApis.Models.Data
         public DateTime? CheckOut { get; set; }
         public int? Status { get; set; }
 
-        public virtual BookingDetail? BookingDetail { get; set; }
     }
 }

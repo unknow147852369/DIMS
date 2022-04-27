@@ -31,7 +31,7 @@ namespace DIMSApis.Controllers
         }
 
         [HttpPost("user_request")]
-        public async Task<IActionResult> SendBookingRequest(BookingRequestInput bookinginput)
+        public async Task<IActionResult> SendBookingRequest(BookingDetailInput bookinginput)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             int check = await _book.SendBookingRequest(bookinginput, userId);

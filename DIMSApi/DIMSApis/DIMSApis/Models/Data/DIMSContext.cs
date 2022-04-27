@@ -25,7 +25,6 @@ namespace DIMSApis.Models.Data
         public virtual DbSet<Province> Provinces { get; set; } = null!;
         public virtual DbSet<Qr> Qrs { get; set; } = null!;
         public virtual DbSet<Room> Rooms { get; set; } = null!;
-        public virtual DbSet<RoomRequest> RoomRequests { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Ward> Wards { get; set; } = null!;
         public virtual DbSet<staff> staff { get; set; } = null!;
@@ -75,7 +74,7 @@ namespace DIMSApis.Models.Data
 
             modelBuilder.Entity<BookingDetail>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.BookingDetailId).HasColumnName("BookingDetailID");
 
                 entity.Property(e => e.BookingId).HasColumnName("BookingID");
 
@@ -203,29 +202,21 @@ namespace DIMSApis.Models.Data
 
             modelBuilder.Entity<Qr>(entity =>
             {
+                entity.HasIndex(e => e.BookingDetailId, "IX_Qrs")
+                    .IsUnique();
+
                 entity.Property(e => e.QrId).HasColumnName("QrID");
 
-                entity.Property(e => e.ActiveDate).HasColumnType("datetime");
+                entity.Property(e => e.BookingDetailId).HasColumnName("BookingDetailID");
 
-                entity.Property(e => e.BookedId).HasColumnName("BookedID");
+                entity.Property(e => e.CheckIn).HasColumnType("datetime");
 
-                entity.Property(e => e.ExpireDate).HasColumnType("datetime");
+                entity.Property(e => e.CheckOut).HasColumnType("datetime");
 
-                entity.Property(e => e.QrString)
-                    .HasMaxLength(10)
-                    .IsFixedLength();
-
-                entity.Property(e => e.UserId).HasColumnName("UserID");
-
-                entity.HasOne(d => d.Booked)
-                    .WithMany(p => p.Qrs)
-                    .HasForeignKey(d => d.BookedId)
-                    .HasConstraintName("FK_Qrs_BookedRooms");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Qrs)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK_Qrs_Users");
+                entity.HasOne(d => d.BookingDetail)
+                    .WithOne(p => p.Qr)
+                    .HasForeignKey<Qr>(d => d.BookingDetailId)
+                    .HasConstraintName("FK_Qrs_BookingDetails");
             });
 
             modelBuilder.Entity<Room>(entity =>
@@ -247,25 +238,6 @@ namespace DIMSApis.Models.Data
                     .WithMany(p => p.Rooms)
                     .HasForeignKey(d => d.HotelId)
                     .HasConstraintName("FK_Rooms_Hotels");
-            });
-
-            modelBuilder.Entity<RoomRequest>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.BookingId).HasColumnName("BookingID");
-
-                entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
-
-                entity.HasOne(d => d.Booking)
-                    .WithMany(p => p.RoomRequests)
-                    .HasForeignKey(d => d.BookingId)
-                    .HasConstraintName("FK_RoomRequests_Bookings");
-
-                entity.HasOne(d => d.Category)
-                    .WithMany(p => p.RoomRequests)
-                    .HasForeignKey(d => d.CategoryId)
-                    .HasConstraintName("FK_RoomRequests_Categories");
             });
 
             modelBuilder.Entity<User>(entity =>

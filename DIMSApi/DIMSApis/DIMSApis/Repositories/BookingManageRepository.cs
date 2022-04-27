@@ -72,16 +72,16 @@ namespace DIMSApis.Repositories
             return bill;
         }
 
-        public async Task<int> SendBookingRequest(BookingRequestInput bok, int UserId)
+        public async Task<int> SendBookingRequest(BookingDetailInput bok, int UserId)
         {
             try
             {
                 Booking book = new();
-                _mapper.Map(bok, book);
-           
                 book.UserId = UserId;
                 book.CreateDate = DateTime.Now;
                 book.Status = 1;
+                book.Condition = "WAIT";
+                _mapper.Map(bok, book);
                 await _context.Bookings.AddAsync(book);
 
                 if (await _context.SaveChangesAsync() > 0)

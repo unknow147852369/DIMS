@@ -69,6 +69,7 @@ builder.Services.AddDbContext<DIMSContext>(options => options.UseSqlServer(build
 builder.Services.AddScoped<IAuth, AuthRepository>();
 builder.Services.AddScoped<IUserManage, UserManageRepository> ();
 builder.Services.AddScoped<IBookingManage, BookingManageRepository> ();
+builder.Services.AddScoped<IQrManage, QrManageRepository> ();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IOtherService, OtherService>();

@@ -7,7 +7,6 @@ namespace DIMSApis.Models.Data
     {
         public Category()
         {
-            RoomRequests = new HashSet<RoomRequest>();
             Rooms = new HashSet<Room>();
         }
 
@@ -15,7 +14,6 @@ namespace DIMSApis.Models.Data
         public string? CategoryName { get; set; }
         public int? Status { get; set; }
 
-        public virtual ICollection<RoomRequest> RoomRequests { get; set; }
         public virtual ICollection<Room> Rooms { get; set; }
     }
 }

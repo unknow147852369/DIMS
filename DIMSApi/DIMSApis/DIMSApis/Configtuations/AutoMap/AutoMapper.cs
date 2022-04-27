@@ -11,8 +11,13 @@ namespace DIMSApis.Configtuations.AutoMap
         {
             CreateMap<UserUpdateInput, User>();
             CreateMap<User, UserInfoOutput>().ForMember(a => a.Age, condition => condition.MapFrom(d => CalculateAge(d.Birthday)));
-            CreateMap<BookingRequestInput, Booking>();
-            CreateMap<RoomRequestInput, RoomRequest>();
+            CreateMap<BookingDetailInput, Booking>();
+            CreateMap<BookingDetailInput, BookingDetail>()
+                .ForMember(a => a.StartDate, option => option.MapFrom(tbl => tbl.StartDate))
+                .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.EndDate))
+                .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
+                ;
+            CreateMap<Qr, QrOutput>();
 
 
             CreateMap<Booking, BookingInfoOutput>()
@@ -24,11 +29,11 @@ namespace DIMSApis.Configtuations.AutoMap
             CreateMap<BookingDetail, BookingDetailInfoOutput>()
                 .ForMember(a => a.CategoryName, option => option.MapFrom(tbl => tbl.Room.Category.CategoryName))
                 .ForMember(a => a.RoomName, option => option.MapFrom(tbl => tbl.Room.RoomName))
-                .ForMember(a => a.RoomName, option => option.MapFrom(tbl => tbl.Room.Price))
+                .ForMember(a => a.RoomPrice, option => option.MapFrom(tbl => tbl.Room.Price))
                 .ForMember(a => a.CategoryId, option => option.MapFrom(tbl => tbl.Room.CategoryId))
-
                 ;
-            CreateMap<BookingDetailInfoInput, BookingDetail>();
+
+
         }
         private int CalculateAge(DateTime? theDateTime)
         {

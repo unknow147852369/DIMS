@@ -6,7 +6,7 @@ namespace DIMSApis.Interfaces
 {
     public interface IBookingManage
     {
-        Task<int> SendBookingRequest(BookingRequestInput book, int UserId);
+        Task<int> SendBookingRequest(BookingDetailInput book, int UserId);
 
         Task<IEnumerable<Booking>> GetListBookingInfo(int UserId);
 

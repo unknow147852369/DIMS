@@ -8,8 +8,6 @@ namespace DIMSApis.Models.Data
         public Booking()
         {
             BookingDetails = new HashSet<BookingDetail>();
-            Qrs = new HashSet<Qr>();
-            RoomRequests = new HashSet<RoomRequest>();
         }
 
         public int BookingId { get; set; }
@@ -29,7 +27,5 @@ namespace DIMSApis.Models.Data
         public virtual Hotel? Hotel { get; set; }
         public virtual User? User { get; set; }
         public virtual ICollection<BookingDetail> BookingDetails { get; set; }
-        public virtual ICollection<Qr> Qrs { get; set; }
-        public virtual ICollection<RoomRequest> RoomRequests { get; set; }
     }
 }
