@@ -5,6 +5,8 @@ namespace DIMSApis.Interfaces
 {
     public interface IQrManage
     {
-        Task<IEnumerable<QrOutput>> getQrString(QrInput qrIn);
+        Task<IEnumerable<QrOutput>> getListQrString(QrInput qrIn);
+        Task<int> CreateBookingQrString(QrInput qrIn);
+
     }
 }

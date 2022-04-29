@@ -26,18 +26,12 @@ namespace DIMSApis.Controllers
         public async Task<IActionResult> GetBooking(QrInput qrIn)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var qrList = await _qrmanage.getQrString(qrIn);
+            var qrList = await _qrmanage.getListQrString(qrIn);
             var returnQrList = _mapper.Map<IEnumerable<QrOutput>>(qrList);
             return Ok(returnQrList);
         }
 
-        [HttpGet("get_Qr_Booking_list")]
-        public async Task<IActionResult> create(QrInput qrIn)
-        {
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var qrList = await _qrmanage.getQrString(qrIn);
-            var returnQrList = _mapper.Map<IEnumerable<QrOutput>>(qrList);
-            return Ok(returnQrList);
-        }
+
+
     }
 }

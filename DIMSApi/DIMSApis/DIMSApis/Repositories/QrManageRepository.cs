@@ -18,7 +18,12 @@ namespace DIMSApis.Repositories
             _mapper = mapper;
         }
 
-        public Task<IEnumerable<QrOutput>> getQrString(QrInput qrIn)
+        public Task<int> CreateBookingQrString(QrInput qrIn)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<QrOutput>> getListQrString(QrInput qrIn)
         {
             throw new NotImplementedException();
         }
