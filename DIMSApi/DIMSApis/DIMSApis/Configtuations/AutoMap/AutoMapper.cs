@@ -2,6 +2,7 @@
 using DIMSApis.Models.Data;
 using DIMSApis.Models.Input;
 using DIMSApis.Models.Output;
+using System.Text;
 
 namespace DIMSApis.Configtuations.AutoMap
 {
@@ -17,8 +18,17 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.EndDate))
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 ;
-            CreateMap<Qr, QrOutput>();
+            CreateMap<Qr, QrOutput>()
+                .ForMember(a => a.QrStringImage, option => option.MapFrom(tbl => Encoding.UTF8.GetString(tbl.QrString)))
+                ;
 
+            CreateMap<BookingDetail, QrInput>()
+                .ForMember(a => a.UserId, option => option.MapFrom(tbl =>tbl.Booking.UserId))
+                .ForMember(a => a.RoomName, option => option.MapFrom(tbl =>tbl.Room.RoomName))
+                ;
+            CreateMap<QrInput, Qr>()
+                .ForMember(a => a.Status, option => option.MapFrom(tbl => 0))
+                ;
 
             CreateMap<Booking, BookingInfoOutput>()
                 .ForMember(a => a.HotelAddress, option => option.MapFrom(tbl => tbl.Hotel.HotelAddress))

@@ -296,3 +296,4 @@ D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\Microsoft
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\Microsoft.Threading.Tasks.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\System.Net.Http.Extensions.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\System.Net.Http.Primitives.dll
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\IronBarCode.dll

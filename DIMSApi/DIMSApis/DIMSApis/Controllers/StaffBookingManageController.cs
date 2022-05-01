@@ -23,10 +23,10 @@ namespace DIMSApis.Controllers
             _booking = booking;
         }
 
-        [HttpPut("accept/{id}")]
-        public async Task<IActionResult> AcceptRent(int BooingId, int[] roomId ,string condition)
+        [HttpPut("accept")]
+        public async Task<IActionResult> AcceptRent(int BooingId ,string condition)
         { 
-            int check = await _booking.AccecptBookingRequest( BooingId,  roomId,  condition);
+            int check = await _booking.AccecptBookingRequest( BooingId,  condition);
             if (check == 1)
             {
                 return Ok();

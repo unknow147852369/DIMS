@@ -20,32 +20,13 @@ namespace DIMSApis.Repositories
         }
 
 
-        public async Task<int> AccecptBookingRequest(int BooingId, int[] roomId, string condition)
+        public async Task<int> AccecptBookingRequest(int BooingId, string condition)
         {
             var booking = await _context.Bookings.Where(r => r.BookingId == BooingId).FirstOrDefaultAsync();
             if (booking != null)
             {
                 if (condition.Equals("APPROVED"))
-                {
-                    foreach (var item in roomId) {
-                        var Room = await _context.Rooms.Where(r => r.HotelId == booking.HotelId && r.HotelId == item).FirstOrDefaultAsync();
-                        if (Room != null)
-                        {
-                            BookingDetail bok = new()
-                            {
-                                BookingId = BooingId,
-                                RoomId = item,
-                                StartDate = booking.StartDate,
-                                EndDate = booking.EndDate,
-                                Status = 1,
-                            };
-                            await _context.AddAsync(bok);
-                        }
-                        else
-                        {
-                            return 0;
-                        }
-                    }
+                { 
                     booking.Condition = "APPROVED";
                     if (await _context.SaveChangesAsync() > 0)
                         return 1;

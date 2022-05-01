@@ -6,6 +6,7 @@ D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\DIMSApis.pdb
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\AutoMapper.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\IronBarCode.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\EntityFramework.SqlServer.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\EntityFramework.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\FirebaseAdmin.dll

@@ -10,6 +10,6 @@ namespace DIMSApis.Interfaces
 
         Task<IEnumerable<Booking>> GetListBookingInfo(int UserId);
 
-        Task<int> AccecptBookingRequest(int BooingId, int[] roomId, string condition);
+        Task<int> AccecptBookingRequest(int BooingId,  string condition);
     }
 }

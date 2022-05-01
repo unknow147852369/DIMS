@@ -71,21 +71,22 @@ builder.Services.AddScoped<IUserManage, UserManageRepository> ();
 builder.Services.AddScoped<IBookingManage, BookingManageRepository> ();
 builder.Services.AddScoped<IQrManage, QrManageRepository> ();
 
+
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IOtherService, OtherService>();
 builder.Services.AddScoped<IMail, MailService>();
-
+builder.Services.AddScoped<IGenerateQr, GenerateQrImageStringService>();
 //>Add more
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
+
+//}
     app.UseSwagger();
     app.UseSwaggerUI();
-}
-
 app.UseHttpsRedirection();
 //Add more<
 //PAHI NAM TRC HAN app.UseAuthorization();

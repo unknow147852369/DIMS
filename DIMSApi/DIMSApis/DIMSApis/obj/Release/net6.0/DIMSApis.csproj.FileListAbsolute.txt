@@ -296,3 +296,4 @@ D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\refint\
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\DIMSApis.pdb
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\DIMSApis.genruntimeconfig.cache
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\ref\DIMSApis.dll
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Release\net6.0\IronBarCode.dll

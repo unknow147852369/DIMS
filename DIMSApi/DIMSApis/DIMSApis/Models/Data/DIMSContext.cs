@@ -213,6 +213,12 @@ namespace DIMSApis.Models.Data
 
                 entity.Property(e => e.CheckOut).HasColumnType("datetime");
 
+                entity.Property(e => e.QrContent).IsUnicode(false);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
                 entity.HasOne(d => d.BookingDetail)
                     .WithOne(p => p.Qr)
                     .HasForeignKey<Qr>(d => d.BookingDetailId)

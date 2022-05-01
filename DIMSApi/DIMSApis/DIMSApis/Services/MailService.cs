@@ -23,7 +23,7 @@ namespace DIMSApis.Services
             var email = new MimeMessage();
             email.Sender = MailboxAddress.Parse(_mail.Mail);
             email.To.Add(MailboxAddress.Parse(mail));
-            email.Subject = "UniHome's Access Key";
+            email.Subject = "DIMS's Access Key";
             var builder = new BodyBuilder();
             builder.HtmlBody = GetHtmlBody(key);
             email.Body = builder.ToMessageBody();
