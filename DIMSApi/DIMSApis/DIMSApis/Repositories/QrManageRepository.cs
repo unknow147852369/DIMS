@@ -27,8 +27,7 @@ namespace DIMSApis.Repositories
                  .Include(b => b.Room).ToListAsync();
             var ListRoom = _mapper.Map<IEnumerable<QrInput>>(content);
             if (content != null)
-            {
-                
+            {         
                 foreach (var room in ListRoom)
                 {
                     Qr qrdetail = new()

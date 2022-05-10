@@ -2,6 +2,7 @@
 using DIMSApis.Models.Data;
 using DIMSApis.Models.Input;
 using DIMSApis.Models.Output;
+using System.Linq;
 using System.Text;
 
 namespace DIMSApis.Configtuations.AutoMap
@@ -11,13 +12,27 @@ namespace DIMSApis.Configtuations.AutoMap
         public AutoMapper()
         {
             CreateMap<UserUpdateInput, User>();
-            CreateMap<User, UserInfoOutput>().ForMember(a => a.Age, condition => condition.MapFrom(d => CalculateAge(d.Birthday)));
-            CreateMap<BookingDetailInput, Booking>();
+            CreateMap<User, UserInfoOutput>()
+                .ForMember(a => a.Age, condition => condition.MapFrom(d => CalculateAge(d.Birthday)))
+                ;
+
+            CreateMap<BookingInput, Booking>()
+                .ForMember(a => a.TotalPrice, option => option.MapFrom(tbl => CalculateTotalPrice(tbl.BookingDetails)))
+                .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
+                .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
+                .ForMember(a => a.Condition, option => option.MapFrom(tbl => "WAIT"))
+                ;
+
             CreateMap<BookingDetailInput, BookingDetail>()
+                .ForMember(a => a.RoomId, option => option.MapFrom(tbl => tbl.RoomId))
+                .ForMember(a => a.Price, option => option.MapFrom(tbl => tbl.Price))
                 .ForMember(a => a.StartDate, option => option.MapFrom(tbl => tbl.StartDate))
                 .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.EndDate))
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 ;
+            
+
+
             CreateMap<Qr, QrOutput>()
                 .ForMember(a => a.QrStringImage, option => option.MapFrom(tbl => Encoding.UTF8.GetString(tbl.QrString)))
                 ;
@@ -33,7 +48,7 @@ namespace DIMSApis.Configtuations.AutoMap
             CreateMap<Booking, BookingInfoOutput>()
                 .ForMember(a => a.HotelAddress, option => option.MapFrom(tbl => tbl.Hotel.HotelAddress))
                 .ForMember(a => a.HotelName, option => option.MapFrom(tbl => tbl.Hotel.HotelName))
-                .ForMember(a => a.TotalDate, option => option.MapFrom(tbl => CalculateDate(tbl.EndDate, tbl.StartDate)))
+                .ForMember(a => a.TotalDate, option => option.MapFrom(tbl =>1))
                 ;
 
             CreateMap<BookingDetail, BookingDetailInfoOutput>()
@@ -57,16 +72,21 @@ namespace DIMSApis.Configtuations.AutoMap
             }
             return 0;
         }
-        private int CalculateDate(DateTime? start, DateTime? end)
+        private Double CalculateTotalPrice(IEnumerable<BookingDetailInput> price)
         {
-            if (start != null || end != null || start < end)
+            Double totalPrice = 0;
+            if (price != null)
             {
-                DateTime startdate = (DateTime)start;
-                DateTime enddate = (DateTime)end;
-                var duration = enddate.Date.Hour - startdate.Date.Hour;
-                return duration;
+                foreach (BookingDetailInput input in price)
+                {
+                    totalPrice = (double)(totalPrice + input.Price);
+                }
+                return totalPrice;
             }
-            return 0;
+            else
+            {
+                return totalPrice;
+            }
         }
     }
 }

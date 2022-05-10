@@ -11,10 +11,12 @@ namespace DIMSApis.Services
     public class GenerateQrImageStringService : IGenerateQr
     {
         private readonly SymmetricSecurityKey _key;
+        private readonly IOtherService _otherService;
 
-        public GenerateQrImageStringService(IConfiguration config)
+        public GenerateQrImageStringService(IConfiguration config,IOtherService otherService)
         {
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
+            _otherService = otherService;
         }
 
         public string GenerateQrString(QrInput qri)
@@ -36,16 +38,17 @@ namespace DIMSApis.Services
         {
             var claims = new List<Claim>
             {
-                new Claim("BookingdetailId",qri.BookingDetailId.ToString()),
                 new Claim("userId",qri.UserId.ToString()),
-                new Claim(ClaimTypes.Role,qri.RoomId.ToString()),
-                new Claim(ClaimTypes.NameIdentifier,qri.BookingId.ToString())
+                new Claim("BookingId",qri.BookingId.ToString()),
+                new Claim("RoomId",qri.RoomId.ToString()),
+                new Claim("RoomName",qri.RoomName.ToString()),
+                new Claim("RandomPass",_otherService.RandomString(5)),
+                
             };
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDes = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = creds
             };
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -62,13 +65,9 @@ namespace DIMSApis.Services
             var jsonToken = handler.ReadToken(token);
             var tokenS = jsonToken as JwtSecurityToken;
 
-            bookingID = tokenS.Claims.First(claim => claim.Type == "nameid").Value;
+            bookingID = tokenS.Claims.First(claim => claim.Type == "BookingId").Value;
 
-            RoomID = tokenS.Claims.First(claim => claim.Type == "role").Value;
-
-
-
-
+            RoomID = tokenS.Claims.First(claim => claim.Type == "RoomId").Value;
         }
     }
 }

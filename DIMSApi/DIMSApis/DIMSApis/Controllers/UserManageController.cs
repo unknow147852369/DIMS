@@ -59,7 +59,5 @@ namespace DIMSApis.Controllers
             var returnUser = _mapper.Map<UserInfoOutput>(user);
             return Ok(returnUser);
         }
-
-
     }
 }

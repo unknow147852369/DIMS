@@ -23,23 +23,7 @@ namespace DIMSApis.Controllers
             _booking = booking;
         }
 
-        [HttpPut("accept")]
-        public async Task<IActionResult> AcceptRent(int BooingId ,string condition)
-        { 
-            int check = await _booking.AccecptBookingRequest( BooingId,  condition);
-            if (check == 1)
-            {
-                return Ok();
-            }
-            else if (check == 3)
-            {
-                return NoContent();
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
+        
 
         //[HttpPut("deny/{id}")]
         //public async Task<IActionResult> DenyRent(int id)

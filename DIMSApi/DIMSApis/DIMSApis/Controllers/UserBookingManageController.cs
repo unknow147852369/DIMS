@@ -30,8 +30,31 @@ namespace DIMSApis.Controllers
             _mapper = mapper;
         }
 
+        [HttpPost("user_Payment")]
+        public async Task<IActionResult> PaySelectedBooking(StripeInput stripein)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            int check = await _book.PayBooking(stripein, userId);
+            if (check == 1)
+            {
+                return Ok();
+            }
+            else if (check == 3)
+            {
+                return NoContent();
+            }
+            else if (check == 2)
+            {
+                return BadRequest("Payment Fail");
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpPost("user_request")]
-        public async Task<IActionResult> SendBookingRequest(BookingDetailInput bookinginput)
+        public async Task<IActionResult> SendBookingRequest(BookingInput bookinginput)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             int check = await _book.SendBookingRequest(bookinginput, userId);

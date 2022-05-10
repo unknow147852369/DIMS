@@ -33,6 +33,7 @@
 		</PackageReference>
 		<PackageReference Include="MimeKit" Version="3.2.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.3" />
+		<PackageReference Include="Stripe.net" Version="39.110.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.17.0" />
 	</ItemGroup>

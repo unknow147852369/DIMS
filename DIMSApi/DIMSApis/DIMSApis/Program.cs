@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Stripe;
 using System.Configuration;
 using System.Text;
 
@@ -19,6 +20,9 @@ builder.Services.AddEndpointsApiExplorer();
 
 //Add more<
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+StripeConfiguration.SetApiKey(builder.Configuration.GetSection("Stripe")["SecretKey"]);
+
 builder.Services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 builder.Services.AddSwaggerGen(c =>
@@ -72,10 +76,11 @@ builder.Services.AddScoped<IBookingManage, BookingManageRepository> ();
 builder.Services.AddScoped<IQrManage, QrManageRepository> ();
 
 
-builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ITokenService, DIMSApis.Services.TokenService>();
 builder.Services.AddScoped<IOtherService, OtherService>();
 builder.Services.AddScoped<IMail, MailService>();
 builder.Services.AddScoped<IGenerateQr, GenerateQrImageStringService>();
+builder.Services.AddScoped<IStripePayment, StripePaymentService>();
 //>Add more
 
 var app = builder.Build();

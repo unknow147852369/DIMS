@@ -14,11 +14,13 @@ namespace DIMSApis.Controllers
     {
         private readonly IQrManage _qrmanage;
         private readonly IMapper _mapper;
+        private readonly IGenerateQr _generateqr;
 
-        public QrsManageController(IQrManage qrmanage, IMapper mapper)
+        public QrsManageController(IQrManage qrmanage, IMapper mapper, IGenerateQr generateqr)
         {
             _qrmanage = qrmanage;
             _mapper = mapper;
+            _generateqr = generateqr;
         }
 
         [HttpGet("get_Qr_Booking_list")]
