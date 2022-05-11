@@ -38,12 +38,11 @@ namespace DIMSApis.Services
         {
             var claims = new List<Claim>
             {
-                new Claim("userId",qri.UserId.ToString()),
+                new Claim("HotelId",qri.HotelId.ToString()),
                 new Claim("BookingId",qri.BookingId.ToString()),
+                new Claim("userId",qri.UserId.ToString()),
                 new Claim("RoomId",qri.RoomId.ToString()),
-                new Claim("RoomName",qri.RoomName.ToString()),
-                new Claim("RandomPass",_otherService.RandomString(5)),
-                
+                new Claim("RoomName",qri.RoomName.ToString()),   
             };
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDes = new SecurityTokenDescriptor

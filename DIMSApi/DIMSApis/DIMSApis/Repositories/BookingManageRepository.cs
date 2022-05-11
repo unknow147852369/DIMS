@@ -46,8 +46,6 @@ namespace DIMSApis.Repositories
                         var paymentstatus = _stripe.PayWithStripe(booking.Email, stripeIn.Token, booking);
                         if (paymentstatus.Contains(condition4))
                         {
-                            booking.Condition = condition1;
-
                             var content = await _context.BookingDetails
                                 .Where(a => a.BookingId == stripeIn.BooingId && a.Booking.Condition.Equals(condition3))
                                 .Include(b => b.Room).ToListAsync();
@@ -55,6 +53,7 @@ namespace DIMSApis.Repositories
 
                             if (content != null)
                             {
+                                booking.Condition = condition1;
                                 foreach (var room in ListRoom)
                                 {
                                     Qr qrdetail = new()
@@ -66,11 +65,14 @@ namespace DIMSApis.Repositories
 
                                     await _context.Qrs.AddAsync(qrdetail);
                                 }
+                                if (await _context.SaveChangesAsync() > 0)
+                                    return 1;
+                                return 3;
                             }
-
-                            if (await _context.SaveChangesAsync() > 0)
-                                return 1;
-                            return 3;
+                            else
+                            {
+                                 return 0;
+                            }
                         }
                         else
                         {

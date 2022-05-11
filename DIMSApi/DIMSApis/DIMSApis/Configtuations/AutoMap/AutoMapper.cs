@@ -40,6 +40,7 @@ namespace DIMSApis.Configtuations.AutoMap
             CreateMap<BookingDetail, QrInput>()
                 .ForMember(a => a.UserId, option => option.MapFrom(tbl =>tbl.Booking.UserId))
                 .ForMember(a => a.RoomName, option => option.MapFrom(tbl =>tbl.Room.RoomName))
+                .ForMember(a => a.HotelId, option => option.MapFrom(tbl =>tbl.Booking.HotelId))
                 ;
             CreateMap<QrInput, Qr>()
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 0))
@@ -48,7 +49,7 @@ namespace DIMSApis.Configtuations.AutoMap
             CreateMap<Booking, BookingInfoOutput>()
                 .ForMember(a => a.HotelAddress, option => option.MapFrom(tbl => tbl.Hotel.HotelAddress))
                 .ForMember(a => a.HotelName, option => option.MapFrom(tbl => tbl.Hotel.HotelName))
-                .ForMember(a => a.TotalDate, option => option.MapFrom(tbl =>1))
+                .ForMember(a => a.TotalDate, option => option.MapFrom(tbl => (tbl.EndDate - tbl.StartDate).Value.TotalDays))
                 ;
 
             CreateMap<BookingDetail, BookingDetailInfoOutput>()

@@ -10,7 +10,6 @@ namespace DIMSApis.Models.Data
             Bookings = new HashSet<Booking>();
             Photos = new HashSet<Photo>();
             Rooms = new HashSet<Room>();
-            staff = new HashSet<staff>();
         }
 
         public int HotelId { get; set; }
@@ -30,6 +29,5 @@ namespace DIMSApis.Models.Data
         public virtual ICollection<Booking> Bookings { get; set; }
         public virtual ICollection<Photo> Photos { get; set; }
         public virtual ICollection<Room> Rooms { get; set; }
-        public virtual ICollection<staff> staff { get; set; }
     }
 }

@@ -27,7 +27,6 @@ namespace DIMSApis.Models.Data
         public virtual DbSet<Room> Rooms { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Ward> Wards { get; set; } = null!;
-        public virtual DbSet<staff> staff { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -291,32 +290,6 @@ namespace DIMSApis.Models.Data
                     .WithMany(p => p.Wards)
                     .HasForeignKey(d => d.DistrictId)
                     .HasConstraintName("FK_level3s_level2s");
-            });
-
-            modelBuilder.Entity<staff>(entity =>
-            {
-                entity.ToTable("Staff");
-
-                entity.Property(e => e.Id)
-                    .HasMaxLength(10)
-                    .HasColumnName("ID")
-                    .IsFixedLength();
-
-                entity.Property(e => e.HotelId).HasColumnName("HotelID");
-
-                entity.Property(e => e.Job).HasMaxLength(50);
-
-                entity.Property(e => e.UserId).HasColumnName("UserID");
-
-                entity.HasOne(d => d.Hotel)
-                    .WithMany(p => p.staff)
-                    .HasForeignKey(d => d.HotelId)
-                    .HasConstraintName("FK_Staff_Hotels");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.staff)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK_Staff_Users");
             });
 
             OnModelCreatingPartial(modelBuilder);
