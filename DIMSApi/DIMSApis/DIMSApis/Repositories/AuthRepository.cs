@@ -35,7 +35,7 @@ namespace DIMSApis.Repositories
 
         public async Task<bool> ForgotCodeVertify(ForgotCodeVertifyInput code)
         {
-            var user = await _context.Users.Where(u => u.Email == code.Email.ToLower() && u.Status == true && u.Role != "ADMIN" && u.UnlockKey == code.UnlockKey).SingleOrDefaultAsync();
+            var user = await _context.Users.Where(u => u.Email == code.Email.ToLower() && u.Status == true && u.Role != "ADMIN" ).SingleOrDefaultAsync();
             if (user == null)
                 return false;
             user.UnlockKey = null;
@@ -46,7 +46,7 @@ namespace DIMSApis.Repositories
 
         public async Task<bool> UpdateNewPass(ForgotPassInput pass)
         {
-            var user = await _context.Users.Where(u => u.Email == pass.Email.ToLower() && u.Status == true && u.Role != "ADMIN").SingleOrDefaultAsync();
+            var user = await _context.Users.Where(u => u.Email == pass.Email.ToLower() && u.Status == true ).SingleOrDefaultAsync();
             if (user == null)
                 return false;
             byte[] passwordHash, passwordSalt;

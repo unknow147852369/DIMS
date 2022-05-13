@@ -11,13 +11,42 @@ namespace DIMSApis.Configtuations.AutoMap
     {
         public AutoMapper()
         {
+            CreateMap<Room, HotelRoomOutput>()
+                .ForMember(a => a.CategoryName, option => option.MapFrom(tbl => tbl.Category.CategoryName))
+                ;
+            //
+            CreateMap<Hotel, HotelOutput>()
+                .ForMember(a => a.TotalRoom, option => option.MapFrom(tbl => tbl.Rooms.Count))
+                .ForMember(a => a.WardName, option => option.MapFrom(tbl => tbl.WardNavigation.Name))
+                .ForMember(a => a.ProvinceName, option => option.MapFrom(tbl => tbl.ProvinceNavigation.Name))
+                .ForMember(a => a.DistrictName, option => option.MapFrom(tbl => tbl.DistrictNavigation.Name))
+                ;
+            CreateMap<Photo, HotelPhotosOutput>();
+
+            //
+            CreateMap<HotelInput, Hotel>()
+                .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
+                .ForMember(a => a.Status, option => option.MapFrom(tbl => 0))
+                ;
+            CreateMap<Hotel, Photo>()
+                 .ForMember(a => a.HotelId, option => option.MapFrom(tbl => tbl.HotelId ))
+                ;
+            CreateMap<PhotosInput, Photo>()
+                .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
+                .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
+                ;
+            //
+            CreateMap<NewRoomInput, Room>()
+                .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
+                ;
+            //
             CreateMap<UserUpdateInput, User>();
             CreateMap<User, UserInfoOutput>()
                 .ForMember(a => a.Age, condition => condition.MapFrom(d => CalculateAge(d.Birthday)))
                 ;
-
+            //
             CreateMap<BookingInput, Booking>()
-                .ForMember(a => a.TotalPrice, option => option.MapFrom(tbl => CalculateTotalPrice(tbl.BookingDetails)))
+                .ForMember(a => a.TotalPrice, option => option.MapFrom(tbl => CalculateTotalPrice(tbl.BookingDetails) * (tbl.EndDate - tbl.StartDate).Value.TotalDays))
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
                 .ForMember(a => a.Condition, option => option.MapFrom(tbl => "WAIT"))
@@ -30,9 +59,9 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.EndDate))
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 ;
-            
+            //
 
-
+            //
             CreateMap<Qr, QrOutput>()
                 .ForMember(a => a.QrStringImage, option => option.MapFrom(tbl => Encoding.UTF8.GetString(tbl.QrString)))
                 ;
@@ -45,7 +74,7 @@ namespace DIMSApis.Configtuations.AutoMap
             CreateMap<QrInput, Qr>()
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 0))
                 ;
-
+            //
             CreateMap<Booking, BookingInfoOutput>()
                 .ForMember(a => a.HotelAddress, option => option.MapFrom(tbl => tbl.Hotel.HotelAddress))
                 .ForMember(a => a.HotelName, option => option.MapFrom(tbl => tbl.Hotel.HotelName))

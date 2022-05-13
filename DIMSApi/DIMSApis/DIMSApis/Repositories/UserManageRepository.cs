@@ -2,6 +2,7 @@
 using DIMSApis.Interfaces;
 using DIMSApis.Models.Data;
 using DIMSApis.Models.Input;
+using DIMSApis.Models.Output;
 using Microsoft.EntityFrameworkCore;
 
 namespace DIMSApis.Repositories
@@ -40,6 +41,18 @@ namespace DIMSApis.Repositories
             }
         }
 
+        public async Task<IEnumerable<HotelOutput>> GetListAvaiableHotel()
+        {
+            var lsHotel = await _context.Hotels
+                .Include(p => p.Photos)
+                .Include(h => h.Rooms)
+                .Include(w => w.WardNavigation)
+                .Include(d => d.DistrictNavigation)
+                .Include(pr => pr.ProvinceNavigation)
+                .Where(op => op.Status == 1).ToListAsync();
+            var returnHotel = _mapper.Map<IEnumerable<HotelOutput>>(lsHotel);
+            return returnHotel;
+        }
 
     }
 }

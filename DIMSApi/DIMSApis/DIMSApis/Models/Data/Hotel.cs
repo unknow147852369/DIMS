@@ -22,7 +22,7 @@ namespace DIMSApis.Models.Data
         public DateTime? CreateDate { get; set; }
         public int? Status { get; set; }
 
-        public virtual Province? District1 { get; set; }
+        public virtual Province? ProvinceNavigation { get; set; }
         public virtual District? DistrictNavigation { get; set; }
         public virtual User? User { get; set; }
         public virtual Ward? WardNavigation { get; set; }

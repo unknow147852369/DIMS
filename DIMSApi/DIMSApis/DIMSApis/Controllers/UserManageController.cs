@@ -59,5 +59,21 @@ namespace DIMSApis.Controllers
             var returnUser = _mapper.Map<UserInfoOutput>(user);
             return Ok(returnUser);
         }
+
+        [HttpGet("Avaiable_Hotel")]
+        public async Task<IActionResult> GetAllHotel()
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var Hotel = await _usermanage.GetListAvaiableHotel();
+            return Ok(Hotel);
+        }
+
+        //[HttpGet("Host_All_Hotel_Room")]
+        //public async Task<IActionResult> GetAllHotelRoom(int hotelId)
+        //{
+        //    int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        //    var HotelRoom = await _host.GetListAllHotelRoom(hotelId, userId);
+        //    return Ok(HotelRoom);
+        //}
     }
 }

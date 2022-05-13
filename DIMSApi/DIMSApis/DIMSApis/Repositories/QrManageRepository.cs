@@ -58,7 +58,7 @@ namespace DIMSApis.Repositories
         public async Task<string> vertifyQrContent(VertifyQrInput qrIn)
         {
             var condition = "";
-            String BookingId, RoomId;
+            string BookingId, RoomId;
             _generateqr.GetQrDetail(qrIn, out BookingId, out RoomId);
             var qrvertify = await _context.Qrs.Include(b => b.BookingDetail)
                 .Where(c => c.BookingDetail.BookingId.Equals(int.Parse(BookingId))

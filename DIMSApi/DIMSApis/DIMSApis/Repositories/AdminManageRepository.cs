@@ -31,5 +31,18 @@ namespace DIMSApis.Repositories
             }
             return 0;
         }
+
+        public async Task<int> AcpectHotel(int hotelId)
+        {
+            var hotel = await _context.Hotels.Where(u => u.HotelId == hotelId ).FirstOrDefaultAsync();
+            if (hotel != null)
+            {
+                hotel.Status = 1;
+                if (await _context.SaveChangesAsync() > 0)
+                    return 1;
+                return 3;
+            }
+            return 0;
+        }
     }
 }

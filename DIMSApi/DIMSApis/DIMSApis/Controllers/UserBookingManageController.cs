@@ -80,5 +80,7 @@ namespace DIMSApis.Controllers
             var returnBooking = _mapper.Map<IEnumerable<BookingInfoOutput>>(Booking);
             return Ok(returnBooking);
         }
+
+
     }
 }

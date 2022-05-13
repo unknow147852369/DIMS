@@ -125,9 +125,7 @@ namespace DIMSApis.Models.Data
 
             modelBuilder.Entity<Hotel>(entity =>
             {
-                entity.Property(e => e.HotelId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("HotelID");
+                entity.Property(e => e.HotelId).HasColumnName("HotelID");
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
@@ -150,7 +148,7 @@ namespace DIMSApis.Models.Data
                     .HasForeignKey(d => d.District)
                     .HasConstraintName("FK_Hotels_Districts");
 
-                entity.HasOne(d => d.District1)
+                entity.HasOne(d => d.ProvinceNavigation)
                     .WithMany(p => p.Hotels)
                     .HasForeignKey(d => d.District)
                     .HasConstraintName("FK_Hotels_Provinces");
@@ -242,7 +240,7 @@ namespace DIMSApis.Models.Data
                 entity.HasOne(d => d.Hotel)
                     .WithMany(p => p.Rooms)
                     .HasForeignKey(d => d.HotelId)
-                    .HasConstraintName("FK_Rooms_Hotels");
+                    .HasConstraintName("FK_Rooms_Hotels1");
             });
 
             modelBuilder.Entity<User>(entity =>
