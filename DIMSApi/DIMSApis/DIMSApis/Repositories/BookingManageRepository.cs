@@ -50,7 +50,7 @@ namespace DIMSApis.Repositories
                                 .Where(a => a.BookingId == stripeIn.BooingId && a.Booking.Condition.Equals(condition3))
                                 .Include(b => b.Room).ToListAsync();
                             var ListRoom = _mapper.Map<IEnumerable<QrInput>>(content);
-
+                            
                             if (content != null)
                             {
                                 booking.Condition = condition1;
@@ -65,6 +65,7 @@ namespace DIMSApis.Repositories
 
                                     await _context.Qrs.AddAsync(qrdetail);
                                 }
+                                foreach (BookingDetail st in content) { st.Status = 1; }
                                 if (await _context.SaveChangesAsync() > 0)
                                     return 1;
                                 return 3;

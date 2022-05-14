@@ -57,8 +57,9 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.Price, option => option.MapFrom(tbl => tbl.Price))
                 .ForMember(a => a.StartDate, option => option.MapFrom(tbl => tbl.StartDate))
                 .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.EndDate))
-                .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
+                .ForMember(a => a.Status, option => option.MapFrom(tbl => 0))
                 ;
+
             //
 
             //

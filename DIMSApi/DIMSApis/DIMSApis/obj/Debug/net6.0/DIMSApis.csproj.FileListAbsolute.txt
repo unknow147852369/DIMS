@@ -298,3 +298,6 @@ D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\zh-Hans\M
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\runtimes\win-arm\lib\net6.0\dotnet-aspnet-codegenerator-design.exe
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\runtimes\win-arm64\lib\net6.0\dotnet-aspnet-codegenerator-design.exe
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\Z.EntityFramework.Extensions.EFCore.dll
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\Z.EntityFramework.Plus.EFCore.dll
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\Z.Expressions.Eval.dll

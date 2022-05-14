@@ -41,18 +41,42 @@ namespace DIMSApis.Repositories
             }
         }
 
-        public async Task<IEnumerable<HotelOutput>> GetListAvaiableHotel()
+        public async Task<IEnumerable<HotelOutput>> GetListAvaiableHotel(string? searchadress, DateTime? start, DateTime? end)
         {
+            var terms = searchadress.Split(' ');
+           
             var lsHotel = await _context.Hotels
                 .Include(p => p.Photos)
                 .Include(h => h.Rooms)
                 .Include(w => w.WardNavigation)
                 .Include(d => d.DistrictNavigation)
                 .Include(pr => pr.ProvinceNavigation)
-                .Where(op => op.Status == 1).ToListAsync();
+                .Where(op => op.Status == 1)
+                
+                .ToListAsync();
+
+            var results = lsHotel
+               .Where(a => terms.Any(term => a.HotelAddress.Contains(searchadress)))
+               .ToList();
+
             var returnHotel = _mapper.Map<IEnumerable<HotelOutput>>(lsHotel);
             return returnHotel;
         }
 
+        public async Task<IEnumerable<HotelRoomOutput>> GetListAvaiableHotelRoom(int hotelId, DateTime start, DateTime end)
+        {
+            var lsHotelRoom = await _context.BookingDetails
+                .Include(b => b.Booking)
+               .Where(op => op.Status == 1 && op.Booking.HotelId == hotelId)
+               .Where(op => ((op.StartDate > start && op.StartDate < end) && (op.EndDate > start && op.EndDate < end))
+                         || (op.StartDate < end && op.EndDate > end)
+                        || (op.StartDate < start && op.EndDate > start))
+               .ToListAsync();
+
+            var lsRoom = _context.Rooms.WhereBulkNotContains(lsHotelRoom, a => a.RoomId).Where(op => op.HotelId == hotelId);
+            var returnHotelRoom = _mapper.Map<IEnumerable<HotelRoomOutput>>(lsRoom);
+
+            return returnHotelRoom;
+        }
     }
 }
