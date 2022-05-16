@@ -1,4 +1,5 @@
 ﻿using DIMSApis.Interfaces;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -37,6 +38,31 @@ namespace DIMSApis.Services
                   .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        public string RemoveMark(string inputString)
+        {
+            try
+            {
+                if (inputString == null) inputString = "";
+                var normalizedString = inputString.Normalize(NormalizationForm.FormD);
+                var stringBuilder = new StringBuilder(capacity: normalizedString.Length);
+
+                for (int i = 0; i < normalizedString.Length; i++)
+                {
+                    char c = normalizedString[i];
+                    var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                    if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                    {
+                        stringBuilder.Append(c);
+                    }
+                }
+
+                return stringBuilder
+                    .ToString()
+                    .Normalize(NormalizationForm.FormC)
+                    .ToLower();
+            }
+            catch (Exception ex) { throw ex; }
+        }
 
     }
 }

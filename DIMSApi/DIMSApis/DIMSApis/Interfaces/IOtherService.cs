@@ -8,6 +8,6 @@
 
         string RandomString(int length);
 
-
+        string RemoveMark(string inputString);
     }
 }

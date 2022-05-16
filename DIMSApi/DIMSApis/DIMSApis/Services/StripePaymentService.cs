@@ -24,14 +24,14 @@ namespace DIMSApis.Services
             var chage = charges.Create(new ChargeCreateOptions
             {
                 Amount = (long?)bok.TotalPrice,
-                Description = bok.BookingDetails.ToString(),
+                Description = bok.FullName + "-"+bok.Email+"-"+bok.PhoneNumber,
                 Currency = "usd",
                 Customer = customer.Id,
                 ReceiptEmail = stripeMail,
                 Metadata = new Dictionary<string, string>()
                 {
-                    {"OrderId" , "111" },
-                    {"Postcode", "LEE111" },
+                    {"BookingId" , bok.BookingId.ToString() },
+                    {"RealTotal",  bok.TotalPrice.ToString() },
                 },
 
             });

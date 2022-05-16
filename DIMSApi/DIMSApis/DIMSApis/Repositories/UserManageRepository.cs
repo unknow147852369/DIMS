@@ -11,11 +11,13 @@ namespace DIMSApis.Repositories
     {
         private readonly DIMSContext _context;
         private readonly IMapper _mapper;
+        private readonly IOtherService _other;
 
-        public UserManageRepository(DIMSContext context, IMapper mapper)
+        public UserManageRepository(DIMSContext context, IMapper mapper, IOtherService other)
         {
             _context = context;
             _mapper = mapper;
+            _other = other;
         }
 
         public async Task<User> GetUserDetail(int userId)
@@ -43,7 +45,7 @@ namespace DIMSApis.Repositories
 
         public async Task<IEnumerable<HotelOutput>> GetListAvaiableHotel(string? searchadress, DateTime? start, DateTime? end)
         {
-            var terms = searchadress.Split(' ');
+            var terms = _other.RemoveMark(searchadress);
            
             var lsHotel = await _context.Hotels
                 .Include(p => p.Photos)
@@ -52,14 +54,37 @@ namespace DIMSApis.Repositories
                 .Include(d => d.DistrictNavigation)
                 .Include(pr => pr.ProvinceNavigation)
                 .Where(op => op.Status == 1)
-                
                 .ToListAsync();
 
-            var results = lsHotel
-               .Where(a => terms.Any(term => a.HotelAddress.Contains(searchadress)))
-               .ToList();
+            var searchhotel = new List<Hotel>();
+            foreach (var hotel in lsHotel)
+            {
+                if(_other.RemoveMark(hotel.HotelAddress).Contains(terms))
+                {
+                    if (start != null && end != null)
+                    {
+                        var lsHotelRoom = await _context.BookingDetails
+                           .Include(b => b.Booking)
+                           .Where(op => op.Status == 1 && op.Booking.HotelId == hotel.HotelId)
+                           .Where(op => ((op.StartDate > start && op.StartDate < end) && (op.EndDate > start && op.EndDate < end))
+                                     || (op.StartDate < end && op.EndDate > end)
+                                    || (op.StartDate < start && op.EndDate > start))
+                           .ToListAsync();
 
-            var returnHotel = _mapper.Map<IEnumerable<HotelOutput>>(lsHotel);
+                        var lsRoom = _context.Rooms.WhereBulkNotContains(lsHotelRoom, a => a.RoomId).Where(op => op.HotelId == hotel.HotelId).Count();
+                        if (lsRoom > 0)
+                        {
+                            searchhotel.Add(hotel);
+                        }
+                    }
+                    else
+                    {
+                        searchhotel.Add(hotel);
+                    }
+                }
+            }
+            
+            var returnHotel = _mapper.Map<IEnumerable<HotelOutput>>(searchhotel);
             return returnHotel;
         }
 
@@ -73,7 +98,11 @@ namespace DIMSApis.Repositories
                         || (op.StartDate < start && op.EndDate > start))
                .ToListAsync();
 
-            var lsRoom = _context.Rooms.WhereBulkNotContains(lsHotelRoom, a => a.RoomId).Where(op => op.HotelId == hotelId);
+            var lsRoom = _context.Rooms
+                .Include(c => c.Category)
+                .Where(op => op.HotelId == hotelId)
+                .WhereBulkNotContains(lsHotelRoom, a => a.RoomId);
+
             var returnHotelRoom = _mapper.Map<IEnumerable<HotelRoomOutput>>(lsRoom);
 
             return returnHotelRoom;

@@ -23,7 +23,7 @@ namespace DIMSApis.Controllers
             _generateqr = generateqr;
         }
 
-        [HttpGet("get_Qr_Booking_list")]
+        [HttpGet("get_Qr_Booking_list_CHEAT")]
         public async Task<IActionResult> GetQrListImage(int bookingID)
         {
             //int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -39,32 +39,22 @@ namespace DIMSApis.Controllers
             }
         }
 
-        [HttpPost("QrAutoCreate")]
-        public async Task<IActionResult> AutoCreateQR(int bookingID)
-        {
-            if (await _qrmanage.CreateBookingQrString(bookingID) == 1)
-            {
-                return Ok();
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
 
-        [HttpPost("vertify_Qr_Content")]
+        [HttpPost("vertify_Qr")]
         public async Task<IActionResult> VertifyQrContent(VertifyQrInput qrIn)
         {
-            //int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var qrList = await _qrmanage.vertifyQrContent(qrIn);
-            if (qrList == null)
-            {
-                return BadRequest();
-            }
-            else
-            {
-                return Ok(qrList);
-            }
+            var qrcheck = await _qrmanage.vertifyQrContent(qrIn);
+
+            return Ok(qrcheck);
         }
+
+        [HttpGet("check_Room_lock")]
+        public async Task<IActionResult> checkRoomlock(int hotelId, String roomName)
+        {
+            var check = await _qrmanage.getStringToCheckRoom(hotelId, roomName);
+            return Ok(check);
+        }
+
+
     }
 }

@@ -21,30 +21,6 @@ namespace DIMSApis.Repositories
             _generateqr = generateqr;
         }
 
-        public async Task<int> CreateBookingQrString(int bookingID)
-        {
-            var content = await _context.BookingDetails.Where(a => a.BookingId == bookingID && a.Booking.Condition.Equals("APPROVED"))
-                 .Include(b => b.Room).ToListAsync();
-            var ListRoom = _mapper.Map<IEnumerable<QrInput>>(content);
-            if (content != null)
-            {         
-                foreach (var room in ListRoom)
-                {
-                    Qr qrdetail = new()
-                    {
-                        QrContent = _generateqr.createQrContent(room),
-                        QrString = Encoding.UTF8.GetBytes(_generateqr.GenerateQrString(room)),
-                    };
-                    _mapper.Map(room, qrdetail);
-
-                    await _context.Qrs.AddAsync(qrdetail);
-                }
-                if (await _context.SaveChangesAsync() > 0)
-                    return 1;
-                return 3;
-            }
-            else { return 0; }
-        }
 
         public async Task<IEnumerable<Qr>> getListQrString(int bookingID)
         {
@@ -52,7 +28,26 @@ namespace DIMSApis.Repositories
                 .Where(a => a.BookingDetail.BookingId == bookingID)
                 .ToListAsync();
             return content;
-            
+        }
+
+        public async Task<string> getStringToCheckRoom(int hotel, string roomName)
+        {
+            var today = DateTime.Now;
+            var check = "empty";
+            var lsHotelRoom = await _context.BookingDetails
+                          .Include(b => b.Booking)
+                          .Include(b => b.Room)
+                          .Where(op => op.Status == 1 && op.Booking.HotelId == hotel)
+                          .Where(op => ((op.StartDate < today && op.EndDate > today)))
+                          .ToListAsync();
+            foreach (var item in lsHotelRoom)
+            {
+                if(item.Room.RoomName == roomName)
+                {
+                    check = item.RoomId.ToString();
+                }
+            }
+            return check;
         }
 
         public async Task<string> vertifyQrContent(VertifyQrInput qrIn)
@@ -60,17 +55,21 @@ namespace DIMSApis.Repositories
             var condition = "";
             string BookingId, RoomId;
             _generateqr.GetQrDetail(qrIn, out BookingId, out RoomId);
-            var qrvertify = await _context.Qrs.Include(b => b.BookingDetail)
+            var qrvertify = await _context.Qrs
+                .Include(b => b.BookingDetail).ThenInclude(r => r.Room)
+                .Include(b => b.BookingDetail).ThenInclude(a => a.Booking)
                 .Where(c => c.BookingDetail.BookingId.Equals(int.Parse(BookingId))
-                && c.BookingDetail.RoomId.Equals(int.Parse(RoomId)))
+                && c.BookingDetail.RoomId.Equals(int.Parse(RoomId))
+                && c.Status == "1")
                 .FirstOrDefaultAsync();
-            if(qrvertify == null)
+            if(qrvertify.BookingDetail.Booking.HotelId.Equals(qrIn.HotelId) 
+                && qrvertify.BookingDetail.RoomId.Equals(qrIn.RoomId))
             {
-                condition = "close";
+                condition = "1";
             }
             else
             {
-                condition = "open";
+                condition = "0";
             }
 
             return condition; 
