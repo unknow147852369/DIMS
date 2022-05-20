@@ -92,15 +92,23 @@ var app = builder.Build();
 //{
 
 //}
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseHttpsRedirection();
 //Add more<
 //PAHI NAM TRC HAN app.UseAuthorization();
 app.UseAuthentication();
-//>Add more
+app.UseRouting();
+app.UseCors(a => a
+.SetIsOriginAllowed(origin => true)
+.AllowAnyMethod()
+.AllowAnyHeader()
+.AllowCredentials()
+);
 app.UseAuthorization();
-
-app.MapControllers();
-
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
+//>Add more
 app.Run();

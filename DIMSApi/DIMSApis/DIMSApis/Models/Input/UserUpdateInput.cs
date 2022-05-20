@@ -4,6 +4,7 @@ namespace DIMSApis.Models.Input
 {
     public class UserUpdateInput
     {
+        public int UserId { get; set; }
         [Required(ErrorMessage = "Can't be empty"), StringLength(30, ErrorMessage = "{0} length must be between {2} and {1}.", MinimumLength = 8)]
         public string UserName { get; set; }
 

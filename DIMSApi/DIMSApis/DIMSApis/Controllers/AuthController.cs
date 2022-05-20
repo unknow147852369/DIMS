@@ -98,18 +98,6 @@ namespace DIMSApis.Controllers
             }
         }
 
-        [HttpPost("forgot-code-vertify")]
-        public async Task<IActionResult> ForgotCodeVertify(ForgotCodeVertifyInput code)
-        {
-            if (await _auth.ForgotCodeVertify(code))
-            {
-                return Ok();
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
 
         [HttpPost("forgot-pass-change")]
         public async Task<IActionResult> ForgoPassChange(ForgotPassInput pass)

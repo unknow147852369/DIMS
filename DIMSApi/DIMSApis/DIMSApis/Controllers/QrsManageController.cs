@@ -26,7 +26,6 @@ namespace DIMSApis.Controllers
         [HttpGet("get_Qr_Booking_list_CHEAT")]
         public async Task<IActionResult> GetQrListImage(int bookingID)
         {
-            //int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var qrList = await _qrmanage.getListQrString(bookingID);
             if (qrList == null)
             {
@@ -53,6 +52,44 @@ namespace DIMSApis.Controllers
         {
             var check = await _qrmanage.getStringToCheckRoom(hotelId, roomName);
             return Ok(check);
+        }
+
+        [HttpPost("Check_in")]
+        public async Task<IActionResult> CheckIn(checkInInput ckIn)
+        {
+            var checkIn = await _qrmanage.checkIn(ckIn);
+
+            if (checkIn.Equals("1"))
+            {
+                return Ok();
+            }
+            else if (checkIn.Equals("3"))
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("Check_out")]
+        public async Task<IActionResult> CheckOut(CheckOutInput ckOut)
+        {
+            var checkOut = await _qrmanage.CheckOut(ckOut);
+
+            if (checkOut.Equals("1"))
+            {
+                return Ok();
+            }
+            else if (checkOut.Equals("3"))
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
 

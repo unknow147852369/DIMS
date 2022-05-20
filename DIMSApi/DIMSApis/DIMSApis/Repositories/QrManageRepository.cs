@@ -2,9 +2,7 @@
 using DIMSApis.Interfaces;
 using DIMSApis.Models.Data;
 using DIMSApis.Models.Input;
-using DIMSApis.Models.Output;
 using Microsoft.EntityFrameworkCore;
-using System.Text;
 
 namespace DIMSApis.Repositories
 {
@@ -21,6 +19,39 @@ namespace DIMSApis.Repositories
             _generateqr = generateqr;
         }
 
+        public async Task<string> checkIn(checkInInput checkIn)
+        {
+            var bokingdetailInfo = await _context.Qrs
+                .Include(a => a.BookingDetail)
+                .Where(a => a.BookingDetail.BookingId == checkIn.BookingId && a.BookingDetail.RoomId == checkIn.RoomId)
+            .FirstOrDefaultAsync();
+
+            if (bokingdetailInfo != null)
+            {
+                bokingdetailInfo.Status = "1";
+                bokingdetailInfo.CheckIn = checkIn.CheckIn;
+            }
+            if (await _context.SaveChangesAsync() > 0)
+                return "1";
+            return "3";
+        }
+
+        public async Task<string> CheckOut(CheckOutInput checkOut)
+        {
+            var bokingdetailInfo = await _context.Qrs
+                .Include(a => a.BookingDetail)
+                .Where(a => a.BookingDetail.BookingId == checkOut.BookingId && a.BookingDetail.RoomId == checkOut.RoomId)
+            .FirstOrDefaultAsync();
+
+            if (bokingdetailInfo != null)
+            {
+                bokingdetailInfo.Status = "0";
+                bokingdetailInfo.CheckOut = checkOut.CheckOut;
+            }
+            if (await _context.SaveChangesAsync() > 0)
+                return "1";
+            return "3";
+        }
 
         public async Task<IEnumerable<Qr>> getListQrString(int bookingID)
         {
@@ -36,17 +67,17 @@ namespace DIMSApis.Repositories
             var check = "empty";
             var lsHotelRoom = await _context.BookingDetails
                           .Include(b => b.Booking)
-                          .Include(b => b.Room)
-                          .Where(op => op.Status == 1 && op.Booking.HotelId == hotel)
+                          .Include(r => r.Room)
+                          .Include(q => q.Qr)
+                          .Where(op => op.Status == 1 && op.Booking.HotelId == hotel && op.Room.RoomName.Equals(roomName))
                           .Where(op => ((op.StartDate < today && op.EndDate > today)))
-                          .ToListAsync();
-            foreach (var item in lsHotelRoom)
+                          .FirstOrDefaultAsync();
+
+            if (lsHotelRoom != null)
             {
-                if(item.Room.RoomName == roomName)
-                {
-                    check = item.RoomId.ToString();
-                }
+                check = lsHotelRoom.Qr.QrContent;
             }
+
             return check;
         }
 
@@ -62,17 +93,21 @@ namespace DIMSApis.Repositories
                 && c.BookingDetail.RoomId.Equals(int.Parse(RoomId))
                 && c.Status == "1")
                 .FirstOrDefaultAsync();
-            if(qrvertify.BookingDetail.Booking.HotelId.Equals(qrIn.HotelId) 
-                && qrvertify.BookingDetail.RoomId.Equals(qrIn.RoomId))
-            {
-                condition = "1";
-            }
-            else
-            {
-                condition = "0";
-            }
 
-            return condition; 
+            if (qrvertify != null)
+            {
+                if (qrvertify.BookingDetail.Booking.HotelId.Equals(qrIn.HotelId)
+                    && qrvertify.BookingDetail.RoomId.Equals(qrIn.RoomId))
+                {
+                    condition = "1";
+                }
+                else
+                {
+                    condition = "0";
+                }
+            }
+            else { condition = "wrong infrom"; }
+            return condition;
         }
     }
 }

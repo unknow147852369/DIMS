@@ -49,10 +49,14 @@ namespace DIMSApis.Repositories
             var user = await _context.Users.Where(u => u.Email == pass.Email.ToLower() && u.Status == true ).SingleOrDefaultAsync();
             if (user == null)
                 return false;
-            byte[] passwordHash, passwordSalt;
-            _otherservice.CreatePasswordHash(pass.Password, out passwordHash, out passwordSalt);
-            user.PasswordHash = passwordHash;
-            user.PasswordSalt = passwordSalt;
+            if (user.UnlockKey == pass.UnlockKey)
+            {
+                byte[] passwordHash, passwordSalt;
+                _otherservice.CreatePasswordHash(pass.Password, out passwordHash, out passwordSalt);
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+                user.UnlockKey = null;
+            }
             if (await _context.SaveChangesAsync() > 0)
                 return true;
             return false;
@@ -91,12 +95,13 @@ namespace DIMSApis.Repositories
                 Email = userinput.Email.ToLower(),
                 CreateDate = DateTime.Now,
                 Gender = "UNKNOW",
-                Role = "USER",
+                Role = "WAIT_USER",
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
+                UnlockKey = _otherservice.RandomString(6),
                 Status = true
             };
-            //await _mail.SendEmailAsync(user.Email, user.UnlockKey);
+            await _mail.SendEmailAsync(user.Email, user.UnlockKey);
             await _context.Users.AddAsync(user);
             return await _context.SaveChangesAsync() > 0;
         }

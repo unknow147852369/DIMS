@@ -12,5 +12,7 @@ namespace DIMSApis.Models.Input
 
         [Required(ErrorMessage = "Can't be empty"), Compare(nameof(Password), ErrorMessage = "Passwords don't match.")]
         public string ConfirmPassword { get; set; }
+
+        public string UnlockKey { get; set; }
     }
 }
