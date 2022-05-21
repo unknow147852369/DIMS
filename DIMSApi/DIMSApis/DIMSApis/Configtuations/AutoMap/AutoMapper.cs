@@ -11,6 +11,8 @@ namespace DIMSApis.Configtuations.AutoMap
     {
         public AutoMapper()
         {
+            CreateMap<NewOtpInput, Otp>();
+            //
             CreateMap<Room, HotelRoomOutput>()
                 .ForMember(a => a.CategoryName, option => option.MapFrom(tbl => tbl.Category.CategoryName))
                 ;
@@ -18,7 +20,7 @@ namespace DIMSApis.Configtuations.AutoMap
             CreateMap<Hotel, HotelOutput>()
                 .ForMember(a => a.TotalRoom, option => option.MapFrom(tbl => tbl.Rooms.Count))
                 .ForMember(a => a.WardName, option => option.MapFrom(tbl => tbl.WardNavigation.Name))
-                .ForMember(a => a.ProvinceName, option => option.MapFrom(tbl => tbl.ProvinceNavigation.Name))
+                .ForMember(a => a.ProvinceName, option => option.MapFrom(tbl => tbl.District1.Name))
                 .ForMember(a => a.DistrictName, option => option.MapFrom(tbl => tbl.DistrictNavigation.Name))
                 ;
             CreateMap<Photo, HotelPhotosOutput>();

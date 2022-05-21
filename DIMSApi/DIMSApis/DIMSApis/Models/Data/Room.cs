@@ -17,6 +17,7 @@ namespace DIMSApis.Models.Data
         public int? CategoryId { get; set; }
         public double? Price { get; set; }
         public int? Status { get; set; }
+        public int? Rating { get; set; }
 
         public virtual Category? Category { get; set; }
         public virtual Hotel? Hotel { get; set; }

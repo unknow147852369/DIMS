@@ -12,6 +12,7 @@ namespace DIMSApis.Models.Data
 
         public int CategoryId { get; set; }
         public string? CategoryName { get; set; }
+        public int? Quanity { get; set; }
         public int? Status { get; set; }
 
         public virtual ICollection<Room> Rooms { get; set; }

@@ -10,6 +10,7 @@ namespace DIMSApis.Models.Data
             Bookings = new HashSet<Booking>();
             Photos = new HashSet<Photo>();
             Rooms = new HashSet<Room>();
+            Vouchers = new HashSet<Voucher>();
         }
 
         public int HotelId { get; set; }
@@ -21,13 +22,15 @@ namespace DIMSApis.Models.Data
         public string? Province { get; set; }
         public DateTime? CreateDate { get; set; }
         public int? Status { get; set; }
+        public int? Rating { get; set; }
 
-        public virtual Province? ProvinceNavigation { get; set; }
+        public virtual Province? District1 { get; set; }
         public virtual District? DistrictNavigation { get; set; }
         public virtual User? User { get; set; }
         public virtual Ward? WardNavigation { get; set; }
         public virtual ICollection<Booking> Bookings { get; set; }
         public virtual ICollection<Photo> Photos { get; set; }
         public virtual ICollection<Room> Rooms { get; set; }
+        public virtual ICollection<Voucher> Vouchers { get; set; }
     }
 }

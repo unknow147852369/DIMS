@@ -39,7 +39,7 @@ namespace DIMSApis.Repositories
             }
             else
             {
-                if (stripeIn.conditon.Equals(condition1))
+                if (stripeIn.conditon.ToUpper().Equals(condition1))
                 {
                     if (booking != null)
                     {
@@ -47,7 +47,7 @@ namespace DIMSApis.Repositories
                         if (paymentstatus.Contains(condition4))
                         {
                             var content = await _context.BookingDetails
-                                .Where(a => a.BookingId == stripeIn.BooingId && a.Booking.Condition.Equals(condition3))
+                                .Where(a => a.BookingId == stripeIn.BooingId && a.Booking.Condition.ToUpper().Equals(condition3))
                                 .Include(b => b.Room).ToListAsync();
                             var ListRoom = _mapper.Map<IEnumerable<QrInput>>(content);
                             

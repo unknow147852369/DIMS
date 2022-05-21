@@ -62,7 +62,7 @@ namespace DIMSApis.Repositories
                 .Include(h => h.Rooms)
                 .Include(w => w.WardNavigation)
                 .Include(d => d.DistrictNavigation)
-                .Include(pr => pr.ProvinceNavigation)
+                .Include(pr => pr.District1)
                 .Where(op => op.UserId == userId).ToListAsync();
             var returnHotel = _mapper.Map<IEnumerable<HotelOutput>>(lsHotel);
             return returnHotel;

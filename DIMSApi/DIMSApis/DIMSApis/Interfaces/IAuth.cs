@@ -11,7 +11,6 @@ namespace DIMSApis.Interfaces
         Task<bool> UserExists(string email);
 
         Task<bool> GetForgotCodeMailSend(ForgotCodeMailInput mail);
-        Task<bool> ForgotCodeVertify(ForgotCodeVertifyInput code);
         Task<bool> UpdateNewPass(ForgotPassInput pass);
 
     }

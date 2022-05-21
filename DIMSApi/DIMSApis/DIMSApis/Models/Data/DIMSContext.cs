@@ -21,11 +21,14 @@ namespace DIMSApis.Models.Data
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<District> Districts { get; set; } = null!;
         public virtual DbSet<Hotel> Hotels { get; set; } = null!;
+        public virtual DbSet<InboundUser> InboundUsers { get; set; } = null!;
+        public virtual DbSet<Otp> Otps { get; set; } = null!;
         public virtual DbSet<Photo> Photos { get; set; } = null!;
         public virtual DbSet<Province> Provinces { get; set; } = null!;
         public virtual DbSet<Qr> Qrs { get; set; } = null!;
         public virtual DbSet<Room> Rooms { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<Voucher> Vouchers { get; set; } = null!;
         public virtual DbSet<Ward> Wards { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -148,7 +151,7 @@ namespace DIMSApis.Models.Data
                     .HasForeignKey(d => d.District)
                     .HasConstraintName("FK_Hotels_Districts");
 
-                entity.HasOne(d => d.ProvinceNavigation)
+                entity.HasOne(d => d.District1)
                     .WithMany(p => p.Hotels)
                     .HasForeignKey(d => d.District)
                     .HasConstraintName("FK_Hotels_Provinces");
@@ -162,6 +165,45 @@ namespace DIMSApis.Models.Data
                     .WithMany(p => p.Hotels)
                     .HasForeignKey(d => d.Ward)
                     .HasConstraintName("FK_Hotels_Wards");
+            });
+
+            modelBuilder.Entity<InboundUser>(entity =>
+            {
+                entity.Property(e => e.BookingDetailId).HasColumnName("BookingDetailID");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.UserBirthday).HasColumnType("datetime");
+
+                entity.Property(e => e.UserIdCard)
+                    .HasMaxLength(20)
+                    .IsFixedLength();
+
+                entity.HasOne(d => d.BookingDetail)
+                    .WithMany(p => p.InboundUsers)
+                    .HasForeignKey(d => d.BookingDetailId)
+                    .HasConstraintName("FK_InboundUsers_BookingDetails");
+            });
+
+            modelBuilder.Entity<Otp>(entity =>
+            {
+                entity.Property(e => e.CodeOtp)
+                    .HasMaxLength(20)
+                    .HasColumnName("codeOtp")
+                    .IsFixedLength();
+
+                entity.Property(e => e.CreateDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createDate");
+
+                entity.Property(e => e.Purpose).HasMaxLength(50);
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Otps)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Otps_Users");
             });
 
             modelBuilder.Entity<Photo>(entity =>
@@ -266,6 +308,28 @@ namespace DIMSApis.Models.Data
                 entity.Property(e => e.UnlockKey).HasMaxLength(10);
 
                 entity.Property(e => e.UserName).HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<Voucher>(entity =>
+            {
+                entity.ToTable("Voucher");
+
+                entity.Property(e => e.VoucherId).HasColumnName("VoucherID");
+
+                entity.Property(e => e.EndDate).HasColumnType("datetime");
+
+                entity.Property(e => e.HotelId).HasColumnName("HotelID");
+
+                entity.Property(e => e.StartDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.VoucherName).HasMaxLength(100);
+
+                entity.HasOne(d => d.Hotel)
+                    .WithMany(p => p.Vouchers)
+                    .HasForeignKey(d => d.HotelId)
+                    .HasConstraintName("FK_Voucher_Hotels");
             });
 
             modelBuilder.Entity<Ward>(entity =>

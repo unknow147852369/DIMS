@@ -5,6 +5,11 @@ namespace DIMSApis.Models.Data
 {
     public partial class BookingDetail
     {
+        public BookingDetail()
+        {
+            InboundUsers = new HashSet<InboundUser>();
+        }
+
         public int BookingDetailId { get; set; }
         public int? BookingId { get; set; }
         public int? RoomId { get; set; }
@@ -16,5 +21,6 @@ namespace DIMSApis.Models.Data
         public virtual Booking? Booking { get; set; }
         public virtual Room? Room { get; set; }
         public virtual Qr? Qr { get; set; }
+        public virtual ICollection<InboundUser> InboundUsers { get; set; }
     }
 }
