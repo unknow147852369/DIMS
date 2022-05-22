@@ -11,6 +11,9 @@ namespace DIMSApis.Configtuations.AutoMap
     {
         public AutoMapper()
         {
+            CreateMap<BookingDetail,InboundUser>();
+            //
+
             CreateMap<NewOtpInput, Otp>();
             //
             CreateMap<Room, HotelRoomOutput>()

@@ -75,5 +75,21 @@ namespace DIMSApis.Controllers
             var HotelRoom = await _usermanage.GetListAvaiableHotelRoom(hotelId,start,end);
             return Ok(HotelRoom);
         }
+        [HttpPost("Active_Account")]
+        public async Task<IActionResult> AACitveAccount(string AcitveCode)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            string check = await _usermanage.ActiveAccount(AcitveCode, userId);
+            if (check != null)
+            {
+                return Ok(check);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
     }
 }

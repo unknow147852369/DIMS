@@ -16,7 +16,7 @@ using AutoMapper;
 
 namespace DIMSApis.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "USER")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserBookingManageController : ControllerBase

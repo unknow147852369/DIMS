@@ -13,6 +13,8 @@ namespace DIMSApis.Repositories
         private readonly IOtherService _otherservice;
         private readonly IMail _mail;
         private readonly IMapper _mapper;
+        private string purpose1 = "ACTIVE ACCOUNT";
+        private string purpose2 = "CHANGE PASS";
 
         public  AuthRepository(DIMSContext context, IOtherService otherservice, IMail mail, IMapper mapper)
         {
@@ -25,14 +27,15 @@ namespace DIMSApis.Repositories
         public async Task<bool> GetForgotCodeMailSend(ForgotCodeMailInput mail)
         {
             var user = await _context.Users
-                .Include(x => x.Otps)
-                .Where(u => u.Email == mail.Email.ToLower() && u.Status == true ).SingleOrDefaultAsync();
-            if (user == null)
+                .Where(u => u.Email == mail.Email.ToLower() && u.Status == true).SingleOrDefaultAsync();
+            var otpCode = await _context.Otps
+                .Where(a => a.Purpose.Equals(purpose2) && user.UserId == a.UserId).SingleOrDefaultAsync();
+            if (user == null || otpCode == null)
                 return false;
-            user.UnlockKey = _otherservice.RandomString(6);
+            otpCode.CodeOtp = _otherservice.RandomString(6);
             if (await _context.SaveChangesAsync() > 0)
             {
-                await _mail.SendEmailAsync(user.Email, user.UnlockKey);
+                await _mail.SendEmailAsync(user.Email, otpCode.CodeOtp);
                 return true;
             }
             return false;
@@ -41,16 +44,19 @@ namespace DIMSApis.Repositories
 
         public async Task<bool> UpdateNewPass(ForgotPassInput pass)
         {
-            var user = await _context.Users.Where(u => u.Email == pass.Email.ToLower() && u.Status == true ).SingleOrDefaultAsync();
-            if (user == null)
+            var user = await _context.Users
+                .Where(u => u.Email == pass.Email.ToLower() && u.Status == true).SingleOrDefaultAsync();
+            var otpCode = await _context.Otps
+                .Where(a => a.Purpose.Equals(purpose2) && user.UserId == a.UserId).SingleOrDefaultAsync();
+            if (user == null || otpCode == null)
                 return false;
-            if (user.UnlockKey == pass.UnlockKey)
+            if (otpCode.CodeOtp.Trim().Equals(pass.UnlockKey.Trim()))
             {
                 byte[] passwordHash, passwordSalt;
                 _otherservice.CreatePasswordHash(pass.Password, out passwordHash, out passwordSalt);
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
-                user.UnlockKey = null;
+                otpCode.CodeOtp = null;
             }
             if (await _context.SaveChangesAsync() > 0)
                 return true;
@@ -89,8 +95,15 @@ namespace DIMSApis.Repositories
             var ltOtp = new List<NewOtpInput>();
             ltOtp.Add(new NewOtpInput
             {
-                Purpose = "ACTIVE ACCOUNT",
+                Purpose = purpose1,
                 CodeOtp =checkcode,
+                CreateDate = DateTime.Now,
+                Status = 1,
+            });
+            ltOtp.Add(new NewOtpInput
+            {
+                Purpose = purpose2,
+                CodeOtp = null,
                 CreateDate = DateTime.Now,
                 Status = 1,
             });
@@ -99,7 +112,7 @@ namespace DIMSApis.Repositories
                 Email = userinput.Email.ToLower(),
                 CreateDate = DateTime.Now,
                 Gender = "UNKNOW",
-                Role = "USER",
+                Role = "WAIT_USER",
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
                 Status = true,

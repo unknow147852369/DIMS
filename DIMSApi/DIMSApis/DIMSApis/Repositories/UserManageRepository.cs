@@ -12,6 +12,7 @@ namespace DIMSApis.Repositories
         private readonly DIMSContext _context;
         private readonly IMapper _mapper;
         private readonly IOtherService _other;
+        private string purpose1 = "ACTIVE ACCOUNT";
 
         public UserManageRepository(DIMSContext context, IMapper mapper, IOtherService other)
         {
@@ -108,5 +109,22 @@ namespace DIMSApis.Repositories
             return returnHotelRoom;
         }
 
+        public async Task<string> ActiveAccount(string activeCode, int userId)
+        {
+            var user = await _context.Users
+                .Where(a => userId == a.UserId).SingleOrDefaultAsync();
+            var otpCode = await _context.Otps
+                .Where(a => a.Purpose.Equals(purpose1) && userId == a.UserId).SingleOrDefaultAsync();
+            if (otpCode == null)
+                return "Already Active";
+            if (otpCode.CodeOtp.Trim().Equals(activeCode.Trim()))
+            {
+                otpCode.CodeOtp = null;
+                user.Role = "USER";
+            }
+            if (await _context.SaveChangesAsync() > 0)
+                return "Active success";
+            return "0";
+        }
     }
 }

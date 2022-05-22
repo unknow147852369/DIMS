@@ -22,15 +22,38 @@ namespace DIMSApis.Repositories
         public async Task<string> checkIn(checkInInput checkIn)
         {
             var bokingdetailInfo = await _context.Qrs
-                .Include(a => a.BookingDetail)
+                .Include(a => a.BookingDetail).ThenInclude(b=>b.InboundUsers)
                 .Where(a => a.BookingDetail.BookingId == checkIn.BookingId && a.BookingDetail.RoomId == checkIn.RoomId)
             .FirstOrDefaultAsync();
+
+            var detail = await _context.BookingDetails
+               .Include(a => a.Booking)
+               .Include(b => b.InboundUsers)
+               .Where(a => a.BookingId == checkIn.BookingId && a.RoomId == checkIn.RoomId)
+           .FirstOrDefaultAsync();
+            if (detail != null)
+            {
+                foreach (var people in checkIn.InboundUsers)
+                {
+                    var pieces = people.InboundUserString.Split("-");
+                    InboundUser ib = new()
+                    {
+                        UserName = pieces[0],
+                        UserIdCard = pieces[1],
+                        UserBirthday = DateTime.Parse(pieces[2]),
+                        Status = 1,
+                    };
+                    _mapper.Map(detail, ib);
+                    await _context.InboundUsers.AddAsync(ib);
+                }
+            }
 
             if (bokingdetailInfo != null)
             {
                 bokingdetailInfo.Status = "1";
                 bokingdetailInfo.CheckIn = checkIn.CheckIn;
             }
+
             if (await _context.SaveChangesAsync() > 0)
                 return "1";
             return "3";

@@ -324,6 +324,10 @@ namespace DIMSApis.Models.Data
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
+                entity.Property(e => e.VoucherCode)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.VoucherName).HasMaxLength(100);
 
                 entity.HasOne(d => d.Hotel)

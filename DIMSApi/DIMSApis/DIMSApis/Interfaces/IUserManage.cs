@@ -9,6 +9,8 @@ namespace DIMSApis.Interfaces
         Task<int> UpdateUserInfo(int userId, UserUpdateInput user);
         Task<User> GetUserDetail(int userId);
 
+        Task<string> ActiveAccount (string activeCode,int userId);
+
         Task<IEnumerable<HotelOutput>> GetListAvaiableHotel(string? searchadress, DateTime? start, DateTime? end);
         Task<IEnumerable<HotelRoomOutput>> GetListAvaiableHotelRoom(int hotelId,DateTime start,DateTime end);
     }
