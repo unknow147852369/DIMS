@@ -55,6 +55,20 @@ namespace DIMSApis.Repositories
             return duplicateRoom;
         }
 
+        public async Task<AHotelOutput> GetAHotelAllRoom(int hotelId, int userId)
+        {
+            var AHotel = await _context.Hotels
+                .Include(h => h.Rooms).ThenInclude(c => c.Category)
+                .Include(w => w.WardNavigation)
+                .Include(d => d.DistrictNavigation)
+                .Include(pr => pr.District1)
+                .Where(op => op.UserId == userId && op.HotelId == hotelId)
+                .FirstOrDefaultAsync();
+            var returnHotelRoom = _mapper.Map<AHotelOutput>(AHotel);
+
+            return returnHotelRoom;
+        }
+
         public async Task<IEnumerable<HotelOutput>> GetListAllHotel(int userId)
         {
             var lsHotel = await _context.Hotels

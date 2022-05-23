@@ -10,5 +10,6 @@ namespace DIMSApis.Interfaces
         Task<string> CreateRoom(NewRoomInput room, int userId);
         Task<IEnumerable<HotelOutput>> GetListAllHotel( int userId);
         Task<IEnumerable<HotelRoomOutput>> GetListAllHotelRoom( int hotelId,int userId);
+        Task<AHotelOutput> GetAHotelAllRoom( int hotelId,int userId);
     }
 }

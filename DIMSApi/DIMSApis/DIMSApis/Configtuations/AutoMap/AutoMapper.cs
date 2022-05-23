@@ -11,6 +11,17 @@ namespace DIMSApis.Configtuations.AutoMap
     {
         public AutoMapper()
         {
+            CreateMap<Hotel, AHotelOutput>()
+                .ForMember(a => a.TotalRoom, option => option.MapFrom(tbl => tbl.Rooms.Count))
+                .ForMember(a => a.WardName, option => option.MapFrom(tbl => tbl.WardNavigation.Name))
+                .ForMember(a => a.ProvinceName, option => option.MapFrom(tbl => tbl.District1.Name))
+                .ForMember(a => a.DistrictName, option => option.MapFrom(tbl => tbl.DistrictNavigation.Name))
+                ;
+            CreateMap<Room, AllRoomOutput>()
+                .ForMember(a => a.CategoryName, option => option.MapFrom(tbl => tbl.Category.CategoryName))
+                .ForMember(a => a.Quanity, option => option.MapFrom(tbl => tbl.Category.Quanity))
+                ;
+            //
             CreateMap<BookingDetail,InboundUser>();
             //
 
@@ -18,6 +29,7 @@ namespace DIMSApis.Configtuations.AutoMap
             //
             CreateMap<Room, HotelRoomOutput>()
                 .ForMember(a => a.CategoryName, option => option.MapFrom(tbl => tbl.Category.CategoryName))
+                .ForMember(a => a.Quanity, option => option.MapFrom(tbl => tbl.Category.Quanity))
                 ;
             //
             CreateMap<Hotel, HotelOutput>()

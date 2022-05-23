@@ -1,10 +1,9 @@
 ﻿namespace DIMSApis.Models.Output
 {
-    public class HotelRoomOutput
+    public class AllRoomOutput
     {
         public int RoomId { get; set; }
         public string? RoomName { get; set; }
-        public int? HotelId { get; set; }
         public int? CategoryId { get; set; }
         public string? CategoryName { get; set; }
         public int? Quanity { get; set; }
