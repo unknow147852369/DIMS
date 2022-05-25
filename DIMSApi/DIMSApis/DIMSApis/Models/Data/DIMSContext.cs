@@ -63,6 +63,8 @@ namespace DIMSApis.Models.Data
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
+                entity.Property(e => e.VoucherId).HasColumnName("VoucherID");
+
                 entity.HasOne(d => d.Hotel)
                     .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.HotelId)
@@ -72,6 +74,11 @@ namespace DIMSApis.Models.Data
                     .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_BookedRooms_Users1");
+
+                entity.HasOne(d => d.Voucher)
+                    .WithMany(p => p.Bookings)
+                    .HasForeignKey(d => d.VoucherId)
+                    .HasConstraintName("FK_Bookings_Voucher");
             });
 
             modelBuilder.Entity<BookingDetail>(entity =>
@@ -102,6 +109,13 @@ namespace DIMSApis.Models.Data
                 entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
 
                 entity.Property(e => e.CategoryName).HasMaxLength(100);
+
+                entity.Property(e => e.HotelId).HasColumnName("HotelID");
+
+                entity.HasOne(d => d.Hotel)
+                    .WithMany(p => p.Categories)
+                    .HasForeignKey(d => d.HotelId)
+                    .HasConstraintName("FK_Categories_Hotels");
             });
 
             modelBuilder.Entity<District>(entity =>
@@ -210,21 +224,21 @@ namespace DIMSApis.Models.Data
             {
                 entity.Property(e => e.PhotoId).HasColumnName("PhotoID");
 
+                entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
+
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.HotelId).HasColumnName("HotelID");
 
-                entity.Property(e => e.RoomId).HasColumnName("RoomID");
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.Photos)
+                    .HasForeignKey(d => d.CategoryId)
+                    .HasConstraintName("FK_Photos_Categories");
 
                 entity.HasOne(d => d.Hotel)
                     .WithMany(p => p.Photos)
                     .HasForeignKey(d => d.HotelId)
                     .HasConstraintName("FK_Photo_Hotel");
-
-                entity.HasOne(d => d.Room)
-                    .WithMany(p => p.Photos)
-                    .HasForeignKey(d => d.RoomId)
-                    .HasConstraintName("FK_Photos_Rooms");
             });
 
             modelBuilder.Entity<Province>(entity =>
@@ -272,6 +286,8 @@ namespace DIMSApis.Models.Data
 
                 entity.Property(e => e.HotelId).HasColumnName("HotelID");
 
+                entity.Property(e => e.RoomDescription).HasMaxLength(100);
+
                 entity.Property(e => e.RoomName).IsUnicode(false);
 
                 entity.HasOne(d => d.Category)
@@ -304,8 +320,6 @@ namespace DIMSApis.Models.Data
                 entity.Property(e => e.PhoneNumber).HasMaxLength(15);
 
                 entity.Property(e => e.Role).HasMaxLength(10);
-
-                entity.Property(e => e.UnlockKey).HasMaxLength(10);
 
                 entity.Property(e => e.UserName).HasMaxLength(100);
             });

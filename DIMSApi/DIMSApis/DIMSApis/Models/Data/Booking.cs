@@ -18,7 +18,7 @@ namespace DIMSApis.Models.Data
         public string? PhoneNumber { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public string? Description { get; set; }
+        public int? VoucherId { get; set; }
         public double? TotalPrice { get; set; }
         public DateTime? CreateDate { get; set; }
         public string? Condition { get; set; }
@@ -26,6 +26,7 @@ namespace DIMSApis.Models.Data
 
         public virtual Hotel? Hotel { get; set; }
         public virtual User? User { get; set; }
+        public virtual Voucher? Voucher { get; set; }
         public virtual ICollection<BookingDetail> BookingDetails { get; set; }
     }
 }

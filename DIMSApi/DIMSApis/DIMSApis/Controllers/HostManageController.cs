@@ -45,6 +45,25 @@ namespace DIMSApis.Controllers
             }
         }
 
+        [HttpPut("Update_Hotel")]
+        public async Task<IActionResult> UpdateHotel(int hotelId,HotelInput htInput)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _host.UpdateHotel(htInput, hotelId ,userId);
+            if (check.Equals("1"))
+            {
+                return Ok();
+            }
+            else if (check.Equals("3"))
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpPost("Crete_Room")]
         public async Task<IActionResult> CreateRoom(NewRoomInput roomInput)
         {
@@ -63,6 +82,8 @@ namespace DIMSApis.Controllers
                 return BadRequest("Some rooms are existed "+check );
             }
         }
+
+
 
         [HttpGet("Host_All_Hotel")]
         public async Task<IActionResult> GetAllHotel()

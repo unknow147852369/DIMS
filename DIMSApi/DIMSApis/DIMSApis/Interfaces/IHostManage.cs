@@ -7,7 +7,15 @@ namespace DIMSApis.Interfaces
     public interface IHostManage
     {
         Task<int> CreateHotel(HotelInput hotel,int userId);
+        Task<string> UpdateHotel(HotelInput hotel,int hotelId, int userId);
+
         Task<string> CreateRoom(NewRoomInput room, int userId);
+        Task<string> UpdateRoom(NewRoomInput room, int userId);
+
+        Task<string> CreateCategory(NewRoomInput room, int userId);
+        Task<string> UpdateCategory(NewRoomInput room, int userId);
+
+
         Task<IEnumerable<HotelOutput>> GetListAllHotel( int userId);
         Task<IEnumerable<HotelRoomOutput>> GetListAllHotelRoom( int hotelId,int userId);
         Task<AHotelOutput> GetAHotelAllRoom( int hotelId,int userId);

@@ -25,7 +25,6 @@ namespace DIMSApis.Models.Data
         public byte[]? PasswordHash { get; set; }
         public byte[]? PasswordSalt { get; set; }
         public DateTime? CreateDate { get; set; }
-        public string? UnlockKey { get; set; }
         public bool? Status { get; set; }
 
         public virtual ICollection<Booking> Bookings { get; set; }

@@ -37,7 +37,7 @@ namespace DIMSApis.Controllers
             int check = await _usermanage.UpdateUserInfo(userId, user);
             if (check == 1)
             {
-                return Ok();
+                return Ok("Update Success");
             }
             else if (check == 3)
             {
@@ -45,7 +45,7 @@ namespace DIMSApis.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Update Fail");
             }
         }
 
@@ -60,34 +60,36 @@ namespace DIMSApis.Controllers
             return Ok(returnUser);
         }
 
-        [HttpGet("Avaiable_Hotel")]
-        public async Task<IActionResult> GetAllHotel(string? searchadress , DateTime? start, DateTime? end)
+        [HttpGet("Avaiable-Hotel")]
+        public async Task<IActionResult> GetAvaiableHotel(string? searchadress , DateTime? start, DateTime? end)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var Hotel = await _usermanage.GetListAvaiableHotel(searchadress,start,end);
+            if(Hotel.Count() == 0) { return NotFound("Not Found"); }
             return Ok(Hotel);
         }
 
-        [HttpGet("Avaiable_Hotel_Room")]
-        public async Task<IActionResult> GetAllHotelRoom(int hotelId,DateTime start, DateTime end)
+        [HttpGet("Avaiable-Hotel-Room")]
+        public async Task<IActionResult> GetAllHotelRoom(int? hotelId,DateTime? start, DateTime? end)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var HotelRoom = await _usermanage.GetListAvaiableHotelRoom(hotelId,start,end);
+            if (HotelRoom == null) { return NotFound("Wrong fill"); }
             return Ok(HotelRoom);
         }
-        [HttpPost("Active_Account")]
-        public async Task<IActionResult> AACitveAccount(string AcitveCode)
+        [HttpGet("Active_Account")]
+        public async Task<IActionResult> AcitveAccount(string AcitveCode)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
             string check = await _usermanage.ActiveAccount(AcitveCode, userId);
-            if (check != null)
+            if (check.Equals("1"))
             {
-                return Ok(check);
+                return Ok("Active success");
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Wrong code");
             }
         }
 

@@ -18,6 +18,11 @@ namespace DIMSApis.Repositories
             _mapper = mapper;
         }
 
+        public Task<string> CreateCategory(NewRoomInput room, int userId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<int> CreateHotel(HotelInput hotel, int userId)
         {
             Hotel ht = new();
@@ -90,6 +95,31 @@ namespace DIMSApis.Repositories
             var returnHotelRoom = _mapper.Map<IEnumerable<HotelRoomOutput>>(lsHotelRoom);
 
             return returnHotelRoom;
+        }
+
+        public Task<string> UpdateCategory(NewRoomInput room, int userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<string> UpdateHotel(HotelInput hotel, int hotelId, int userId)
+        {
+            if (hotelId != null)
+            {
+                var newHotel = await _context.Hotels
+                    .Where(h => h.UserId == userId && h.HotelId == hotelId)
+                    .SingleOrDefaultAsync();
+                _mapper.Map(hotel, newHotel);
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }
+            return "0";
+        }
+
+        public Task<string> UpdateRoom(NewRoomInput room, int userId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

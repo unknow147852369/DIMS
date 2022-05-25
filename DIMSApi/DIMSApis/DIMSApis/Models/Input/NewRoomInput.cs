@@ -6,5 +6,6 @@
         public int? HotelId { get; set; }
         public int? CategoryId { get; set; }
         public double? Price { get; set; }
+
     }
 }

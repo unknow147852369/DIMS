@@ -23,7 +23,8 @@ namespace DIMSApis.Repositories
 
         public async Task<User> GetUserDetail(int userId)
         {
-            var userinfo = await _context.Users.Where(a => a.UserId == userId && a.Role != "ADMIN").FirstOrDefaultAsync();
+            var userinfo = await _context.Users
+                .Where(a => a.UserId == userId && a.Role != "ADMIN").FirstOrDefaultAsync();
             return userinfo;
         }
 
@@ -56,41 +57,48 @@ namespace DIMSApis.Repositories
                 .Include(pr => pr.District1)
                 .Where(op => op.Status == 1)
                 .ToListAsync();
-
-            var searchhotel = new List<Hotel>();
-            foreach (var hotel in lsHotel)
+            if (terms == "")
             {
-                if(_other.RemoveMark(hotel.HotelAddress).Contains(terms))
+                return _mapper.Map<IEnumerable<HotelOutput>>(lsHotel);
+            }
+            else
+            {
+                var searchhotel = new List<Hotel>();
+                foreach (var hotel in lsHotel)
                 {
-                    if (start != null && end != null)
+                    if (_other.RemoveMark(hotel.HotelAddress).Contains(terms))
                     {
-                        var lsHotelRoom = await _context.BookingDetails
-                           .Include(b => b.Booking)
-                           .Where(op => op.Status == 1 && op.Booking.HotelId == hotel.HotelId)
-                           .Where(op => ((op.StartDate > start && op.StartDate < end) && (op.EndDate > start && op.EndDate < end))
-                                     || (op.StartDate < end && op.EndDate > end)
-                                    || (op.StartDate < start && op.EndDate > start))
-                           .ToListAsync();
+                        if (start != null && end != null)
+                        {
+                            var lsHotelRoom = await _context.BookingDetails
+                               .Include(b => b.Booking)
+                               .Where(op => op.Status == 1 && op.Booking.HotelId == hotel.HotelId)
+                               .Where(op => ((op.StartDate > start && op.StartDate < end) && (op.EndDate > start && op.EndDate < end))
+                                         || (op.StartDate < end && op.EndDate > end)
+                                        || (op.StartDate < start && op.EndDate > start))
+                               .ToListAsync();
 
-                        var lsRoom = _context.Rooms.WhereBulkNotContains(lsHotelRoom, a => a.RoomId).Where(op => op.HotelId == hotel.HotelId).Count();
-                        if (lsRoom > 0)
+                            var lsRoom = _context.Rooms.WhereBulkNotContains(lsHotelRoom, a => a.RoomId).Where(op => op.HotelId == hotel.HotelId).Count();
+                            if (lsRoom > 0)
+                            {
+                                searchhotel.Add(hotel);
+                            }
+                        }
+                        else
                         {
                             searchhotel.Add(hotel);
                         }
                     }
-                    else
-                    {
-                        searchhotel.Add(hotel);
-                    }
                 }
+
+                var returnHotel = _mapper.Map<IEnumerable<HotelOutput>>(searchhotel);
+                return returnHotel;
             }
-            
-            var returnHotel = _mapper.Map<IEnumerable<HotelOutput>>(searchhotel);
-            return returnHotel;
         }
 
-        public async Task<IEnumerable<HotelRoomOutput>> GetListAvaiableHotelRoom(int hotelId, DateTime start, DateTime end)
+        public async Task<IEnumerable<HotelRoomOutput>> GetListAvaiableHotelRoom(int? hotelId, DateTime? start, DateTime? end)
         {
+            if(hotelId == null || start == null || end == null) { return null; }
             var lsHotelRoom = await _context.BookingDetails
                 .Include(b => b.Booking)
                .Where(op => op.Status == 1 && op.Booking.HotelId == hotelId)
@@ -100,7 +108,7 @@ namespace DIMSApis.Repositories
                .ToListAsync();
 
             var lsRoom = _context.Rooms
-                .Include(c => c.Category)
+                .Include(c => c.Category).ThenInclude(b => b.Photos)
                 .Where(op => op.HotelId == hotelId)
                 .WhereBulkNotContains(lsHotelRoom, a => a.RoomId);
 
@@ -123,7 +131,7 @@ namespace DIMSApis.Repositories
                 user.Role = "USER";
             }
             if (await _context.SaveChangesAsync() > 0)
-                return "Active success";
+                return "1";
             return "0";
         }
     }
