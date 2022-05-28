@@ -9,7 +9,6 @@ namespace DIMSApis.Interfaces
         Task<User> Login(LoginInput user);
         Task<User> LoginAdmin(LoginInput user);
         Task<bool> UserExists(string email);
-
         Task<bool> GetForgotCodeMailSend(ForgotCodeMailInput mail);
         Task<bool> UpdateNewPass(ForgotPassInput pass);
 

@@ -16,7 +16,6 @@ namespace DIMSApis.Services
 
             var customer = customers.Create(new CustomerCreateOptions
             {
-                
                 Email = stripeMail,
                 Source = stripeToken,
             });

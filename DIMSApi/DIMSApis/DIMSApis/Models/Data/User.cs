@@ -8,6 +8,7 @@ namespace DIMSApis.Models.Data
         public User()
         {
             Bookings = new HashSet<Booking>();
+            Feedbacks = new HashSet<Feedback>();
             Hotels = new HashSet<Hotel>();
             Otps = new HashSet<Otp>();
         }
@@ -28,6 +29,7 @@ namespace DIMSApis.Models.Data
         public bool? Status { get; set; }
 
         public virtual ICollection<Booking> Bookings { get; set; }
+        public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<Hotel> Hotels { get; set; }
         public virtual ICollection<Otp> Otps { get; set; }
     }

@@ -20,6 +20,7 @@ namespace DIMSApis.Models.Data
         public virtual DbSet<BookingDetail> BookingDetails { get; set; } = null!;
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<District> Districts { get; set; } = null!;
+        public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
         public virtual DbSet<Hotel> Hotels { get; set; } = null!;
         public virtual DbSet<InboundUser> InboundUsers { get; set; } = null!;
         public virtual DbSet<Otp> Otps { get; set; } = null!;
@@ -43,6 +44,9 @@ namespace DIMSApis.Models.Data
         {
             modelBuilder.Entity<Booking>(entity =>
             {
+                entity.HasIndex(e => e.VoucherId, "IX_Bookings")
+                    .IsUnique();
+
                 entity.Property(e => e.BookingId).HasColumnName("BookingID");
 
                 entity.Property(e => e.Condition).HasMaxLength(50);
@@ -76,8 +80,8 @@ namespace DIMSApis.Models.Data
                     .HasConstraintName("FK_BookedRooms_Users1");
 
                 entity.HasOne(d => d.Voucher)
-                    .WithMany(p => p.Bookings)
-                    .HasForeignKey(d => d.VoucherId)
+                    .WithOne(p => p.Booking)
+                    .HasForeignKey<Booking>(d => d.VoucherId)
                     .HasConstraintName("FK_Bookings_Voucher");
             });
 
@@ -140,6 +144,31 @@ namespace DIMSApis.Models.Data
                     .HasConstraintName("FK_level2s_level1s");
             });
 
+            modelBuilder.Entity<Feedback>(entity =>
+            {
+                entity.ToTable("Feedback");
+
+                entity.Property(e => e.FeedbackId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("FeedbackID");
+
+                entity.Property(e => e.BookingId).HasColumnName("BookingID");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.UserId).HasColumnName("userID");
+
+                entity.HasOne(d => d.Booking)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.BookingId)
+                    .HasConstraintName("FK_Feedback_Bookings");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Feedback_Users");
+            });
+
             modelBuilder.Entity<Hotel>(entity =>
             {
                 entity.Property(e => e.HotelId).HasColumnName("HotelID");
@@ -163,12 +192,12 @@ namespace DIMSApis.Models.Data
                 entity.HasOne(d => d.DistrictNavigation)
                     .WithMany(p => p.Hotels)
                     .HasForeignKey(d => d.District)
-                    .HasConstraintName("FK_Hotels_Districts");
+                    .HasConstraintName("FK_Hotels_Districts1");
 
-                entity.HasOne(d => d.District1)
+                entity.HasOne(d => d.ProvinceNavigation)
                     .WithMany(p => p.Hotels)
-                    .HasForeignKey(d => d.District)
-                    .HasConstraintName("FK_Hotels_Provinces");
+                    .HasForeignKey(d => d.Province)
+                    .HasConstraintName("FK_Hotels_Provinces1");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Hotels)
@@ -178,7 +207,7 @@ namespace DIMSApis.Models.Data
                 entity.HasOne(d => d.WardNavigation)
                     .WithMany(p => p.Hotels)
                     .HasForeignKey(d => d.Ward)
-                    .HasConstraintName("FK_Hotels_Wards");
+                    .HasConstraintName("FK_Hotels_Wards1");
             });
 
             modelBuilder.Entity<InboundUser>(entity =>
@@ -267,10 +296,6 @@ namespace DIMSApis.Models.Data
                 entity.Property(e => e.CheckOut).HasColumnType("datetime");
 
                 entity.Property(e => e.QrContent).IsUnicode(false);
-
-                entity.Property(e => e.Status)
-                    .HasMaxLength(10)
-                    .IsUnicode(false);
 
                 entity.HasOne(d => d.BookingDetail)
                     .WithOne(p => p.Qr)

@@ -11,7 +11,7 @@ namespace DIMSApis.Models.Data
         public string? QrContent { get; set; }
         public DateTime? CheckIn { get; set; }
         public DateTime? CheckOut { get; set; }
-        public string? Status { get; set; }
+        public int? Status { get; set; }
 
         public virtual BookingDetail? BookingDetail { get; set; }
     }

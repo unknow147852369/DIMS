@@ -83,6 +83,7 @@ builder.Services.AddScoped<IOtherService, OtherService>();
 builder.Services.AddScoped<IMail, MailService>();
 builder.Services.AddScoped<IGenerateQr, GenerateQrImageStringService>();
 builder.Services.AddScoped<IStripePayment, StripePaymentService>();
+builder.Services.AddScoped<IMailQrService, MailQrService>();
 //>Add more
 
 var app = builder.Build();

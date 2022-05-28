@@ -30,49 +30,25 @@ namespace DIMSApis.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("user_Payment")]
-        public async Task<IActionResult> PaySelectedBooking(StripeInput stripein)
+        [HttpPost("user-Payment-Processing")]
+        public async Task<IActionResult> UserPaymentProcessing(PaymentProcessingInput ppi)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            int check = await _book.PayBooking(stripein, userId);
-            if (check == 1)
+            string check = await _book.PaymentProcessing(ppi , userId);
+            if (check.Equals("1"))
             {
-                return Ok();
+                return Ok("Paid Success");
             }
-            else if (check == 3)
-            {
-                return NoContent();
-            }
-            else if (check == 2)
-            {
-                return BadRequest("Payment Fail");
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-
-        [HttpPost("user_request")]
-        public async Task<IActionResult> SendBookingRequest(BookingInput bookinginput)
-        {
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            int check = await _book.SendBookingRequest(bookinginput, userId);
-            if (check == 1)
-            {
-                return Ok();
-            }
-            else if (check == 3)
+            else if (check.Equals("3"))
             {
                 return NoContent();
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Error");
             }
         }
-
-        [HttpGet("user_Booking_list")]
+        [HttpGet("user-Booking-list")]
         public async Task<IActionResult> GetBooking()
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -81,6 +57,13 @@ namespace DIMSApis.Controllers
             return Ok(returnBooking);
         }
 
-
+        [HttpGet("Vertify-Voucher")]
+        public async Task<IActionResult> VertifyVouvher(int hotelId,string VoucherCode)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var voucher = await _book.VertifyVouvher(hotelId, VoucherCode);
+            if(voucher == null) { return BadRequest("Wrong code"); }
+            return Ok(voucher);
+        }
     }
 }

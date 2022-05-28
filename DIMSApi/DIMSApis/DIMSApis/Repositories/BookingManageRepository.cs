@@ -2,6 +2,7 @@
 using DIMSApis.Interfaces;
 using DIMSApis.Models.Data;
 using DIMSApis.Models.Input;
+using DIMSApis.Models.Output;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
@@ -28,69 +29,6 @@ namespace DIMSApis.Repositories
             _generateqr = generateqr;
         }
 
-        public async Task<int> PayBooking(StripeInput stripeIn, int userId)
-        {
-            var booking = await _context.Bookings
-                      .Where(r => r.BookingId.Equals(stripeIn.BooingId) && r.Condition.Equals(condition3))
-                      .FirstOrDefaultAsync();
-            if (booking.UserId != userId)
-            {
-                return 0;
-            }
-            else
-            {
-                if (stripeIn.conditon.ToUpper().Equals(condition1))
-                {
-                    if (booking != null)
-                    {
-                        var paymentstatus = _stripe.PayWithStripe(booking.Email, stripeIn.Token, booking);
-                        if (paymentstatus.Contains(condition4))
-                        {
-                            var content = await _context.BookingDetails
-                                .Where(a => a.BookingId == stripeIn.BooingId && a.Booking.Condition.ToUpper().Equals(condition3))
-                                .Include(b => b.Room).ToListAsync();
-                            var ListRoom = _mapper.Map<IEnumerable<QrInput>>(content);
-                            
-                            if (content != null)
-                            {
-                                booking.Condition = condition1;
-                                foreach (var room in ListRoom)
-                                {
-                                    Qr qrdetail = new()
-                                    {
-                                        QrContent = _generateqr.createQrContent(room),
-                                        QrString = Encoding.UTF8.GetBytes(_generateqr.GenerateQrString(room)),
-                                    };
-                                    _mapper.Map(room, qrdetail);
-
-                                    await _context.Qrs.AddAsync(qrdetail);
-                                }
-                                foreach (BookingDetail st in content) { st.Status = 1; }
-                                if (await _context.SaveChangesAsync() > 0)
-                                    return 1;
-                                return 3;
-                            }
-                            else
-                            {
-                                 return 0;
-                            }
-                        }
-                        else
-                        {
-                            return 2;
-                        }
-                    }
-                }
-                else
-                {
-                    booking.Condition = condition2;
-                    if (await _context.SaveChangesAsync() > 0)
-                        return 1;
-                    return 3;
-                }
-            }
-            return 0;
-        }
 
         public async Task<IEnumerable<Booking>> GetListBookingInfo(int UserId)
         {
@@ -102,30 +40,71 @@ namespace DIMSApis.Repositories
             return bill;
         }
 
-        public async Task<int> SendBookingRequest(BookingInput bok, int UserId)
+        public async Task<string> PaymentProcessing(PaymentProcessingInput ppi, int userId)
         {
             try
             {
-                Booking book = new();
-                foreach (BookingDetailInput r in bok.BookingDetails)
+                Booking bok = new();
+                _mapper.Map(ppi, bok);
+                float total = 0;
+                float sale = 0;
+                foreach (BookingDetail r in bok.BookingDetails)
                 {
                     var price = await _context.Rooms.Where(a => a.RoomId.Equals(r.RoomId)).FirstOrDefaultAsync();
                     r.Price = price.Price;
                     r.StartDate = bok.StartDate;
                     r.EndDate = bok.EndDate;
+                    r.Status = 1;
+                    total = (float)(total + price.Price);
                 }
-                book.UserId = UserId;
-                _mapper.Map(bok, book);
-                await _context.Bookings.AddAsync(book);
+                bok.UserId = userId;
+                if (ppi.VoucherId != null)
+                {
+                    bok.Voucher = await _context.Vouchers.Where(a => a.VoucherId.Equals(ppi.VoucherId)).FirstOrDefaultAsync();
+                    sale = ((float)(total * bok.Voucher.VoucherSale / 100));
+                }
+                bok.TotalPrice = (total - sale) * (bok.EndDate - bok.StartDate).Value.TotalDays;
 
-                if (await _context.SaveChangesAsync() > 0)
-                    return 1;
-                return 3;
+                var paymentstatus = condition4;
+                    //_stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
+                if (paymentstatus.Contains(condition4))
+                {
+                    bok.Condition = condition1;
+                    await _context.Bookings.AddAsync(bok);
+                    if (await _context.SaveChangesAsync() > 0)
+                    {
+                        var ListRoom = _mapper.Map<IEnumerable<QrInput>>(bok.BookingDetails);
+                        foreach (var room in ListRoom)
+                        {
+                            Qr qrdetail = new()
+                            {
+                                QrContent = _generateqr.createQrContent(room),
+                                QrString = Encoding.UTF8.GetBytes(_generateqr.GenerateQrString(room)),
+                            };
+                            _mapper.Map(room, qrdetail);
+
+                            await _context.Qrs.AddAsync(qrdetail);
+                        }
+                        if (await _context.SaveChangesAsync() > 0)
+                            return "1";
+                        return "3";
+                    }
+                }
+                return "0";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return 0;
+                return ex.ToString();
             }
+        }
+
+        public async Task<VoucherInfoOutput> VertifyVouvher(int hotelId,string code)
+        {
+            var vou = await _context.Vouchers
+              .Include(h => h.Hotel).Where(op=>op.EndDate > DateTime.Now && op.HotelId == hotelId && op.VoucherCode.Equals(code))
+              .SingleOrDefaultAsync();
+            var returnVoucher = _mapper.Map<VoucherInfoOutput>(vou);
+            return returnVoucher;
         }
     }
 }

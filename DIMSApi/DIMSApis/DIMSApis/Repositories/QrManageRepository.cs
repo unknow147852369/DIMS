@@ -50,7 +50,7 @@ namespace DIMSApis.Repositories
 
             if (bokingdetailInfo != null)
             {
-                bokingdetailInfo.Status = "1";
+                bokingdetailInfo.Status = 1;
                 bokingdetailInfo.CheckIn = checkIn.CheckIn;
             }
 
@@ -68,7 +68,7 @@ namespace DIMSApis.Repositories
 
             if (bokingdetailInfo != null)
             {
-                bokingdetailInfo.Status = "0";
+                bokingdetailInfo.Status = 0;
                 bokingdetailInfo.CheckOut = checkOut.CheckOut;
             }
             if (await _context.SaveChangesAsync() > 0)
@@ -114,7 +114,7 @@ namespace DIMSApis.Repositories
                 .Include(b => b.BookingDetail).ThenInclude(a => a.Booking)
                 .Where(c => c.BookingDetail.BookingId.Equals(int.Parse(BookingId))
                 && c.BookingDetail.RoomId.Equals(int.Parse(RoomId))
-                && c.Status == "1")
+                && c.Status == 1)
                 .FirstOrDefaultAsync();
 
             if (qrvertify != null)

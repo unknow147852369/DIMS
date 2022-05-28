@@ -77,6 +77,8 @@ namespace DIMSApis.Controllers
             if (HotelRoom == null) { return NotFound("Wrong fill"); }
             return Ok(HotelRoom);
         }
+
+
         [HttpGet("Active_Account")]
         public async Task<IActionResult> AcitveAccount(string AcitveCode)
         {
@@ -93,5 +95,23 @@ namespace DIMSApis.Controllers
             }
         }
 
+        [HttpPut("Send-mail-active")]
+        public async Task<IActionResult> GetActiveCodeMailSend()
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            int check = await _usermanage.GetActiveCodeMailSend(userId);
+            if (check == 1)
+            {
+                return Ok("send Success");
+            }
+            else if (check == 0)
+            {
+                return NotFound("Empty fill");
+            }
+            else
+            {
+                return BadRequest("send Fail");
+            }
+        }
     }
 }

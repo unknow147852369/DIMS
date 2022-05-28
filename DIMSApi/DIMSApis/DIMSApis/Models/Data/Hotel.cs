@@ -23,10 +23,10 @@ namespace DIMSApis.Models.Data
         public string? Province { get; set; }
         public DateTime? CreateDate { get; set; }
         public int? Status { get; set; }
-        public int? Rating { get; set; }
+        public int? TotalRate { get; set; }
 
-        public virtual Province? District1 { get; set; }
         public virtual District? DistrictNavigation { get; set; }
+        public virtual Province? ProvinceNavigation { get; set; }
         public virtual User? User { get; set; }
         public virtual Ward? WardNavigation { get; set; }
         public virtual ICollection<Booking> Bookings { get; set; }

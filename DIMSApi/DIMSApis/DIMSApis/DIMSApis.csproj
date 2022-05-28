@@ -35,12 +35,16 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.4" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.5" />
 		<PackageReference Include="MimeKit" Version="3.2.0" />
 		<PackageReference Include="Stripe.net" Version="39.110.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.17.0" />
 		<PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="6.13.19" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Material\qrs\" />
 	</ItemGroup>
 
 </Project>
