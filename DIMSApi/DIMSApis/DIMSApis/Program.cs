@@ -19,6 +19,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 //Add more<
+builder.Services.Configure<FireBaseSettings>(builder.Configuration.GetSection("FireBase"));
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 StripeConfiguration.SetApiKey(builder.Configuration.GetSection("Stripe")["SecretKey"]);
