@@ -301,3 +301,5 @@ D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\runtimes\
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\Z.EntityFramework.Extensions.EFCore.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\Z.EntityFramework.Plus.EFCore.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\Z.Expressions.Eval.dll
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\Firebase.Auth.dll
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\Firebase.Storage.dll

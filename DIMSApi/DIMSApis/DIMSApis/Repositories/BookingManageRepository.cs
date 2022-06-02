@@ -14,19 +14,25 @@ namespace DIMSApis.Repositories
         private readonly IMapper _mapper;
         private readonly IStripePayment _stripe;
         private readonly IGenerateQr _generateqr;
+        private readonly IFireBaseService _fireBase;
+        private readonly IMailQrService _qrmail;
+        private readonly IMailBillService _billmail;
 
-        private string condition1 = "PAID";
-        private string condition2 = "CANCEL";
+        private string condition1 = "ONLINE";
+        private string condition2 = "LOCAl";
         private string condition3 = "WAIT";
         private string condition4 = "succeeded";
         private string condition5 = "fail";
 
-        public BookingManageRepository(DIMSContext context, IMapper mapper, IStripePayment stripe, IGenerateQr generateqr)
+        public BookingManageRepository(IMailBillService billmail,IMailQrService qrmail,IFireBaseService fireBase,DIMSContext context, IMapper mapper, IStripePayment stripe, IGenerateQr generateqr)
         {
             _context = context;
             _mapper = mapper;
             _stripe = stripe;
             _generateqr = generateqr;
+            _fireBase = fireBase;
+            _qrmail = qrmail;
+            _billmail = billmail;
         }
 
 
@@ -57,32 +63,54 @@ namespace DIMSApis.Repositories
                     r.Status = 1;
                     total = (float)(total + price.Price);
                 }
+                bok.TotalDate = (int?)(bok.EndDate - bok.StartDate).Value.TotalDays;
                 bok.UserId = userId;
                 if (ppi.VoucherId != null)
                 {
                     bok.Voucher = await _context.Vouchers.Where(a => a.VoucherId.Equals(ppi.VoucherId)).FirstOrDefaultAsync();
-                    sale = ((float)(total * bok.Voucher.VoucherSale / 100));
+                    sale = ((float)(total*bok.TotalDate * bok.Voucher.VoucherSale / 100));
+                    bok.VoucherDiscoundPrice = sale;
                 }
-                bok.TotalPrice = (total - sale) * (bok.EndDate - bok.StartDate).Value.TotalDays;
+                else
+                {
+                    bok.VoucherDiscoundPrice = 0;
+                }
+                bok.SubTotal = total * bok.TotalDate;
+                bok.TotalPrice = bok.SubTotal - bok.VoucherDiscoundPrice;
 
                 var paymentstatus = condition4;
                     //_stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
                 if (paymentstatus.Contains(condition4))
                 {
-                    bok.Condition = condition1;
+                    if (ppi.Condition.ToLower().Trim().Contains("online")) {
+                        bok.Condition = condition1;
+                    }
+                    else { bok.Condition = condition2; }
                     await _context.Bookings.AddAsync(bok);
                     if (await _context.SaveChangesAsync() > 0)
                     {
                         var ListRoom = _mapper.Map<IEnumerable<QrInput>>(bok.BookingDetails);
+                        var bookingFullDetail = await _context.Bookings
+                            .Include(v =>v.Voucher)
+                            .Include(h =>h.Hotel)
+                            .Include(b =>b.BookingDetails).ThenInclude(r =>r.Room).ThenInclude(c =>c.Category)
+                            .Where(a => a.BookingId == bok.BookingId).FirstOrDefaultAsync();
+                        await _billmail.SendBillEmailAsync(bookingFullDetail);
                         foreach (var room in ListRoom)
                         {
-                            Qr qrdetail = new()
-                            {
-                                QrContent = _generateqr.createQrContent(room),
-                                QrString = Encoding.UTF8.GetBytes(_generateqr.GenerateQrString(room)),
-                            };
-                            _mapper.Map(room, qrdetail);
+                            //
+                            Qr qrdetail = new();
+                            _fireBase.createFilePath(room, out string imagePath, out string imageName);
+                            qrdetail.QrContent = _generateqr.createQrContent(room);
+                            //
+                            qrdetail.QrString = Encoding.UTF8.GetBytes(_generateqr.GenerateQrString(room,imagePath,imageName));
+                            //
+                            var link = await _fireBase.GetlinkImage(room, imagePath, imageName);
 
+                            await _qrmail.SendQrEmailAsync(link,bok,room, bok.Hotel.HotelName);
+                            _fireBase.RemoveDirectories(imagePath);
+                            //
+                            _mapper.Map(room, qrdetail);
                             await _context.Qrs.AddAsync(qrdetail);
                         }
                         if (await _context.SaveChangesAsync() > 0)

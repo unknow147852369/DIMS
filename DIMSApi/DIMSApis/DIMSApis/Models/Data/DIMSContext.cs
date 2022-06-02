@@ -44,9 +44,6 @@ namespace DIMSApis.Models.Data
         {
             modelBuilder.Entity<Booking>(entity =>
             {
-                entity.HasIndex(e => e.VoucherId, "IX_Bookings")
-                    .IsUnique();
-
                 entity.Property(e => e.BookingId).HasColumnName("BookingID");
 
                 entity.Property(e => e.Condition).HasMaxLength(50);
@@ -72,17 +69,17 @@ namespace DIMSApis.Models.Data
                 entity.HasOne(d => d.Hotel)
                     .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.HotelId)
-                    .HasConstraintName("FK_BookedRooms_Hotels");
+                    .HasConstraintName("FK_BBookings_Hotels");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK_BookedRooms_Users1");
+                    .HasConstraintName("FK_BBookings_Users");
 
                 entity.HasOne(d => d.Voucher)
-                    .WithOne(p => p.Booking)
-                    .HasForeignKey<Booking>(d => d.VoucherId)
-                    .HasConstraintName("FK_Bookings_Voucher");
+                    .WithMany(p => p.Bookings)
+                    .HasForeignKey(d => d.VoucherId)
+                    .HasConstraintName("FK_BBookings_Voucher");
             });
 
             modelBuilder.Entity<BookingDetail>(entity =>
@@ -100,7 +97,7 @@ namespace DIMSApis.Models.Data
                 entity.HasOne(d => d.Booking)
                     .WithMany(p => p.BookingDetails)
                     .HasForeignKey(d => d.BookingId)
-                    .HasConstraintName("FK_BookingDetails_Bookings");
+                    .HasConstraintName("FK_BookingDetails_BBookings");
 
                 entity.HasOne(d => d.Room)
                     .WithMany(p => p.BookingDetails)
@@ -161,7 +158,7 @@ namespace DIMSApis.Models.Data
                 entity.HasOne(d => d.Booking)
                     .WithMany(p => p.Feedbacks)
                     .HasForeignKey(d => d.BookingId)
-                    .HasConstraintName("FK_Feedback_Bookings");
+                    .HasConstraintName("FK_Feedback_BBookings");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Feedbacks)

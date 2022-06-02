@@ -14,15 +14,17 @@ namespace DIMSApis.Repositories
         private readonly IOtherService _other;
         private readonly IMail _mail;
         private readonly IMailQrService _mailQrService;
+        private readonly IFireBaseService _firebase;
         private string purpose1 = "ACTIVE ACCOUNT";
 
-        public UserManageRepository(IMailQrService mailQrService, IMail mail, DIMSContext context, IMapper mapper, IOtherService other)
+        public UserManageRepository(IFireBaseService firebase,IMailQrService mailQrService, IMail mail, DIMSContext context, IMapper mapper, IOtherService other)
         {
             _context = context;
             _mapper = mapper;
             _other = other;
             _mail = mail;
             _mailQrService = mailQrService;
+            _firebase = firebase;
         }
 
         public async Task<User> GetUserDetail(int userId)
@@ -320,8 +322,12 @@ namespace DIMSApis.Repositories
 
         public async Task<bool> GetForgotCodeMailSend(ForgotCodeMailInput mail)
         {
-            await _mailQrService.SendEmailAsync(mail.Email, "123");
-            return true;
+            //var link = await _firebase.GetlinkImage("a");
+            //if (_firebase.RemoveDirectories("a"))
+            //{
+            //    await _mailQrService.SendEmailAsync(mail.Email, link);
+            //    return true;
+            //}
             return false;
         }
     }

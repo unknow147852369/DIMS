@@ -10,6 +10,8 @@ D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\EntityFramework.SqlServer.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\EntityFramework.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\FirebaseAdmin.dll
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\Firebase.Auth.dll
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\Firebase.Storage.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\FireSharp.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\Google.Api.Gax.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\Google.Api.Gax.Rest.dll

@@ -19,11 +19,13 @@ namespace DIMSApis.Services
             _otherService = otherService;
         }
 
-        public string GenerateQrString(QrInput qri)
+        public string GenerateQrString(QrInput qri, string imagePath, string imageName)
         {
+            var fullPath = imagePath + imageName;
             var conntent = createQrContent(qri);
-            var MyQRWithLogo = QRCodeWriter.CreateQrCodeWithLogo(conntent, "logo.png", 500);
-            MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.DarkGreen);
+            var MyQRWithLogo = QRCodeWriter.CreateQrCodeWithLogo(conntent, @"Material/images/logo.png", 500);
+            MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.DarkGreen).SaveAsPng($@"{fullPath}");
+
             byte[] vs = MyQRWithLogo.ToPngBinaryData();
             //
             string base64ImageRepresentation = Convert.ToBase64String(vs);

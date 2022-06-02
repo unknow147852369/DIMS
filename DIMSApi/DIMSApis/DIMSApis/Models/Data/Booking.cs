@@ -19,7 +19,11 @@ namespace DIMSApis.Models.Data
         public string? PhoneNumber { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public int? TotalDate { get; set; }
         public int? VoucherId { get; set; }
+        public int? PeopleQuanity { get; set; }
+        public double? SubTotal { get; set; }
+        public double? VoucherDiscoundPrice { get; set; }
         public double? TotalPrice { get; set; }
         public DateTime? CreateDate { get; set; }
         public string? Condition { get; set; }

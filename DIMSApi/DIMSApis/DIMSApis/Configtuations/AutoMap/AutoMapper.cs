@@ -29,7 +29,6 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.BookingDetails, option => option.MapFrom(tbl => tbl.BookingDetails))
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
-                .ForMember(a => a.Condition, option => option.MapFrom(tbl => "PAID"))
                 ;
             CreateMap<PaymentProcessingDetailInput, BookingDetail>()
                 ;

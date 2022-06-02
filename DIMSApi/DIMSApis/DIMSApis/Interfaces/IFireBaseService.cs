@@ -1,7 +1,13 @@
-﻿namespace DIMSApis.Interfaces
+﻿using DIMSApis.Models.Data;
+using DIMSApis.Models.Input;
+
+namespace DIMSApis.Interfaces
 {
     public interface IFireBaseService
     {
-        string Getlink(string stripeMail);
+        Task<string> GetlinkImage(QrInput qrInput, string imagePath, string imageName);
+        bool RemoveDirectories(string imagePath);
+        void createFilePath(QrInput qrInput, out string imagePath,out string imageName);
+
     }
 }
