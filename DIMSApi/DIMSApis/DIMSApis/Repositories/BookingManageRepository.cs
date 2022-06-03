@@ -20,9 +20,7 @@ namespace DIMSApis.Repositories
 
         private string condition1 = "ONLINE";
         private string condition2 = "LOCAl";
-        private string condition3 = "WAIT";
         private string condition4 = "succeeded";
-        private string condition5 = "fail";
 
         public BookingManageRepository(IMailBillService billmail,IMailQrService qrmail,IFireBaseService fireBase,DIMSContext context, IMapper mapper, IStripePayment stripe, IGenerateQr generateqr)
         {
@@ -34,7 +32,6 @@ namespace DIMSApis.Repositories
             _qrmail = qrmail;
             _billmail = billmail;
         }
-
 
         public async Task<IEnumerable<Booking>> GetListBookingInfo(int UserId)
         {
@@ -108,7 +105,7 @@ namespace DIMSApis.Repositories
                             var link = await _fireBase.GetlinkImage(room, imagePath, imageName);
 
                             await _qrmail.SendQrEmailAsync(link,bok,room, bok.Hotel.HotelName);
-                            _fireBase.RemoveDirectories(imagePath);
+                             _fireBase.RemoveDirectories(imagePath);
                             //
                             _mapper.Map(room, qrdetail);
                             await _context.Qrs.AddAsync(qrdetail);

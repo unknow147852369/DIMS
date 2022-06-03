@@ -34,13 +34,6 @@ namespace DIMSApis.Controllers
             return Ok(Hotel);
         }
 
-        [HttpGet("Avaiable-Hotel-Room")]
-        public async Task<IActionResult> GetAllHotelRoom(int? hotelId, DateTime? start, DateTime? end)
-        {
-            var HotelRoom = await _usermanage.GetListAvaiableHotelRoom(hotelId, start, end);
-            if (HotelRoom == null) { return NotFound("Wrong fill"); }
-            return Ok(HotelRoom);
-        }
 
         [HttpGet("Avaiable-Hotel-Cate")]
         public async Task<IActionResult> GetAllHotelCate(int? hotelId, DateTime? start, DateTime? end, int peopleQuanity)
@@ -82,18 +75,6 @@ namespace DIMSApis.Controllers
             return Ok(districts);
         }
 
-        [HttpPost("Test-mmail_send-CHEAT")]
-        public async Task<IActionResult> ForgotCodeMailSend(ForgotCodeMailInput mail)
-        {
-            if (await _usermanage.GetForgotCodeMailSend(mail))
-            {
-                return Ok();
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
 
     }
 }

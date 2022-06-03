@@ -35,12 +35,11 @@ namespace DIMSApis.Repositories
             {
                 foreach (var people in checkIn.InboundUsers)
                 {
-                    var pieces = people.InboundUserString.Split("-");
                     InboundUser ib = new()
                     {
-                        UserName = pieces[0],
-                        UserIdCard = pieces[1],
-                        UserBirthday = DateTime.Parse(pieces[2]),
+                        UserName = people.UserName,
+                        UserIdCard = people.UserIdCard,
+                        UserBirthday = people.UserBirthday,
                         Status = 1,
                     };
                     _mapper.Map(detail, ib);

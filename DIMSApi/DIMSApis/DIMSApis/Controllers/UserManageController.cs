@@ -60,26 +60,7 @@ namespace DIMSApis.Controllers
             return Ok(returnUser);
         }
 
-        [HttpGet("Avaiable-Hotel")]
-        public async Task<IActionResult> GetAvaiableHotel(string? searchadress , DateTime? start, DateTime? end)
-        {
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var Hotel = await _usermanage.GetListAvaiableHotel(searchadress,start,end);
-            if(Hotel.Count() == 0) { return NotFound("Not Found"); }
-            return Ok(Hotel);
-        }
-
-        [HttpGet("Avaiable-Hotel-Room")]
-        public async Task<IActionResult> GetAllHotelRoom(int? hotelId,DateTime? start, DateTime? end)
-        {
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var HotelRoom = await _usermanage.GetListAvaiableHotelRoom(hotelId,start,end);
-            if (HotelRoom == null) { return NotFound("Wrong fill"); }
-            return Ok(HotelRoom);
-        }
-
-
-        [HttpGet("Active_Account")]
+        [HttpGet("Active-Account")]
         public async Task<IActionResult> AcitveAccount(string AcitveCode)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);

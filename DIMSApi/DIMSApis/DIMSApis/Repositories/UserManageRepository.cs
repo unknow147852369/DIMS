@@ -51,78 +51,6 @@ namespace DIMSApis.Repositories
             }
         }
 
-        public async Task<IEnumerable<HotelOutput>> GetListAvaiableHotel(string? searchadress, DateTime? start, DateTime? end)
-        {
-            var terms = _other.RemoveMark(searchadress);
-
-            var lsHotel = await _context.Hotels
-                .Include(p => p.Photos)
-                .Include(h => h.Rooms)
-                .Include(w => w.WardNavigation)
-                .Include(d => d.DistrictNavigation)
-                .Include(pr => pr.ProvinceNavigation)
-                .Where(op => op.Status == 1)
-                .ToListAsync();
-            if (terms == "")
-            {
-                return _mapper.Map<IEnumerable<HotelOutput>>(lsHotel);
-            }
-            else
-            {
-                var searchhotel = new List<Hotel>();
-                foreach (var hotel in lsHotel)
-                {
-                    if (_other.RemoveMark(hotel.HotelAddress).Contains(terms))
-                    {
-                        if (start != null && end != null)
-                        {
-                            var lsHotelRoom = await _context.BookingDetails
-                               .Include(b => b.Booking)
-                               .Where(op => op.Status == 1 && op.Booking.HotelId == hotel.HotelId)
-                               .Where(op => ((op.StartDate > start && op.StartDate < end) && (op.EndDate > start && op.EndDate < end))
-                                         || (op.StartDate < end && op.EndDate > end)
-                                        || (op.StartDate < start && op.EndDate > start))
-                               .ToListAsync();
-
-                            var lsRoom = _context.Rooms.WhereBulkNotContains(lsHotelRoom, a => a.RoomId).Where(op => op.HotelId == hotel.HotelId).Count();
-                            if (lsRoom > 0)
-                            {
-                                searchhotel.Add(hotel);
-                            }
-                        }
-                        else
-                        {
-                            searchhotel.Add(hotel);
-                        }
-                    }
-                }
-
-                var returnHotel = _mapper.Map<IEnumerable<HotelOutput>>(searchhotel);
-                return returnHotel;
-            }
-        }
-
-        public async Task<IEnumerable<HotelRoomOutput>> GetListAvaiableHotelRoom(int? hotelId, DateTime? start, DateTime? end)
-        {
-            if (hotelId == null || start == null || end == null) { return null; }
-            var lsHotelRoom = await _context.BookingDetails
-                .Include(b => b.Booking)
-               .Where(op => op.Status == 1 && op.Booking.HotelId == hotelId)
-               .Where(op => ((op.StartDate > start && op.StartDate < end) && (op.EndDate > start && op.EndDate < end))
-                         || (op.StartDate < end && op.EndDate > end)
-                        || (op.StartDate < start && op.EndDate > start))
-               .ToListAsync();
-
-            var lsRoom = _context.Rooms
-                .Include(c => c.Category).ThenInclude(b => b.Photos)
-                .Where(op => op.HotelId == hotelId)
-                .WhereBulkNotContains(lsHotelRoom, a => a.RoomId);
-
-            var returnHotelRoom = _mapper.Map<IEnumerable<HotelRoomOutput>>(lsRoom);
-
-            return returnHotelRoom;
-        }
-
         public async Task<IEnumerable<HotelCateOutput>> GetListAvaiableHotelCate(int? hotelId, DateTime? start, DateTime? end , int peopleQuanity)
         {
             if (hotelId == null || start == null || end == null || peopleQuanity == null) { return null; }
@@ -320,15 +248,6 @@ namespace DIMSApis.Repositories
             return _mapper.Map<IEnumerable<HotelOutput>>(searchhotel);
         }
 
-        public async Task<bool> GetForgotCodeMailSend(ForgotCodeMailInput mail)
-        {
-            //var link = await _firebase.GetlinkImage("a");
-            //if (_firebase.RemoveDirectories("a"))
-            //{
-            //    await _mailQrService.SendEmailAsync(mail.Email, link);
-            //    return true;
-            //}
-            return false;
-        }
+
     }
 }
