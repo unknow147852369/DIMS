@@ -207,7 +207,9 @@ namespace DIMSApis.Repositories
                 var lsHotel = new List<SearchLocationHotelOutput>();
                 foreach (var item in lsHo)
                 {
-                    if (_other.RemoveMark(item.HotelName).Contains(terms))
+                    if (_other.RemoveMark(item.HotelName).Contains(terms)
+                        || _other.RemoveMark(item.DistrictNavigation.Name).Contains(terms)
+                        || _other.RemoveMark(item.ProvinceNavigation.Name).Contains(terms))
                     {
                         lsHotel.Add(_mapper.Map<SearchLocationHotelOutput>(item));
                     }
