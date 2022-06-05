@@ -38,6 +38,12 @@ namespace DIMSApis.Services
                   .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        public DateTime GetEndDate(DateTime startDate,int night)
+        {
+            DateTime answer = startDate.AddDays(night-1);
+            return answer;
+        }
+
         public string RemoveMark(string inputString)
         {
             try
@@ -59,6 +65,7 @@ namespace DIMSApis.Services
                 return stringBuilder
                     .ToString()
                     .Normalize(NormalizationForm.FormC)
+                    .Replace("đ", "d").Replace("Đ", "D")
                     .ToLower();
             }
             catch (Exception ex) { throw ex; }

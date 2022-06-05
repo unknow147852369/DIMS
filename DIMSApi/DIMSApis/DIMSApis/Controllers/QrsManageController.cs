@@ -39,7 +39,7 @@ namespace DIMSApis.Controllers
         }
 
 
-        [HttpPost("vertify_Qr")]
+        [HttpPost("vertify-Qr")]
         public async Task<IActionResult> VertifyQrContent(VertifyQrInput qrIn)
         {
             var qrcheck = await _qrmanage.vertifyQrContent(qrIn);
@@ -47,14 +47,14 @@ namespace DIMSApis.Controllers
             return Ok(qrcheck);
         }
 
-        [HttpGet("check_Room_lock")]
+        [HttpGet("check-Room-lock")]
         public async Task<IActionResult> checkRoomlock(int hotelId, String roomName)
         {
             var check = await _qrmanage.getStringToCheckRoom(hotelId, roomName);
             return Ok(check);
         }
 
-        [HttpPost("Check_in")]
+        [HttpPost("Check-in")]
         public async Task<IActionResult> CheckIn(checkInInput ckIn)
         {
             var checkIn = await _qrmanage.checkIn(ckIn);
@@ -73,7 +73,7 @@ namespace DIMSApis.Controllers
             }
         }
 
-        [HttpPost("Check_out")]
+        [HttpPost("Check-out")]
         public async Task<IActionResult> CheckOut(CheckOutInput ckOut)
         {
             var checkOut = await _qrmanage.CheckOut(ckOut);

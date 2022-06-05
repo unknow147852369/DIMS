@@ -14,6 +14,7 @@
         public string? Province { get; set; }
         public string? ProvinceName { get; set; }
         public DateTime? CreateDate { get; set; }
+        public float SmallPrice { get; set; }
         public int? TotalRate { get; set; }
         public int? Status { get; set; }
 

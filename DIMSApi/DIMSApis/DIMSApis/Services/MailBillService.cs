@@ -45,7 +45,7 @@ namespace DIMSApis.Services
             body = body.Replace("#LOCATION8#", $"{bok.EndDate}");
 
             body = body.Replace("#LOCATION10#", $"{bok.Condition}");
-            body = body.Replace("#LOCATION11#", $"{bok.TotalDate}");
+            body = body.Replace("#LOCATION11#", $"{bok.TotalNight}");
             body = body.Replace("#LOCATION12#", $"{bok.SubTotal}");
 
             if (bok.VoucherId  != null) {

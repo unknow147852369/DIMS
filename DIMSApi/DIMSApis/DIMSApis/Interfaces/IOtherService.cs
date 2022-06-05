@@ -9,5 +9,7 @@
         string RandomString(int length);
 
         string RemoveMark(string inputString);
+
+        DateTime GetEndDate(DateTime startDate, int night);
     }
 }

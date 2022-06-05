@@ -60,19 +60,18 @@ namespace DIMSApis.Repositories
                     r.Status = 1;
                     total = (float)(total + price.Price);
                 }
-                bok.TotalDate = (int?)(bok.EndDate - bok.StartDate).Value.TotalDays;
                 bok.UserId = userId;
                 if (ppi.VoucherId != null)
                 {
                     bok.Voucher = await _context.Vouchers.Where(a => a.VoucherId.Equals(ppi.VoucherId)).FirstOrDefaultAsync();
-                    sale = ((float)(total*bok.TotalDate * bok.Voucher.VoucherSale / 100));
+                    sale = ((float)(total*bok.TotalNight * bok.Voucher.VoucherSale / 100));
                     bok.VoucherDiscoundPrice = sale;
                 }
                 else
                 {
                     bok.VoucherDiscoundPrice = 0;
                 }
-                bok.SubTotal = total * bok.TotalDate;
+                bok.SubTotal = total * bok.TotalNight;
                 bok.TotalPrice = bok.SubTotal - bok.VoucherDiscoundPrice;
 
                 var paymentstatus = condition4;

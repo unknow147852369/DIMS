@@ -26,7 +26,7 @@ namespace DIMSApis.Controllers
         }
 
 
-        [HttpPost("Crete_Hotel")]
+        [HttpPost("Crete-Hotel")]
         public async Task<IActionResult> CreateHotel(HotelInput htInput)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -45,7 +45,7 @@ namespace DIMSApis.Controllers
             }
         }
 
-        [HttpPut("Update_Hotel")]
+        [HttpPut("Update-Hotel")]
         public async Task<IActionResult> UpdateHotel(int hotelId,HotelInput htInput)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -64,7 +64,7 @@ namespace DIMSApis.Controllers
             }
         }
 
-        [HttpPost("Crete_Room")]
+        [HttpPost("Crete-Room")]
         public async Task<IActionResult> CreateRoom(NewRoomInput roomInput)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -85,7 +85,7 @@ namespace DIMSApis.Controllers
 
 
 
-        [HttpGet("Host_All_Hotel")]
+        [HttpGet("Host-All-Hotel")]
         public async Task<IActionResult> GetAllHotel()
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -93,7 +93,7 @@ namespace DIMSApis.Controllers
             return Ok(Hotel);
         }
 
-        [HttpGet("Host_A_Hotel_All_Room")]
+        [HttpGet("Host-A-Hotel-All-Room")]
         public async Task<IActionResult> GetAHotelAllRoom(int hotelId)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);

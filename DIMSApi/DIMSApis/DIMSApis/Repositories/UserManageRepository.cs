@@ -13,17 +13,15 @@ namespace DIMSApis.Repositories
         private readonly IMapper _mapper;
         private readonly IOtherService _other;
         private readonly IMail _mail;
-        private readonly IMailQrService _mailQrService;
         private readonly IFireBaseService _firebase;
         private string purpose1 = "ACTIVE ACCOUNT";
 
-        public UserManageRepository(IFireBaseService firebase,IMailQrService mailQrService, IMail mail, DIMSContext context, IMapper mapper, IOtherService other)
+        public UserManageRepository(IFireBaseService firebase, IMail mail, DIMSContext context, IMapper mapper, IOtherService other)
         {
             _context = context;
             _mapper = mapper;
             _other = other;
             _mail = mail;
-            _mailQrService = mailQrService;
             _firebase = firebase;
         }
 
@@ -63,10 +61,10 @@ namespace DIMSApis.Repositories
                         || (op.StartDate < start && op.EndDate > start))
                .ToListAsync();
 
-            var lsRoom = _context.Rooms
+            var lsRoom = await _context.Rooms
                 .Include(c => c.Category).ThenInclude(b => b.Photos)
                 .Where(op => op.HotelId == hotelId && op.Category.Quanity >= peopleQuanity)
-                .WhereBulkNotContains(lsHotelRoom, a => a.RoomId);
+                .WhereBulkNotContains(lsHotelRoom, a => a.RoomId).ToListAsync();
 
             var returnHotelRoom = _mapper.Map<IEnumerable<HotelCateOutput>>(lsRoom);
             var result = returnHotelRoom
@@ -184,12 +182,25 @@ namespace DIMSApis.Repositories
             {
                 var returnLocation = new SearchLocationOutput();
                 var lsPr = await _context.Provinces.ToListAsync();
+                var lsdis = await _context.Districts.ToListAsync();
                 var lsProvince = new List<SearchLocationAreaOutput>();
                 foreach (var item in lsPr)
                 {
                     if (_other.RemoveMark(item.Name).Contains(terms))
                     {
                         lsProvince.Add(_mapper.Map<SearchLocationAreaOutput>(item));
+                    }
+                }
+                foreach (var item in lsdis)
+                {
+                    if (_other.RemoveMark(item.Name).Contains(terms))
+                    {
+                        lsProvince.Add(
+                            new SearchLocationAreaOutput{
+                            Id = item.Id,
+                            Name = item.Name,
+                            Type = item.Type,
+                            });
                     }
                 }
                 var lsHo = await _context.Hotels.Where(op => op.Status == 1).ToListAsync();
@@ -220,34 +231,65 @@ namespace DIMSApis.Repositories
                 .Where(op => op.Status == 1)
                 .ToListAsync();
             var searchhotel = new List<Hotel>();
-
-            foreach (var hotel in lsHotel)
+            DateTime StartDate =  sInp.ArrivalDate;
+            DateTime EndDate = _other.GetEndDate(sInp.ArrivalDate, sInp.TotalNight);
+            if(sInp.TotalNight>0)
             {
-                if (_other.RemoveMark(hotel.HotelAddress).Contains(terms)
-                    || _other.RemoveMark(hotel.ProvinceNavigation.Name).Contains(terms)
-                    || _other.RemoveMark(hotel.HotelName).Contains(terms))
+                if (sInp.Location.ToLower().Trim() == "areas")
                 {
-                    if (sInp.StartDate != null && sInp.EndDate != null)
+                    foreach (var hotel in lsHotel)
                     {
-                        var lsHotelRoom = await _context.BookingDetails
-                           .Include(b => b.Booking)
-                           .Where(op => op.Status == 1 && op.Booking.HotelId == hotel.HotelId)
-                           .Where(op => ((op.StartDate > sInp.StartDate && op.StartDate < sInp.EndDate) && (op.EndDate > sInp.StartDate && op.EndDate < sInp.EndDate))
-                                     || (op.StartDate < sInp.EndDate && op.EndDate > sInp.EndDate)
-                                    || (op.StartDate < sInp.StartDate && op.EndDate > sInp.StartDate))
-                           .ToListAsync();
-
-                        var lsRoom = _context.Rooms.WhereBulkNotContains(lsHotelRoom, a => a.RoomId).Where(op => op.HotelId == hotel.HotelId).Count();
-                        if (lsRoom > 0)
+                        if (_other.RemoveMark(hotel.DistrictNavigation.Name).Contains(terms)
+                            || _other.RemoveMark(hotel.ProvinceNavigation.Name).Contains(terms))
                         {
-                            searchhotel.Add(hotel);
+                            if (StartDate != null && EndDate != null)
+                            {
+                                var lsHotelRoom = await _context.BookingDetails
+                                   .Include(b => b.Booking)
+                                   .Where(op => op.Status == 1 && op.Booking.HotelId == hotel.HotelId)
+                                   .Where(op => ((op.StartDate > StartDate && op.StartDate < EndDate) && (op.EndDate > StartDate && op.EndDate < EndDate))
+                                             || (op.StartDate < EndDate && op.EndDate > EndDate)
+                                            || (op.StartDate < StartDate && op.EndDate > StartDate))
+                                   .ToListAsync();
+
+                                var lsRoom = await _context.Rooms.WhereBulkNotContains(lsHotelRoom, a => a.RoomId).Where(op => op.HotelId == hotel.HotelId).ToListAsync();
+                                var count = lsRoom.Count();
+                                if (count > 0)
+                                {
+                                    searchhotel.Add(hotel);
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var hotel in lsHotel)
+                    {
+                        if (_other.RemoveMark(hotel.HotelName).Contains(terms))
+                        {
+                            if (StartDate != null && EndDate != null)
+                            {
+                                var lsHotelRoom = await _context.BookingDetails
+                                   .Include(b => b.Booking)
+                                   .Where(op => op.Status == 1 && op.Booking.HotelId == hotel.HotelId)
+                                   .Where(op => ((op.StartDate > StartDate && op.StartDate < EndDate) && (op.EndDate > StartDate && op.EndDate < EndDate))
+                                             || (op.StartDate < EndDate && op.EndDate > EndDate)
+                                            || (op.StartDate < StartDate && op.EndDate > StartDate))
+                                   .ToListAsync();
+
+                                var lsRoom = await _context.Rooms.WhereBulkNotContains(lsHotelRoom, a => a.RoomId).Where(op => op.HotelId == hotel.HotelId).ToListAsync();
+                                var count = lsRoom.Count();
+                                if (count > 0)
+                                {
+                                    searchhotel.Add(hotel);
+                                }
+                            }
                         }
                     }
                 }
             }
-            return _mapper.Map<IEnumerable<HotelOutput>>(searchhotel);
+            return _mapper.Map<IEnumerable<HotelOutput>>(searchhotel.OrderByDescending(r => r.TotalRate));
         }
-
-
     }
 }

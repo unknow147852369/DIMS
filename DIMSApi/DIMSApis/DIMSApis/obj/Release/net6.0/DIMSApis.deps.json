@@ -30,7 +30,7 @@
           "Stripe.net": "39.110.0",
           "Swashbuckle.AspNetCore": "6.3.0",
           "System.IdentityModel.Tokens.Jwt": "6.17.0",
-          "Z.EntityFramework.Plus.EFCore": "6.13.19"
+          "Z.EntityFramework.Plus.EFCore": "6.13.21"
         },
         "runtime": {
           "DIMSApis.dll": {}
@@ -3272,7 +3272,7 @@
           "System.Xml.ReaderWriter": "4.3.0"
         }
       },
-      "Z.EntityFramework.Extensions.EFCore/6.13.19": {
+      "Z.EntityFramework.Extensions.EFCore/6.13.21": {
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
           "Microsoft.EntityFrameworkCore.Relational": "6.0.5",
@@ -3283,28 +3283,28 @@
         },
         "runtime": {
           "lib/net6.0/Z.EntityFramework.Extensions.EFCore.dll": {
-            "assemblyVersion": "6.13.19.0",
-            "fileVersion": "6.13.19.0"
+            "assemblyVersion": "6.13.21.0",
+            "fileVersion": "6.13.21.0"
           }
         }
       },
-      "Z.EntityFramework.Plus.EFCore/6.13.19": {
+      "Z.EntityFramework.Plus.EFCore/6.13.21": {
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
           "Microsoft.EntityFrameworkCore.Relational": "6.0.5",
           "System.Reflection.Emit": "4.7.0",
           "System.Reflection.TypeExtensions": "4.7.0",
-          "Z.EntityFramework.Extensions.EFCore": "6.13.19",
-          "Z.Expressions.Eval": "4.0.80"
+          "Z.EntityFramework.Extensions.EFCore": "6.13.21",
+          "Z.Expressions.Eval": "4.0.82"
         },
         "runtime": {
           "lib/net6.0/Z.EntityFramework.Plus.EFCore.dll": {
-            "assemblyVersion": "6.13.19.0",
-            "fileVersion": "6.13.19.0"
+            "assemblyVersion": "6.13.21.0",
+            "fileVersion": "6.13.21.0"
           }
         }
       },
-      "Z.Expressions.Eval/4.0.80": {
+      "Z.Expressions.Eval/4.0.82": {
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
           "Microsoft.Extensions.Caching.Memory": "6.0.1",
@@ -3320,8 +3320,8 @@
         },
         "runtime": {
           "lib/net6.0/Z.Expressions.Eval.dll": {
-            "assemblyVersion": "4.0.80.0",
-            "fileVersion": "4.0.80.0"
+            "assemblyVersion": "4.0.82.0",
+            "fileVersion": "4.0.82.0"
           }
         }
       }
@@ -5384,26 +5384,26 @@
       "path": "system.xml.xpath/4.3.0",
       "hashPath": "system.xml.xpath.4.3.0.nupkg.sha512"
     },
-    "Z.EntityFramework.Extensions.EFCore/6.13.19": {
+    "Z.EntityFramework.Extensions.EFCore/6.13.21": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-m/VMza/RCv83w+0ymdLehLfftqBgQLcvRkUYNSe+5AtVUZCogUZGS5AcXEcrKz21Uv5BYIZ2p3SLUAN7H59kPQ==",
-      "path": "z.entityframework.extensions.efcore/6.13.19",
-      "hashPath": "z.entityframework.extensions.efcore.6.13.19.nupkg.sha512"
+      "sha512": "sha512-A7CMDpiJKX5BBsArzgKBGSY+/X8zkEbvGyjOj7Qowojzz7VI6E2UBAnJ0PiZg1aDQVLoXv9yH05wOmC2OQmVhA==",
+      "path": "z.entityframework.extensions.efcore/6.13.21",
+      "hashPath": "z.entityframework.extensions.efcore.6.13.21.nupkg.sha512"
     },
-    "Z.EntityFramework.Plus.EFCore/6.13.19": {
+    "Z.EntityFramework.Plus.EFCore/6.13.21": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-6PnlZDK4Xs+L6BB/VC/P85X6jg4jyJlQQp/N3tV17THWfFfigt8gjBHFOKAtnhw4sSuifOhBvQr46f9q7bnyDA==",
-      "path": "z.entityframework.plus.efcore/6.13.19",
-      "hashPath": "z.entityframework.plus.efcore.6.13.19.nupkg.sha512"
+      "sha512": "sha512-2R3eAG68VnEuH7ad+Ei8fOKrwWEkRobcloyhy5VKaAzm/+xVBPW1VInoESlXf5YJwje20Fw6T2vvdI4lHd5Xeg==",
+      "path": "z.entityframework.plus.efcore/6.13.21",
+      "hashPath": "z.entityframework.plus.efcore.6.13.21.nupkg.sha512"
     },
-    "Z.Expressions.Eval/4.0.80": {
+    "Z.Expressions.Eval/4.0.82": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-uR/gfOZwLkxToY762xpIUum8XHz/m/7Riz8vI0h4jA9GqB2jOvhugmYpN/N9p94y4cbEhdZVT9ZkgwNQiOu0lw==",
-      "path": "z.expressions.eval/4.0.80",
-      "hashPath": "z.expressions.eval.4.0.80.nupkg.sha512"
+      "sha512": "sha512-2axiY94uRqCF8Vn95JYNHxdqfF9VCXP8kmy7KY1Ie1R+phDIiUIL30ycsEvTAzqroEyZJsiKMxnH0pzBbdjD4A==",
+      "path": "z.expressions.eval/4.0.82",
+      "hashPath": "z.expressions.eval.4.0.82.nupkg.sha512"
     }
   }
 }

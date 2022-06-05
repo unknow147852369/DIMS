@@ -4767,7 +4767,7 @@
           "lib/netstandard1.3/System.Xml.XPath.dll": {}
         }
       },
-      "Z.EntityFramework.Extensions.EFCore/6.13.19": {
+      "Z.EntityFramework.Extensions.EFCore/6.13.21": {
         "type": "package",
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
@@ -4784,15 +4784,15 @@
           "lib/net6.0/Z.EntityFramework.Extensions.EFCore.dll": {}
         }
       },
-      "Z.EntityFramework.Plus.EFCore/6.13.19": {
+      "Z.EntityFramework.Plus.EFCore/6.13.21": {
         "type": "package",
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
           "Microsoft.EntityFrameworkCore.Relational": "6.0.0",
           "System.Reflection.Emit": "4.7.0",
           "System.Reflection.TypeExtensions": "4.7.0",
-          "Z.EntityFramework.Extensions.EFCore": "[6.13.19]",
-          "Z.Expressions.Eval": "[4.0.80]"
+          "Z.EntityFramework.Extensions.EFCore": "[6.13.21]",
+          "Z.Expressions.Eval": "[4.0.82]"
         },
         "compile": {
           "lib/net6.0/Z.EntityFramework.Plus.EFCore.dll": {}
@@ -4801,7 +4801,7 @@
           "lib/net6.0/Z.EntityFramework.Plus.EFCore.dll": {}
         }
       },
-      "Z.Expressions.Eval/4.0.80": {
+      "Z.Expressions.Eval/4.0.82": {
         "type": "package",
         "dependencies": {
           "Microsoft.CSharp": "4.5.0",
@@ -13703,36 +13703,36 @@
         "system.xml.xpath.nuspec"
       ]
     },
-    "Z.EntityFramework.Extensions.EFCore/6.13.19": {
-      "sha512": "m/VMza/RCv83w+0ymdLehLfftqBgQLcvRkUYNSe+5AtVUZCogUZGS5AcXEcrKz21Uv5BYIZ2p3SLUAN7H59kPQ==",
+    "Z.EntityFramework.Extensions.EFCore/6.13.21": {
+      "sha512": "A7CMDpiJKX5BBsArzgKBGSY+/X8zkEbvGyjOj7Qowojzz7VI6E2UBAnJ0PiZg1aDQVLoXv9yH05wOmC2OQmVhA==",
       "type": "package",
-      "path": "z.entityframework.extensions.efcore/6.13.19",
+      "path": "z.entityframework.extensions.efcore/6.13.21",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "lib/net6.0/Z.EntityFramework.Extensions.EFCore.dll",
         "lib/net6.0/Z.EntityFramework.Extensions.EFCore.xml",
-        "z.entityframework.extensions.efcore.6.13.19.nupkg.sha512",
+        "z.entityframework.extensions.efcore.6.13.21.nupkg.sha512",
         "z.entityframework.extensions.efcore.nuspec"
       ]
     },
-    "Z.EntityFramework.Plus.EFCore/6.13.19": {
-      "sha512": "6PnlZDK4Xs+L6BB/VC/P85X6jg4jyJlQQp/N3tV17THWfFfigt8gjBHFOKAtnhw4sSuifOhBvQr46f9q7bnyDA==",
+    "Z.EntityFramework.Plus.EFCore/6.13.21": {
+      "sha512": "2R3eAG68VnEuH7ad+Ei8fOKrwWEkRobcloyhy5VKaAzm/+xVBPW1VInoESlXf5YJwje20Fw6T2vvdI4lHd5Xeg==",
       "type": "package",
-      "path": "z.entityframework.plus.efcore/6.13.19",
+      "path": "z.entityframework.plus.efcore/6.13.21",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "lib/net6.0/Z.EntityFramework.Plus.EFCore.dll",
         "lib/net6.0/Z.EntityFramework.Plus.EFCore.xml",
-        "z.entityframework.plus.efcore.6.13.19.nupkg.sha512",
+        "z.entityframework.plus.efcore.6.13.21.nupkg.sha512",
         "z.entityframework.plus.efcore.nuspec"
       ]
     },
-    "Z.Expressions.Eval/4.0.80": {
-      "sha512": "uR/gfOZwLkxToY762xpIUum8XHz/m/7Riz8vI0h4jA9GqB2jOvhugmYpN/N9p94y4cbEhdZVT9ZkgwNQiOu0lw==",
+    "Z.Expressions.Eval/4.0.82": {
+      "sha512": "2axiY94uRqCF8Vn95JYNHxdqfF9VCXP8kmy7KY1Ie1R+phDIiUIL30ycsEvTAzqroEyZJsiKMxnH0pzBbdjD4A==",
       "type": "package",
-      "path": "z.expressions.eval/4.0.80",
+      "path": "z.expressions.eval/4.0.82",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -13746,7 +13746,7 @@
         "lib/netstandard2.0/Z.Expressions.Eval.xml",
         "lib/netstandard2.1/Z.Expressions.Eval.dll",
         "lib/netstandard2.1/Z.Expressions.Eval.xml",
-        "z.expressions.eval.4.0.80.nupkg.sha512",
+        "z.expressions.eval.4.0.82.nupkg.sha512",
         "z.expressions.eval.nuspec"
       ]
     }
@@ -13775,7 +13775,7 @@
       "Stripe.net >= 39.110.0",
       "Swashbuckle.AspNetCore >= 6.3.0",
       "System.IdentityModel.Tokens.Jwt >= 6.17.0",
-      "Z.EntityFramework.Plus.EFCore >= 6.13.19"
+      "Z.EntityFramework.Plus.EFCore >= 6.13.21"
     ]
   },
   "packageFolders": {
@@ -13916,7 +13916,7 @@
           },
           "Z.EntityFramework.Plus.EFCore": {
             "target": "Package",
-            "version": "[6.13.19, )"
+            "version": "[6.13.21, )"
           }
         },
         "imports": [

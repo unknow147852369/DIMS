@@ -60,6 +60,20 @@ namespace DIMSApis.Controllers
                 return BadRequest();
             }
         }
+        [HttpGet("List-All-Hotel")]
+        public async Task<IActionResult> ListAllHotel()
+        {
+            var Hotel = await _admin.ListAllHotel();
+            if (Hotel.Count() == 0) { return NotFound("No request"); }
+            return Ok(Hotel);
+        }
+        [HttpGet("List-All-User")]
+        public async Task<IActionResult> ListAllHost()
+        {
+            var Host = await _admin.ListAllHost();
+            if (Host.Count() == 0) { return NotFound("No Accpect"); }
+            return Ok(Host);
+        }
 
     }
 }

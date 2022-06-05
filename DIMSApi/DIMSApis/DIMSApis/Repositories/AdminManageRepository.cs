@@ -44,5 +44,22 @@ namespace DIMSApis.Repositories
             }
             return 0;
         }
+
+        public async Task<IEnumerable<User>> ListAllHost()
+        {
+            var User = await _context.Users
+                .Include(u => u.Hotels)
+                .Where(r =>r.Role.Equals("HOST"))
+                .ToListAsync();
+            return User.OrderBy(a => a.Status);
+        }
+
+        public async Task<IEnumerable<Hotel>> ListAllHotel()
+        {
+            var hotel = await _context.Hotels
+                .Include(u => u.User)
+                .ToListAsync();
+            return hotel.OrderBy(a=>a.Status);
+        }
     }
 }
