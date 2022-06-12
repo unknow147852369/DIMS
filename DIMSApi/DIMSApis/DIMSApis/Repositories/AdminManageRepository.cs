@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DIMSApis.Interfaces;
 using DIMSApis.Models.Data;
+using DIMSApis.Models.Output;
 using Microsoft.EntityFrameworkCore;
 
 namespace DIMSApis.Repositories
@@ -54,12 +55,16 @@ namespace DIMSApis.Repositories
             return User.OrderBy(a => a.Status);
         }
 
-        public async Task<IEnumerable<Hotel>> ListAllHotel()
+        public async Task<IEnumerable<HotelOutput>> ListAllHotel()
         {
             var hotel = await _context.Hotels
                 .Include(u => u.User)
+                .Include(p=>p.Photos)
+                .Include(w=>w.WardNavigation)
+                .Include(pr=>pr.ProvinceNavigation)
+                .Include(d=>d.DistrictNavigation)
                 .ToListAsync();
-            return hotel.OrderBy(a=>a.Status);
+            return _mapper.Map<IEnumerable<HotelOutput>>(hotel).OrderBy(a=>a.Status);
         }
     }
 }

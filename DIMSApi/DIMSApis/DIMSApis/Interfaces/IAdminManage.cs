@@ -1,4 +1,5 @@
 ﻿using DIMSApis.Models.Data;
+using DIMSApis.Models.Output;
 
 namespace DIMSApis.Interfaces
 {
@@ -6,7 +7,7 @@ namespace DIMSApis.Interfaces
     {
         Task<int> AcpectHost(int UserId);
         Task<int> AcpectHotel(int hotelId);
-        Task<IEnumerable<Hotel>> ListAllHotel();
+        Task<IEnumerable<HotelOutput>> ListAllHotel();
         Task<IEnumerable<User>> ListAllHost();
         
     }

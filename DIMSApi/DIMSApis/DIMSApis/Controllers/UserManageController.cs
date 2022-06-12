@@ -94,5 +94,43 @@ namespace DIMSApis.Controllers
                 return BadRequest("send Fail");
             }
         }
+
+        [HttpPost("user-feedback")]
+        public async Task<IActionResult> userFeedback(int BookingId ,FeedBackInput fb)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            int check = await _usermanage.userFeedback(userId,BookingId,fb);
+            if (check == 1)
+            {
+                return Ok("send Success");
+            }
+            else if (check == 0)
+            {
+                return NotFound("booking not end yet");
+            }
+            else
+            {
+                return BadRequest("some feild wrong!");
+            }
+        }
+
+        [HttpPut("user-feedback")]
+        public async Task<IActionResult> userUpdateFeedback(int feedbackId,FeedBackInput fb)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            int check = await _usermanage.userUpdateFeedback(userId,feedbackId, fb);
+            if (check == 1)
+            {
+                return Ok("update Success");
+            }
+            else if (check == 0)
+            {
+                return NotFound("booking not end yet");
+            }
+            else
+            {
+                return BadRequest("some feild wrong!");
+            }
+        }
     }
 }

@@ -145,6 +145,9 @@ namespace DIMSApis.Models.Data
             {
                 entity.ToTable("Feedback");
 
+                entity.HasIndex(e => e.BookingId, "IX_Feedback")
+                    .IsUnique();
+
                 entity.Property(e => e.FeedbackId)
                     .ValueGeneratedNever()
                     .HasColumnName("FeedbackID");
@@ -156,8 +159,8 @@ namespace DIMSApis.Models.Data
                 entity.Property(e => e.UserId).HasColumnName("userID");
 
                 entity.HasOne(d => d.Booking)
-                    .WithMany(p => p.Feedbacks)
-                    .HasForeignKey(d => d.BookingId)
+                    .WithOne(p => p.Feedback)
+                    .HasForeignKey<Feedback>(d => d.BookingId)
                     .HasConstraintName("FK_Feedback_BBookings");
 
                 entity.HasOne(d => d.User)

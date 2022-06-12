@@ -67,6 +67,13 @@ namespace DIMSApis.Controllers
             return Ok(districts);
         }
 
+        [HttpGet("all-District")]
+        public async Task<IActionResult> ListAllDistrict()
+        {
+            var districts = await _usermanage.ListAllDistrict();
+            return Ok(districts);
+        }
+
         [HttpGet("Search-Loaction")]
         public async Task<IActionResult> SearchLocation(string LocationName)
         {

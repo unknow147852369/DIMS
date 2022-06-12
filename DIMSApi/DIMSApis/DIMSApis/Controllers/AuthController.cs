@@ -41,11 +41,11 @@ namespace DIMSApis.Controllers
                 return BadRequest("Email already exists");
             if (await _auth.Register(user))
             {
-                return Ok();
+                return Ok("create sucess");
             }
             else
             {
-                return BadRequest();
+                return BadRequest("some thing went wrong");
             }
         }
 
@@ -55,7 +55,7 @@ namespace DIMSApis.Controllers
             var user = await _auth.Login(userIn);
 
             if (user == null)
-                return Unauthorized();
+                return Unauthorized("wrong email or password");
 
             LoginOutput login = new()
             {
@@ -73,7 +73,7 @@ namespace DIMSApis.Controllers
             var user = await _auth.LoginAdmin(userIn);
 
             if (user == null)
-                return Unauthorized();
+                return Unauthorized("wrong email or password");
 
             LoginOutput login = new()
             {
@@ -90,11 +90,11 @@ namespace DIMSApis.Controllers
         {
             if (await _auth.GetForgotCodeMailSend(mail))
             {
-                return Ok();
+                return Ok("send mail success");
             }
             else
             {
-                return BadRequest();
+                return BadRequest("send mail fail");
             }
         }
 
@@ -104,7 +104,7 @@ namespace DIMSApis.Controllers
         {
             if (await _auth.UpdateNewPass(pass))
             {
-                return Ok();
+                return Ok("change success");
             }
             else
             {

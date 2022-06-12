@@ -49,34 +49,6 @@ namespace DIMSApis.Repositories
             }
         }
 
-        public async Task<IEnumerable<HotelCateOutput>> GetListAvaiableHotelCate(int? hotelId, DateTime? start, DateTime? end , int peopleQuanity)
-        {
-            if (hotelId == null || start == null || end == null || peopleQuanity == null) { return null; }
-            var lsHotelRoom = await _context.BookingDetails
-                .Include(b => b.Booking)
-                .Include(c => c.Room).ThenInclude(b => b.Category)
-               .Where(op => op.Status == 1 && op.Booking.HotelId == hotelId)
-               .Where(op => ((op.StartDate > start && op.StartDate < end) && (op.EndDate > start && op.EndDate < end))
-                         || (op.StartDate < end && op.EndDate > end)
-                        || (op.StartDate < start && op.EndDate > start))
-               .ToListAsync();
-
-            var lsRoom = await _context.Rooms
-                .Include(c => c.Category).ThenInclude(b => b.Photos)
-                .Where(op => op.HotelId == hotelId && op.Category.Quanity >= peopleQuanity)
-                .WhereBulkNotContains(lsHotelRoom, a => a.RoomId).ToListAsync();
-
-            var returnHotelRoom = _mapper.Map<IEnumerable<HotelCateOutput>>(lsRoom);
-            var result = returnHotelRoom
-                   .GroupBy(item => new
-                   {
-                       item.CategoryId,
-                   })
-                   .Select(group => group.FirstOrDefault())
-                   .ToList().OrderBy(i => i.CategoryId);
-            return result;
-        }
-
         public async Task<string> ActiveAccount(string activeCode, int userId)
         {
             var user = await _context.Users
@@ -196,10 +168,11 @@ namespace DIMSApis.Repositories
                     if (_other.RemoveMark(item.Name).Contains(terms))
                     {
                         lsProvince.Add(
-                            new SearchLocationAreaOutput{
-                            Id = item.Id,
-                            Name = item.Name,
-                            Type = item.Type,
+                            new SearchLocationAreaOutput
+                            {
+                                Id = item.Id,
+                                Name = item.Name,
+                                Type = item.Type,
                             });
                     }
                 }
@@ -233,9 +206,9 @@ namespace DIMSApis.Repositories
                 .Where(op => op.Status == 1)
                 .ToListAsync();
             var searchhotel = new List<Hotel>();
-            DateTime StartDate =  sInp.ArrivalDate;
+            DateTime StartDate = sInp.ArrivalDate;
             DateTime EndDate = _other.GetEndDate(sInp.ArrivalDate, sInp.TotalNight);
-            if(sInp.TotalNight>0)
+            if (sInp.TotalNight > 0)
             {
                 if (sInp.Location.ToLower().Trim() == "areas")
                 {
@@ -292,6 +265,107 @@ namespace DIMSApis.Repositories
                 }
             }
             return _mapper.Map<IEnumerable<HotelOutput>>(searchhotel.OrderByDescending(r => r.TotalRate));
+        }
+
+        public async Task<IEnumerable<HotelCateOutput>> GetListAvaiableHotelCate(int? hotelId, DateTime? start, DateTime? end, int peopleQuanity)
+        {
+            if (hotelId == null || start == null || end == null || peopleQuanity == null) { return null; }
+            var lsHotelRoom = await _context.BookingDetails
+                .Include(b => b.Booking)
+                .Include(c => c.Room).ThenInclude(b => b.Category)
+               .Where(op => op.Status == 1 && op.Booking.HotelId == hotelId)
+               .Where(op => ((op.StartDate > start && op.StartDate < end) && (op.EndDate > start && op.EndDate < end))
+                         || (op.StartDate < end && op.EndDate > end)
+                        || (op.StartDate < start && op.EndDate > start))
+               .ToListAsync();
+
+            var lsRoom = await _context.Rooms
+                .Include(c => c.Category).ThenInclude(b => b.Photos)
+                .Where(op => op.HotelId == hotelId && op.Category.Quanity >= peopleQuanity)
+                .WhereBulkNotContains(lsHotelRoom, a => a.RoomId).ToListAsync();
+
+            var returnHotelRoom = _mapper.Map<IEnumerable<HotelCateOutput>>(lsRoom);
+            var result = returnHotelRoom
+                   .GroupBy(item => new
+                   {
+                       item.CategoryId,
+                   })
+                   .Select(group => group.FirstOrDefault())
+                   .ToList().OrderBy(i => i.CategoryId);
+            return result;
+        }
+
+        public async Task<IEnumerable<District>> ListAllDistrict()
+        {
+            var ls = await _context.Districts.ToListAsync();
+            return ls;
+        }
+
+        public async Task<int> userFeedback(int userId, int BookingId, FeedBackInput fb)
+        {
+            if (fb.Rating < 0 || fb.Rating > 10)
+            {
+                return 2;
+            }
+            var newFb = new Feedback();
+            newFb.UserId = userId;
+            newFb.BookingId = BookingId;
+            newFb.Comment = fb.Comment;
+            newFb.Rating = fb.Rating;
+            newFb.Status = true;
+
+            await _context.Feedbacks.AddAsync(newFb);
+            if (await _context.SaveChangesAsync() > 0)
+            {
+                var bok = await _context.Bookings
+                    .Where(op => op.BookingId == BookingId)
+                    .FirstOrDefaultAsync();
+                if (bok.EndDate >= DateTime.Now)
+                {
+                    var hotel = await _context.Hotels
+                        .Include(b => b.Bookings).ThenInclude(f => f.Feedback)
+                        .Where(op => op.HotelId == bok.HotelId)
+                        .FirstOrDefaultAsync();
+                    hotel.TotalRate = (int?)hotel.Bookings.Average(a => a.Feedback.Rating);
+                    if (await _context.SaveChangesAsync() > 0)
+                        return 1;
+                    return 3;
+                }
+            }
+            return 0;
+        }
+
+        public async Task<int> userUpdateFeedback(int userId, int feedbackId, FeedBackInput fb)
+        {
+            if (fb.Rating < 0 || fb.Rating > 10)
+            {
+                return 2;
+            }
+            var feedback = await _context.Feedbacks
+                .Where(op => op.FeedbackId == feedbackId).SingleOrDefaultAsync();
+            if (feedback != null)
+            {
+                feedback.Comment = fb.Comment;
+                feedback.Rating = fb.Rating;
+                if (await _context.SaveChangesAsync() > 0)
+                {
+                    var f = await _context.Feedbacks
+                        .Include(b => b.Booking)
+                        .Where(op => op.FeedbackId == feedbackId)
+                        .FirstOrDefaultAsync();
+
+                    var hotel = await _context.Hotels
+                        .Include(b => b.Bookings).ThenInclude(f => f.Feedback)
+                        .Where(op => op.HotelId == f.Booking.HotelId)
+                        .FirstOrDefaultAsync();
+
+                    hotel.TotalRate = (int?)hotel.Bookings.Average(a => a.Feedback.Rating);
+                    if (await _context.SaveChangesAsync() > 0)
+                        return 1;
+                    return 3;
+                }
+            }
+            return 0;
         }
     }
 }
