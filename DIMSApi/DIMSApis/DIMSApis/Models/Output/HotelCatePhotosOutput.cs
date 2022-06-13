@@ -2,7 +2,7 @@
 {
     public class HotelCatePhotosOutput
     {
-        public int PhotoId { get; set; }
+        public int? PhotoId { get; set; }
         public int? CategoryId { get; set; }
         public string? PhotoUrl { get; set; }
         public DateTime? CreateDate { get; set; }
