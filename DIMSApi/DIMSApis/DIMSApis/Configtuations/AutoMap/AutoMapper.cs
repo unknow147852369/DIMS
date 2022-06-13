@@ -52,17 +52,13 @@ namespace DIMSApis.Configtuations.AutoMap
             CreateMap<NewOtpInput, Otp>();
 
             //
-            CreateMap<Room, HotelCateOutput>()
-                .ForMember(a => a.CatePhotos, option => option.MapFrom(tbl => tbl.Category.Photos))
-                .ForMember(a => a.Rooms, option => option.MapFrom(tbl => tbl.Category.Rooms))
-                .ForMember(a => a.CategoryName, option => option.MapFrom(tbl => tbl.Category.CategoryName))
-                .ForMember(a => a.Quanity, option => option.MapFrom(tbl => tbl.Category.Quanity))
-                .ForMember(a => a.CateDescrpittion, option => option.MapFrom(tbl => tbl.Category.CateDescrpittion))
-                .ForMember(a => a.CateStatus, option => option.MapFrom(tbl => tbl.Category.Status))
-                .ForMember(a => a.CatePhotos, option => option.MapFrom(tbl => tbl.Category.Photos))
+            CreateMap<Category, HotelCateOutput>()
+                .ForMember(a => a.CatePhotos, option => option.MapFrom(tbl => tbl.Photos))
                 ;
+
             CreateMap<Room, HotelCateRoomOutput>()
                 ;
+   
             CreateMap<Photo, HotelCatePhotosOutput>()
                 ;
             CreateMap<Hotel, HotelCateInfoOutput>()

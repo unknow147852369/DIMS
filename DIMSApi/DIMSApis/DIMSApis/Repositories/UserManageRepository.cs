@@ -286,33 +286,68 @@ namespace DIMSApis.Repositories
                 .Where(op => op.HotelId == hotelId && op.Category.Quanity >= peopleQuanity)
                 .WhereBulkNotContains(lsHotelRoom, a => a.RoomId).ToListAsync();
 
-           
             var AHotel = await _context.Hotels
                 .Include(p => p.Photos)
                 .Include(c => c.Categories)
-                .Include(r=>r.Rooms)
+                .Include(r => r.Rooms)
                 .Include(w => w.WardNavigation)
                 .Include(d => d.DistrictNavigation)
                 .Include(pr => pr.ProvinceNavigation)
-                .Where(op => op.Status ==  1 && op.HotelId == hotelId)
+                .Where(op => op.Status == 1 && op.HotelId == hotelId)
                 .SingleOrDefaultAsync();
 
-            var returnHotelRoom = _mapper.Map<IEnumerable<HotelCateOutput>>(lsRoom);
-            
-            var result = returnHotelRoom
-                   .GroupBy(item => new
-                   {
-                       item.CategoryId,
-                   })
-                   .Select(group => group.FirstOrDefault())
-                   .ToList().OrderBy(i => i.CategoryId);
+            var result = lsRoom
+            .GroupBy(item => new
+            {
+                item.CategoryId,
+                item.HotelId,
+                item.Category.CategoryName,
+                item.Category.CateDescrpittion,
+                item.Category.Quanity,
+                item.Category.Status,
+
+            })
+            .Select(gr => new HotelCateOutput
+            {
+                CategoryId = (int)gr.Key.CategoryId,
+                HotelId = gr.Key.HotelId,
+                CategoryName = gr.Key.CategoryName,
+                CateDescrpittion = gr.Key.CateDescrpittion,
+                Quanity = gr.Key.Quanity,
+                CateStatus = gr.Key.Status,
+
+                Rooms = gr.Select(op => new HotelCateRoomOutput {
+                    CategoryId = op.CategoryId,
+                    RoomId = op.RoomId,
+                    RoomName = op.RoomName,
+                    RoomDescription = op.RoomDescription,
+                    Price = op.Price,
+                    Status = op.Status,
+                }).ToList(),
+
+                //CatePhotos = gr.Select(op => op.Category.Photos.Select(con => new HotelCatePhotosOutput {
+                //    CategoryId = op.CategoryId,
+                //    PhotoId = con.PhotoId,
+                //    PhotoUrl = con.PhotoUrl,
+                //    CreateDate = con.CreateDate,
+                //    IsMain = con.IsMain,
+                //    Status = con.Status,
+                //}).ToList(),),
+
+            }).ToList();
 
             var HotelDetail = new HotelCateInfoOutput();
             _mapper.Map(AHotel, HotelDetail);
 
+            var catephoto = await  _context.Categories
+                .Include(p => p.Photos)
+                .Where(op=>op.HotelId == hotelId)
+                .ToListAsync();
+            _mapper.Map(catephoto, result);
             var fullCateRoom = new List<HotelCateOutput>();
-            foreach(var item in result)
+            foreach (var item in result)
             {
+                
                 fullCateRoom.Add(item);
             }
             HotelDetail.LsCate = fullCateRoom;
