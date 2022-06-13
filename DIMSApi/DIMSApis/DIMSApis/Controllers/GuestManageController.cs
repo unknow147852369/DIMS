@@ -26,7 +26,7 @@ namespace DIMSApis.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("Search-Hotel")]
+        [HttpGet("Search-Hotel")]
         public async Task<IActionResult> GetListSearchHotel(SearchFilterInput sInp)
         {
             var Hotel = await _usermanage.GetListSearchHotel(sInp);
@@ -36,9 +36,9 @@ namespace DIMSApis.Controllers
 
 
         [HttpGet("Avaiable-Hotel-Cate")]
-        public async Task<IActionResult> GetAllHotelCate(int? hotelId, DateTime? start, DateTime? end, int peopleQuanity)
+        public async Task<IActionResult> GetAllHotelCate(int? hotelId, DateTime ArrivalDate, int TotalNight, int peopleQuanity)
         {
-            var HotelRoom = await _usermanage.GetListAvaiableHotelCate(hotelId, start, end,peopleQuanity);
+            var HotelRoom = await _usermanage.GetListAvaiableHotelCate(hotelId, ArrivalDate, TotalNight, peopleQuanity);
             if (HotelRoom == null) { return NotFound("Wrong fill"); }
             return Ok(HotelRoom);
         }

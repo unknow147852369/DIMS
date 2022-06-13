@@ -53,12 +53,28 @@ namespace DIMSApis.Configtuations.AutoMap
 
             //
             CreateMap<Room, HotelCateOutput>()
-                .ForMember(a => a.Photos, option => option.MapFrom(tbl => tbl.Category.Photos))
+                .ForMember(a => a.CatePhotos, option => option.MapFrom(tbl => tbl.Category.Photos))
                 .ForMember(a => a.Rooms, option => option.MapFrom(tbl => tbl.Category.Rooms))
                 .ForMember(a => a.CategoryName, option => option.MapFrom(tbl => tbl.Category.CategoryName))
                 .ForMember(a => a.Quanity, option => option.MapFrom(tbl => tbl.Category.Quanity))
                 .ForMember(a => a.CateDescrpittion, option => option.MapFrom(tbl => tbl.Category.CateDescrpittion))
+                .ForMember(a => a.CateStatus, option => option.MapFrom(tbl => tbl.Category.Status))
+                .ForMember(a => a.CatePhotos, option => option.MapFrom(tbl => tbl.Category.Photos))
+
+                .ForMember(a => a.HotelPhotos, option => option.MapFrom(tbl => tbl.Hotel.Photos))
+                .ForMember(a => a.UserId, option => option.MapFrom(tbl => tbl.Hotel.UserId))
+                .ForMember(a => a.HotelStatus, option => option.MapFrom(tbl => tbl.Hotel.Status))
+                .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => tbl.Hotel.CreateDate))
+                .ForMember(a => a.HotelName, option => option.MapFrom(tbl => tbl.Hotel.HotelName))
+                .ForMember(a => a.HotelAddress, option => option.MapFrom(tbl => tbl.Hotel.HotelAddress))
+                .ForMember(a => a.WardName, option => option.MapFrom(tbl => tbl.Hotel.WardNavigation.Name))
+                .ForMember(a => a.Ward, option => option.MapFrom(tbl => tbl.Hotel.WardNavigation.Id))
+                .ForMember(a => a.ProvinceName, option => option.MapFrom(tbl => tbl.Hotel.ProvinceNavigation.Name))
+                .ForMember(a => a.Province, option => option.MapFrom(tbl => tbl.Hotel.ProvinceNavigation.Id))
+                .ForMember(a => a.DistrictName, option => option.MapFrom(tbl => tbl.Hotel.DistrictNavigation.Name))
+                .ForMember(a => a.District, option => option.MapFrom(tbl => tbl.Hotel.DistrictNavigation.Id))
                 ;
+
             CreateMap<Room, HotelCateRoomOutput>()
                 ;
             CreateMap<Photo, HotelCatePhotosOutput>()

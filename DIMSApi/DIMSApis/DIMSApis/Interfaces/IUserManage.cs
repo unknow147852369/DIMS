@@ -18,6 +18,6 @@ namespace DIMSApis.Interfaces
         Task<IEnumerable<District>> ListAllDistrict();
         Task<SearchLocationOutput> SearchLocation(string LocationName);
         Task<IEnumerable<HotelOutput>> GetListSearchHotel(SearchFilterInput sInp);
-        Task<IEnumerable<HotelCateOutput>> GetListAvaiableHotelCate(int? hotelId,DateTime? start,DateTime? end, int peopleQuanity);
+        Task<IEnumerable<HotelCateOutput>> GetListAvaiableHotelCate(int? hotelId, DateTime ArrivalDate, int TotalNight, int peopleQuanity);
     }
 }

@@ -267,8 +267,10 @@ namespace DIMSApis.Repositories
             return _mapper.Map<IEnumerable<HotelOutput>>(searchhotel.OrderByDescending(r => r.TotalRate));
         }
 
-        public async Task<IEnumerable<HotelCateOutput>> GetListAvaiableHotelCate(int? hotelId, DateTime? start, DateTime? end, int peopleQuanity)
+        public async Task<IEnumerable<HotelCateOutput>> GetListAvaiableHotelCate(int? hotelId, DateTime ArrivalDate, int TotalNight, int peopleQuanity)
         {
+            DateTime start = ArrivalDate;
+            DateTime end = _other.GetEndDate(ArrivalDate, TotalNight);
             if (hotelId == null || start == null || end == null || peopleQuanity == null) { return null; }
             var lsHotelRoom = await _context.BookingDetails
                 .Include(b => b.Booking)
@@ -284,7 +286,16 @@ namespace DIMSApis.Repositories
                 .Where(op => op.HotelId == hotelId && op.Category.Quanity >= peopleQuanity)
                 .WhereBulkNotContains(lsHotelRoom, a => a.RoomId).ToListAsync();
 
+            var lsHotel = await _context.Hotels
+                .Include(p => p.Photos)
+                .Include(w => w.WardNavigation)
+                .Include(d => d.DistrictNavigation)
+                .Include(pr => pr.ProvinceNavigation)
+                .Where(op => op.Status ==  1 && op.HotelId == hotelId)
+                .SingleOrDefaultAsync();
+
             var returnHotelRoom = _mapper.Map<IEnumerable<HotelCateOutput>>(lsRoom);
+
             var result = returnHotelRoom
                    .GroupBy(item => new
                    {
