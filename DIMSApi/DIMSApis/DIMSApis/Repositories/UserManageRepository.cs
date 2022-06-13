@@ -194,9 +194,9 @@ namespace DIMSApis.Repositories
             return null;
         }
 
-        public async Task<IEnumerable<HotelOutput>> GetListSearchHotel(SearchFilterInput sInp)
+        public async Task<IEnumerable<HotelOutput>> GetListSearchHotel(string Location, string LocationName, DateTime ArrivalDate, int TotalNight)
         {
-            var terms = _other.RemoveMark(sInp.LocationName);
+            var terms = _other.RemoveMark(LocationName);
             var lsHotel = await _context.Hotels
                 .Include(p => p.Photos)
                 .Include(h => h.Rooms)
@@ -206,11 +206,11 @@ namespace DIMSApis.Repositories
                 .Where(op => op.Status == 1)
                 .ToListAsync();
             var searchhotel = new List<Hotel>();
-            DateTime StartDate = sInp.ArrivalDate;
-            DateTime EndDate = _other.GetEndDate(sInp.ArrivalDate, sInp.TotalNight);
-            if (sInp.TotalNight > 0)
+            DateTime StartDate = ArrivalDate;
+            DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight);
+            if (TotalNight > 0)
             {
-                if (sInp.Location.ToLower().Trim() == "areas")
+                if (Location.ToLower().Trim() == "areas")
                 {
                     foreach (var hotel in lsHotel)
                     {
@@ -267,7 +267,7 @@ namespace DIMSApis.Repositories
             return _mapper.Map<IEnumerable<HotelOutput>>(searchhotel.OrderByDescending(r => r.TotalRate));
         }
 
-        public async Task<IEnumerable<HotelCateOutput>> GetListAvaiableHotelCate(int? hotelId, DateTime ArrivalDate, int TotalNight, int peopleQuanity)
+        public async Task<HotelCateInfoOutput> GetListAvaiableHotelCate(int? hotelId, DateTime ArrivalDate, int TotalNight, int peopleQuanity)
         {
             DateTime start = ArrivalDate;
             DateTime end = _other.GetEndDate(ArrivalDate, TotalNight);
@@ -286,8 +286,11 @@ namespace DIMSApis.Repositories
                 .Where(op => op.HotelId == hotelId && op.Category.Quanity >= peopleQuanity)
                 .WhereBulkNotContains(lsHotelRoom, a => a.RoomId).ToListAsync();
 
-            var lsHotel = await _context.Hotels
+           
+            var AHotel = await _context.Hotels
                 .Include(p => p.Photos)
+                .Include(c => c.Categories)
+                .Include(r=>r.Rooms)
                 .Include(w => w.WardNavigation)
                 .Include(d => d.DistrictNavigation)
                 .Include(pr => pr.ProvinceNavigation)
@@ -295,7 +298,7 @@ namespace DIMSApis.Repositories
                 .SingleOrDefaultAsync();
 
             var returnHotelRoom = _mapper.Map<IEnumerable<HotelCateOutput>>(lsRoom);
-
+            
             var result = returnHotelRoom
                    .GroupBy(item => new
                    {
@@ -303,7 +306,17 @@ namespace DIMSApis.Repositories
                    })
                    .Select(group => group.FirstOrDefault())
                    .ToList().OrderBy(i => i.CategoryId);
-            return result;
+
+            var HotelDetail = new HotelCateInfoOutput();
+            _mapper.Map(AHotel, HotelDetail);
+
+            var fullCateRoom = new List<HotelCateOutput>();
+            foreach(var item in result)
+            {
+                fullCateRoom.Add(item);
+            }
+            HotelDetail.LsCate = fullCateRoom;
+            return HotelDetail;
         }
 
         public async Task<IEnumerable<District>> ListAllDistrict()
