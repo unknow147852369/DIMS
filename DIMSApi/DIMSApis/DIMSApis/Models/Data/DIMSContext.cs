@@ -126,6 +126,10 @@ namespace DIMSApis.Models.Data
                     .IsUnicode(false)
                     .HasColumnName("id");
 
+                entity.Property(e => e.DistrictNoMark)
+                    .IsUnicode(false)
+                    .HasColumnName("districtNoMark");
+
                 entity.Property(e => e.Name).HasColumnName("name");
 
                 entity.Property(e => e.ProvinceId)
@@ -178,6 +182,8 @@ namespace DIMSApis.Models.Data
                 entity.Property(e => e.District)
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.Property(e => e.HotelNameNoMark).IsUnicode(false);
 
                 entity.Property(e => e.Province)
                     .HasMaxLength(50)
@@ -278,6 +284,10 @@ namespace DIMSApis.Models.Data
                     .HasColumnName("id");
 
                 entity.Property(e => e.Name).HasColumnName("name");
+
+                entity.Property(e => e.ProvinceNoMark)
+                    .IsUnicode(false)
+                    .HasColumnName("provinceNoMark");
 
                 entity.Property(e => e.Type).HasColumnName("type");
             });
@@ -390,6 +400,10 @@ namespace DIMSApis.Models.Data
                 entity.Property(e => e.Name).HasColumnName("name");
 
                 entity.Property(e => e.Type).HasColumnName("type");
+
+                entity.Property(e => e.WardNoMark)
+                    .IsUnicode(false)
+                    .HasColumnName("wardNoMark");
 
                 entity.HasOne(d => d.District)
                     .WithMany(p => p.Wards)

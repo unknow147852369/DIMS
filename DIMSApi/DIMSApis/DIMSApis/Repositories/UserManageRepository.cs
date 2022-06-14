@@ -197,14 +197,7 @@ namespace DIMSApis.Repositories
         public async Task<IEnumerable<HotelOutput>> GetListSearchHotel(string Location, string LocationName, DateTime ArrivalDate, int TotalNight)
         {
             var terms = _other.RemoveMark(LocationName);
-            var lsHotel = await _context.Hotels
-                .Include(p => p.Photos)
-                .Include(h => h.Rooms)
-                .Include(w => w.WardNavigation)
-                .Include(d => d.DistrictNavigation)
-                .Include(pr => pr.ProvinceNavigation)
-                .Where(op => op.Status == 1)
-                .ToListAsync();
+
             var searchhotel = new List<Hotel>();
             DateTime StartDate = ArrivalDate;
             DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight);
@@ -212,219 +205,246 @@ namespace DIMSApis.Repositories
             {
                 if (Location.ToLower().Trim() == "areas")
                 {
+                    var lsHotel = await _context.Hotels
+                        .Include(p => p.Photos)
+                        .Include(h => h.Rooms)
+                        .Include(w => w.WardNavigation)
+                        .Include(d => d.DistrictNavigation)
+                        .Include(pr => pr.ProvinceNavigation)
+                        .Where(op => op.Status == 1)
+                        .Where(op => op.DistrictNavigation.DistrictNoMark.Contains(terms) || op.ProvinceNavigation.ProvinceNoMark.Contains(terms))
+                        .ToListAsync();
                     foreach (var hotel in lsHotel)
                     {
-                        if (_other.RemoveMark(hotel.DistrictNavigation.Name).Contains(terms)
-                            || _other.RemoveMark(hotel.ProvinceNavigation.Name).Contains(terms))
+                        if (StartDate != null && EndDate != null)
                         {
-                            if (StartDate != null && EndDate != null)
-                            {
-                                var lsHotelRoom = await _context.BookingDetails
-                                   .Include(b => b.Booking)
-                                   .Where(op => op.Status == 1 && op.Booking.HotelId == hotel.HotelId)
-                                   .Where(op => ((op.StartDate > StartDate && op.StartDate < EndDate) && (op.EndDate > StartDate && op.EndDate < EndDate))
-                                             || (op.StartDate < EndDate && op.EndDate > EndDate)
-                                            || (op.StartDate < StartDate && op.EndDate > StartDate))
-                                   .ToListAsync();
+                            var lsHotelRoom = await _context.BookingDetails
+                               .Include(b => b.Booking)
+                               .Where(op => op.Status == 1 && op.Booking.HotelId == hotel.HotelId)
+                               .Where(op => ((op.StartDate > StartDate && op.StartDate < EndDate) && (op.EndDate > StartDate && op.EndDate < EndDate))
+                                         || (op.StartDate < EndDate && op.EndDate > EndDate)
+                                        || (op.StartDate < StartDate && op.EndDate > StartDate))
+                               .ToListAsync();
 
-                                var lsRoom = await _context.Rooms.WhereBulkNotContains(lsHotelRoom, a => a.RoomId).Where(op => op.HotelId == hotel.HotelId).ToListAsync();
-                                var count = lsRoom.Count();
-                                if (count > 0)
-                                {
-                                    searchhotel.Add(hotel);
-                                }
+                            var lsRoom = await _context.Rooms.WhereBulkNotContains(lsHotelRoom, a => a.RoomId).Where(op => op.HotelId == hotel.HotelId).ToListAsync();
+                            var count = lsRoom.Count();
+                            if (count > 0)
+                            {
+                                searchhotel.Add(hotel);
                             }
                         }
                     }
                 }
                 else
                 {
+                    var lsHotel = await _context.Hotels
+                        .Include(p => p.Photos)
+                        .Include(h => h.Rooms)
+                        .Include(w => w.WardNavigation)
+                        .Include(d => d.DistrictNavigation)
+                        .Include(pr => pr.ProvinceNavigation)
+                        .Where(op => op.Status == 1)
+                        .Where(op => op.HotelNameNoMark.Contains(terms))
+                        .ToListAsync();
                     foreach (var hotel in lsHotel)
                     {
-                        if (_other.RemoveMark(hotel.HotelName).Contains(terms))
+                        if (StartDate != null && EndDate != null)
                         {
-                            if (StartDate != null && EndDate != null)
-                            {
-                                var lsHotelRoom = await _context.BookingDetails
-                                   .Include(b => b.Booking)
-                                   .Where(op => op.Status == 1 && op.Booking.HotelId == hotel.HotelId)
-                                   .Where(op => ((op.StartDate > StartDate && op.StartDate < EndDate) && (op.EndDate > StartDate && op.EndDate < EndDate))
-                                             || (op.StartDate < EndDate && op.EndDate > EndDate)
-                                            || (op.StartDate < StartDate && op.EndDate > StartDate))
-                                   .ToListAsync();
+                            var lsHotelRoom = await _context.BookingDetails
+                               .Include(b => b.Booking)
+                               .Where(op => op.Status == 1 && op.Booking.HotelId == hotel.HotelId)
+                               .Where(op => ((op.StartDate > StartDate && op.StartDate < EndDate) && (op.EndDate > StartDate && op.EndDate < EndDate))
+                                         || (op.StartDate < EndDate && op.EndDate > EndDate)
+                                        || (op.StartDate < StartDate && op.EndDate > StartDate))
+                               .ToListAsync();
 
-                                var lsRoom = await _context.Rooms.WhereBulkNotContains(lsHotelRoom, a => a.RoomId).Where(op => op.HotelId == hotel.HotelId).ToListAsync();
-                                var count = lsRoom.Count();
-                                if (count > 0)
-                                {
-                                    searchhotel.Add(hotel);
-                                }
+                            var lsRoom = await _context.Rooms.WhereBulkNotContains(lsHotelRoom, a => a.RoomId).Where(op => op.HotelId == hotel.HotelId).ToListAsync();
+                            var count = lsRoom.Count();
+                            if (count > 0)
+                            {
+                                searchhotel.Add(hotel);
                             }
                         }
                     }
                 }
+                return _mapper.Map<IEnumerable<HotelOutput>>(searchhotel.OrderByDescending(r => r.TotalRate));
             }
-            return _mapper.Map<IEnumerable<HotelOutput>>(searchhotel.OrderByDescending(r => r.TotalRate));
+            return (IEnumerable<HotelOutput>)searchhotel;
         }
 
-        public async Task<HotelCateInfoOutput> GetListAvaiableHotelCate(int? hotelId, DateTime ArrivalDate, int TotalNight, int peopleQuanity)
-        {
-            DateTime start = ArrivalDate;
-            DateTime end = _other.GetEndDate(ArrivalDate, TotalNight);
-            if (hotelId == null || start == null || end == null || peopleQuanity == null) { return null; }
-            var lsHotelRoom = await _context.BookingDetails
-                .Include(b => b.Booking)
-                .Include(c => c.Room).ThenInclude(b => b.Category)
-               .Where(op => op.Status == 1 && op.Booking.HotelId == hotelId)
-               .Where(op => ((op.StartDate > start && op.StartDate < end) && (op.EndDate > start && op.EndDate < end))
-                         || (op.StartDate < end && op.EndDate > end)
-                        || (op.StartDate < start && op.EndDate > start))
-               .ToListAsync();
-
-            var lsRoom = await _context.Rooms
-                .Include(c => c.Category).ThenInclude(b => b.Photos)
-                .Where(op => op.HotelId == hotelId && op.Category.Quanity >= peopleQuanity)
-                .WhereBulkNotContains(lsHotelRoom, a => a.RoomId).ToListAsync();
-
-            var AHotel = await _context.Hotels
-                .Include(p => p.Photos)
-                .Include(c => c.Categories)
-                .Include(r => r.Rooms)
-                .Include(w => w.WardNavigation)
-                .Include(d => d.DistrictNavigation)
-                .Include(pr => pr.ProvinceNavigation)
-                .Where(op => op.Status == 1 && op.HotelId == hotelId)
-                .SingleOrDefaultAsync();
-
-            var result = lsRoom
-            .GroupBy(item => new
+            public async Task<HotelCateInfoOutput> GetListAvaiableHotelCate(int? hotelId, DateTime ArrivalDate, int TotalNight, int peopleQuanity)
             {
-                item.CategoryId,
-                item.HotelId,
-                item.Category.CategoryName,
-                item.Category.CateDescrpittion,
-                item.Category.Quanity,
-                item.Category.Status,
+                DateTime start = ArrivalDate;
+                DateTime end = _other.GetEndDate(ArrivalDate, TotalNight);
+                if (hotelId == null || start == null || end == null || peopleQuanity == null) { return null; }
+                var lsHotelRoom = await _context.BookingDetails
+                    .Include(b => b.Booking)
+                    .Include(c => c.Room).ThenInclude(b => b.Category)
+                   .Where(op => op.Status == 1 && op.Booking.HotelId == hotelId)
+                   .Where(op => ((op.StartDate > start && op.StartDate < end) && (op.EndDate > start && op.EndDate < end))
+                             || (op.StartDate < end && op.EndDate > end)
+                            || (op.StartDate < start && op.EndDate > start))
+                   .ToListAsync();
 
-            })
-            .Select(gr => new HotelCateOutput
-            {
-                CategoryId = (int)gr.Key.CategoryId,
-                HotelId = gr.Key.HotelId,
-                CategoryName = gr.Key.CategoryName,
-                CateDescrpittion = gr.Key.CateDescrpittion,
-                Quanity = gr.Key.Quanity,
-                CateStatus = gr.Key.Status,
+                var lsRoom = await _context.Rooms
+                    .Include(c => c.Category).ThenInclude(b => b.Photos)
+                    .Where(op => op.HotelId == hotelId && op.Category.Quanity >= peopleQuanity)
+                    .WhereBulkNotContains(lsHotelRoom, a => a.RoomId).ToListAsync();
 
-                Rooms = gr.Select(op => new HotelCateRoomOutput {
-                    CategoryId = op.CategoryId,
-                    RoomId = op.RoomId,
-                    RoomName = op.RoomName,
-                    RoomDescription = op.RoomDescription,
-                    Price = op.Price,
-                    Status = op.Status,
-                }).ToList(),
+                var AHotel = await _context.Hotels
+                    .Include(p => p.Photos)
+                    .Include(c => c.Categories)
+                    .Include(r => r.Rooms)
+                    .Include(w => w.WardNavigation)
+                    .Include(d => d.DistrictNavigation)
+                    .Include(pr => pr.ProvinceNavigation)
+                    .Where(op => op.Status == 1 && op.HotelId == hotelId)
+                    .SingleOrDefaultAsync();
 
-                //CatePhotos = gr.Select(op => op.Category.Photos.Select(con => new HotelCatePhotosOutput {
-                //    CategoryId = op.CategoryId,
-                //    PhotoId = con.PhotoId,
-                //    PhotoUrl = con.PhotoUrl,
-                //    CreateDate = con.CreateDate,
-                //    IsMain = con.IsMain,
-                //    Status = con.Status,
-                //}).ToList(),),
-
-            }).ToList();
-
-            var HotelDetail = new HotelCateInfoOutput();
-            _mapper.Map(AHotel, HotelDetail);
-
-            var catephoto = await  _context.Categories
-                .Include(p => p.Photos)
-                .Where(op=>op.HotelId == hotelId)
-                .ToListAsync();
-            _mapper.Map(catephoto, result);
-            var fullCateRoom = new List<HotelCateOutput>();
-            foreach (var item in result)
-            {
-                
-                fullCateRoom.Add(item);
-            }
-            HotelDetail.LsCate = fullCateRoom;
-            return HotelDetail;
-        }
-
-        public async Task<IEnumerable<District>> ListAllDistrict()
-        {
-            var ls = await _context.Districts.ToListAsync();
-            return ls;
-        }
-
-        public async Task<int> userFeedback(int userId, int BookingId, FeedBackInput fb)
-        {
-            if (fb.Rating < 0 || fb.Rating > 10)
-            {
-                return 2;
-            }
-            var newFb = new Feedback();
-            newFb.UserId = userId;
-            newFb.BookingId = BookingId;
-            newFb.Comment = fb.Comment;
-            newFb.Rating = fb.Rating;
-            newFb.Status = true;
-
-            await _context.Feedbacks.AddAsync(newFb);
-            if (await _context.SaveChangesAsync() > 0)
-            {
-                var bok = await _context.Bookings
-                    .Where(op => op.BookingId == BookingId)
-                    .FirstOrDefaultAsync();
-                if (bok.EndDate >= DateTime.Now)
+                var result = lsRoom
+                .GroupBy(item => new
                 {
-                    var hotel = await _context.Hotels
-                        .Include(b => b.Bookings).ThenInclude(f => f.Feedback)
-                        .Where(op => op.HotelId == bok.HotelId)
-                        .FirstOrDefaultAsync();
-                    hotel.TotalRate = (int?)hotel.Bookings.Average(a => a.Feedback.Rating);
-                    if (await _context.SaveChangesAsync() > 0)
-                        return 1;
-                    return 3;
-                }
-            }
-            return 0;
-        }
+                    item.CategoryId,
+                    item.HotelId,
+                    item.Category.CategoryName,
+                    item.Category.CateDescrpittion,
+                    item.Category.Quanity,
+                    item.Category.Status,
+                })
+                .Select(gr => new HotelCateOutput
+                {
+                    CategoryId = (int)gr.Key.CategoryId,
+                    HotelId = gr.Key.HotelId,
+                    CategoryName = gr.Key.CategoryName,
+                    CateDescrpittion = gr.Key.CateDescrpittion,
+                    Quanity = gr.Key.Quanity,
+                    CateStatus = gr.Key.Status,
 
-        public async Task<int> userUpdateFeedback(int userId, int feedbackId, FeedBackInput fb)
-        {
-            if (fb.Rating < 0 || fb.Rating > 10)
-            {
-                return 2;
+                    Rooms = gr.Select(op => new HotelCateRoomOutput
+                    {
+                        CategoryId = op.CategoryId,
+                        RoomId = op.RoomId,
+                        RoomName = op.RoomName,
+                        RoomDescription = op.RoomDescription,
+                        Price = op.Price,
+                        Status = op.Status,
+                    }).ToList(),
+                }).ToList();
+
+                var HotelDetail = new HotelCateInfoOutput();
+                _mapper.Map(AHotel, HotelDetail);
+
+                var catephoto = await _context.Categories
+                    .Include(p => p.Photos)
+                    .Where(op => op.HotelId == hotelId)
+                    .ToListAsync();
+                _mapper.Map(catephoto, result);
+                var fullCateRoom = new List<HotelCateOutput>();
+                _mapper.Map(result, fullCateRoom);
+                HotelDetail.LsCate = fullCateRoom;
+                return HotelDetail;
             }
-            var feedback = await _context.Feedbacks
-                .Where(op => op.FeedbackId == feedbackId).SingleOrDefaultAsync();
-            if (feedback != null)
+
+            public async Task<IEnumerable<District>> ListAllDistrict()
             {
-                feedback.Comment = fb.Comment;
-                feedback.Rating = fb.Rating;
+                var ls = await _context.Districts.ToListAsync();
+                return ls;
+            }
+
+            public async Task<int> userFeedback(int userId, int BookingId, FeedBackInput fb)
+            {
+                if (fb.Rating < 0 || fb.Rating > 10)
+                {
+                    return 2;
+                }
+                var newFb = new Feedback();
+                newFb.UserId = userId;
+                newFb.BookingId = BookingId;
+                newFb.Comment = fb.Comment;
+                newFb.Rating = fb.Rating;
+                newFb.Status = true;
+
+                await _context.Feedbacks.AddAsync(newFb);
                 if (await _context.SaveChangesAsync() > 0)
                 {
-                    var f = await _context.Feedbacks
-                        .Include(b => b.Booking)
-                        .Where(op => op.FeedbackId == feedbackId)
+                    var bok = await _context.Bookings
+                        .Where(op => op.BookingId == BookingId)
                         .FirstOrDefaultAsync();
-
-                    var hotel = await _context.Hotels
-                        .Include(b => b.Bookings).ThenInclude(f => f.Feedback)
-                        .Where(op => op.HotelId == f.Booking.HotelId)
-                        .FirstOrDefaultAsync();
-
-                    hotel.TotalRate = (int?)hotel.Bookings.Average(a => a.Feedback.Rating);
-                    if (await _context.SaveChangesAsync() > 0)
-                        return 1;
-                    return 3;
+                    if (bok.EndDate >= DateTime.Now)
+                    {
+                        var hotel = await _context.Hotels
+                            .Include(b => b.Bookings).ThenInclude(f => f.Feedback)
+                            .Where(op => op.HotelId == bok.HotelId)
+                            .FirstOrDefaultAsync();
+                        hotel.TotalRate = (int?)hotel.Bookings.Average(a => a.Feedback.Rating);
+                        if (await _context.SaveChangesAsync() > 0)
+                            return 1;
+                        return 3;
+                    }
                 }
+                return 0;
             }
-            return 0;
+
+            public async Task<int> userUpdateFeedback(int userId, int feedbackId, FeedBackInput fb)
+            {
+                if (fb.Rating < 0 || fb.Rating > 10)
+                {
+                    return 2;
+                }
+                var feedback = await _context.Feedbacks
+                    .Where(op => op.FeedbackId == feedbackId).SingleOrDefaultAsync();
+                if (feedback != null)
+                {
+                    feedback.Comment = fb.Comment;
+                    feedback.Rating = fb.Rating;
+                    if (await _context.SaveChangesAsync() > 0)
+                    {
+                        var f = await _context.Feedbacks
+                            .Include(b => b.Booking)
+                            .Where(op => op.FeedbackId == feedbackId)
+                            .FirstOrDefaultAsync();
+
+                        var hotel = await _context.Hotels
+                            .Include(b => b.Bookings).ThenInclude(f => f.Feedback)
+                            .Where(op => op.HotelId == f.Booking.HotelId)
+                            .FirstOrDefaultAsync();
+
+                        hotel.TotalRate = (int?)hotel.Bookings.Average(a => a.Feedback.Rating);
+                        if (await _context.SaveChangesAsync() > 0)
+                            return 1;
+                        return 3;
+                    }
+                }
+                return 0;
+            }
+
+            public async Task<int> CreateNoMarkColumCHEAT()
+            {
+                var a = await _context.Hotels.ToListAsync();
+                var b = await _context.Provinces.ToListAsync();
+                var c = await _context.Wards.ToListAsync();
+                var d = await _context.Districts.ToListAsync();
+
+                foreach (var aa in a)
+                {
+                    aa.HotelNameNoMark = _other.RemoveMark(aa.HotelName);
+                }
+                foreach (var bb in b)
+                {
+                    bb.ProvinceNoMark = _other.RemoveMark(bb.Name);
+                }
+                foreach (var cc in c)
+                {
+                    cc.WardNoMark = _other.RemoveMark(cc.Name);
+                }
+                foreach (var dd in d)
+                {
+                    dd.DistrictNoMark = _other.RemoveMark(dd.Name);
+                }
+
+                if (await _context.SaveChangesAsync() > 0)
+                    return 3;
+                return 0;
+            }
         }
     }
-}

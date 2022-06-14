@@ -16,6 +16,7 @@ namespace DIMSApis.Models.Data
 
         public int HotelId { get; set; }
         public string? HotelName { get; set; }
+        public string? HotelNameNoMark { get; set; }
         public string? HotelAddress { get; set; }
         public int? UserId { get; set; }
         public string? Ward { get; set; }

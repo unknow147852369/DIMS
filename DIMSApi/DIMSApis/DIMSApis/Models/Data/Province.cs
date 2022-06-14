@@ -13,6 +13,7 @@ namespace DIMSApis.Models.Data
 
         public string Id { get; set; } = null!;
         public string? Name { get; set; }
+        public string? ProvinceNoMark { get; set; }
         public string? Type { get; set; }
 
         public virtual ICollection<District> Districts { get; set; }

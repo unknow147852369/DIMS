@@ -82,6 +82,12 @@ namespace DIMSApis.Controllers
             return Ok(districts);
         }
 
-
+        [HttpGet("No-Mark_Colum-CHEAT")]
+        public async Task<IActionResult> CreateNoMarkColumCHEAT()
+        {
+            var districts = await _usermanage.CreateNoMarkColumCHEAT();
+            if (districts == null) { return NotFound("not found"); }
+            return Ok(districts);
+        }
     }
 }

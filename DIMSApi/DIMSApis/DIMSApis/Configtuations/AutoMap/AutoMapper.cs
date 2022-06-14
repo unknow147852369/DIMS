@@ -66,7 +66,9 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.ProvinceName, option => option.MapFrom(tbl => tbl.ProvinceNavigation.Name))
                 .ForMember(a => a.DistrictName, option => option.MapFrom(tbl => tbl.DistrictNavigation.Name))
                 ;
-
+            CreateMap<HotelCateOutput, HotelCateInfoOutput>()
+                 .ForMember(a => a.LsCate, option => option.MapFrom(tbl => tbl))
+                ;
             //
             CreateMap<Room, HotelRoomOutput>()
                 .ForMember(a => a.Photos, option => option.MapFrom(tbl => tbl.Category.Photos))
