@@ -221,9 +221,9 @@ namespace DIMSApis.Repositories
                             {
                                 conn.Open();
                                 var jsonResult = new StringBuilder();
-                                cmd.Parameters.AddWithValue("@StartDate", "2022-06-13");
-                                cmd.Parameters.AddWithValue("@EndDate", "2022-06-14");
-                                cmd.Parameters.AddWithValue("@hello", "%" + "ho chi" + "%");
+                                cmd.Parameters.AddWithValue("@StartDate", StartDate);
+                                cmd.Parameters.AddWithValue("@EndDate", EndDate);
+                                cmd.Parameters.AddWithValue("@hello", "%" + Location + "%");
                                 var reader = cmd.ExecuteReader();
                                 if (!reader.HasRows)
                                 {
