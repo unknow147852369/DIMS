@@ -15,6 +15,9 @@ namespace DIMSApis.Interfaces
         Task<string> CreateCategory(NewRoomInput room, int userId);
         Task<string> UpdateCategory(NewRoomInput room, int userId);
 
+        Task<string> UpdateHotelMainPhoto(int photoID,int hotelID);
+        Task<IEnumerable<HotelPhotosOutput>> GetListHotelPhotos(int userId,int hotelId);
+
 
         Task<IEnumerable<HotelOutput>> GetListAllHotel( int userId);
         Task<IEnumerable<HotelRoomOutput>> GetListAllHotelRoom( int hotelId,int userId);

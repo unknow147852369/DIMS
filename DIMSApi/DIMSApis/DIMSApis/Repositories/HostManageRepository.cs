@@ -97,6 +97,30 @@ namespace DIMSApis.Repositories
             return returnHotelRoom;
         }
 
+        public async Task<IEnumerable<HotelPhotosOutput>> GetListHotelPhotos(int userId, int hotelId)
+        {
+            var hotelPhotos = await _context.Photos
+                .Where(op=>op.HotelId==hotelId && op.Status == true).ToListAsync();
+            return _mapper.Map<IEnumerable<HotelPhotosOutput>>(hotelPhotos);
+        }
+
+        public async Task<string> UpdateHotelMainPhoto(int photoID,int hotelID)
+        {
+            var hotelPhotos = await _context.Photos
+               .Where(op => op.HotelId == hotelID && op.Status == true).ToListAsync();
+            if (hotelPhotos.Any()) { return "Not found image"; }
+            foreach (var item in hotelPhotos) {
+                item.IsMain = false;
+                if (item.PhotoId == photoID) {
+                    item.IsMain = true;
+                }
+            }
+           
+            if (await _context.SaveChangesAsync() > 0)
+                return "1";
+            return "3";
+        }
+
         public Task<string> UpdateCategory(NewRoomInput room, int userId)
         {
             throw new NotImplementedException();
@@ -116,6 +140,8 @@ namespace DIMSApis.Repositories
             }
             return "0";
         }
+
+
 
         public Task<string> UpdateRoom(NewRoomInput room, int userId)
         {

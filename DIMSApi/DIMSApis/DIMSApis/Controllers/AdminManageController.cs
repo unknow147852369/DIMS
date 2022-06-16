@@ -9,6 +9,7 @@ using DIMSApis.Models.Data;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using DIMSApis.Interfaces;
+using DIMSApis.Models.Input;
 
 namespace DIMSApis.Controllers
 {
@@ -24,7 +25,7 @@ namespace DIMSApis.Controllers
              _admin = admin;
         }
 
-        [HttpPost("Admin_Acecpt_Host")]
+        [HttpPost("Admin-Acecpt-Host")]
         public async Task<IActionResult> AcecptHost(int userId)
         {
             int check = await _admin.AcpectHost(userId);
@@ -42,7 +43,7 @@ namespace DIMSApis.Controllers
             }
         }
 
-        [HttpPost("Admin_Acecpt_Hotel")]
+        [HttpPost("Admin-Acecpt-Hotel")]
         public async Task<IActionResult> AcecptHotel(int HotelId)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -74,6 +75,23 @@ namespace DIMSApis.Controllers
             if (Host.Count() == 0) { return NotFound("No Accpect"); }
             return Ok(Host);
         }
-
+        [HttpPost("Admin-Create-User")]
+        public async Task<IActionResult> AdminCreateUser(AdminRegisterInput userinput)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _admin.AdminCreateUser(userinput);
+            if (check == "1")
+            {
+                return Ok("Create Success");
+            }
+            else if (check == "3")
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest("Create failed");
+            }
+        }
     }
 }

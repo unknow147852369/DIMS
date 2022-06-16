@@ -101,6 +101,33 @@ namespace DIMSApis.Controllers
             return Ok(HotelRoom);
         }
 
+        [HttpGet("List-All-Photo")]
+        public async Task<IActionResult> GetListHotelPhotos(int hotelId)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var HotelRoom = await _host.GetListHotelPhotos(hotelId, userId);
+            if(HotelRoom == null) { return BadRequest("Not Found"); }
+            return Ok(HotelRoom);
+        }
+
+        [HttpPut("Update-Hotel-MainPhoto")]
+        public async Task<IActionResult> UpdateHotelMainPhoto(int hotelId,int photoId)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _host.UpdateHotelMainPhoto(photoId, hotelId);
+            if (check.Equals("1"))
+            {
+                return Ok("Update Success");
+            }
+            else if (check.Equals("3"))
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest(check);
+            }
+        }
 
     }
 }
