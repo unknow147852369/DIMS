@@ -4,6 +4,8 @@ using DIMSApis.Models.Data;
 using DIMSApis.Models.Input;
 using DIMSApis.Models.Output;
 using Microsoft.EntityFrameworkCore;
+using System.Data.SqlClient;
+using System.Text;
 
 namespace DIMSApis.Repositories
 {
@@ -193,7 +195,80 @@ namespace DIMSApis.Repositories
             }
             return null;
         }
+        public async Task<IEnumerable<HotelOutputNews>> GetListSearchHotelNews(string Location, string LocationName, DateTime ArrivalDate, int TotalNight)
+        {
+            var terms = _other.RemoveMark(LocationName);
 
+            var searchhotel = new List<HotelOutputNews>();
+            DateTime StartDate = ArrivalDate;
+            DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight);
+            if (TotalNight > 0)
+            {
+                if (Location.ToLower().Trim() == "areas")
+                {
+                    try
+                    {
+                        SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+
+                        builder.DataSource = "fptdims.database.windows.net";
+                        builder.UserID = "handez";
+                        builder.Password = "tuananh@123";
+                        builder.InitialCatalog = "fptdims";
+                        var queryWithForJson = "Select DISTINCT h.* , MIN(r.Price) as Price from Hotels h, Rooms r , Bookings b , BookingDetails bd , Provinces p , Districts d where h.HotelID = r.HotelID and r.RoomID not in (Select r.RoomID  from Bookings b , BookingDetails bd , Rooms r, Hotels h where  ((b.StartDate < @StartDate and b.EndDate >  @EndDate)or ( b.StartDate BETWEEN @StartDate and @EndDate or b.EndDate BETWEEN @StartDate and @EndDate))and b.BookingID = bd.BookingID and bd.RoomID = r.RoomID and r.HotelID = h.HotelID )and h.Province in (select p.id from Provinces p where dbo.ufn_removeMark(p.[Name]) LIKE @hello ) GROUP BY  h.HotelName , h.Province , h.HotelID, h.HotelAddress,h.TotalRate , h.UserID , h.Ward ,h.District , h.CreateDate , h.Status , h.HotelNameNoMark ";
+                        using (var conn = new SqlConnection(builder.ConnectionString))
+                        {
+                            using (var cmd = new SqlCommand(queryWithForJson, conn))
+                            {
+                                conn.Open();
+                                var jsonResult = new StringBuilder();
+                                cmd.Parameters.AddWithValue("@StartDate", "2022-06-13");
+                                cmd.Parameters.AddWithValue("@EndDate", "2022-06-14");
+                                cmd.Parameters.AddWithValue("@hello", "%" + "ho chi" + "%");
+                                var reader = cmd.ExecuteReader();
+                                if (!reader.HasRows)
+                                {
+                                    jsonResult.Append("[]");
+                                }
+                                else
+                                {
+                                    while (reader.Read())
+                                    {
+                                        var HotelID = reader.GetInt32(0);
+                                        var HotelName = reader.GetString(1);
+                                        
+                                        var HotelAddress = reader.GetString(3);
+                                        var UserID = reader.GetInt32(4);
+                                        var District = reader.GetString(6);
+                                        var Province = reader.GetString(7);
+                                        var CreateDate = reader.GetDateTime(8);
+                                        var Status = reader.GetInt32(9);
+                                        var TotalRate = reader.GetInt32(10);
+                                        var Price = reader.GetDouble(11);
+                                        HotelOutputNews hotel = new HotelOutputNews();
+                                        hotel.HotelId = HotelID;
+                                        hotel.HotelAddress = HotelAddress;
+                                        hotel.HotelName = HotelName;
+                                        hotel.Province = Province;
+                                        hotel.District = District;
+                                        hotel.CreateDate = CreateDate;
+                                        hotel.SmallPrice = Price;
+                                        hotel.Status = Status;
+                                        hotel.TotalRate = TotalRate;
+                                        hotel.UserId = UserID;
+                                        searchhotel.Add(hotel);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (SqlException e)
+                    {
+
+                    }
+                   }
+            }
+            return (IEnumerable<HotelOutputNews>)searchhotel;
+        }
         public async Task<IEnumerable<HotelOutput>> GetListSearchHotel(string Location, string LocationName, DateTime ArrivalDate, int TotalNight)
         {
             var terms = _other.RemoveMark(LocationName);
@@ -202,7 +277,7 @@ namespace DIMSApis.Repositories
             DateTime StartDate = ArrivalDate;
             DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight);
             if (TotalNight > 0)
-            {
+            { 
                 if (Location.ToLower().Trim() == "areas")
                 {
                     var lsHotel = await _context.Hotels
