@@ -29,7 +29,7 @@ namespace DIMSApis.Controllers
         [HttpGet("Search-Hotel")]
         public async Task<IActionResult> GetListSearchHotel(string Location, string LocationName, DateTime ArrivalDate, int TotalNight)
         {
-            var Hotel = await _usermanage.GetListSearchHotelNews(Location,LocationName,ArrivalDate,TotalNight);
+            var Hotel = await _usermanage.GetListSearchHotel(Location,LocationName,ArrivalDate,TotalNight);
             if (Hotel.Count() == 0) { return NotFound("out of room");}
             Console.Write(Hotel);
             return Ok(Hotel);
