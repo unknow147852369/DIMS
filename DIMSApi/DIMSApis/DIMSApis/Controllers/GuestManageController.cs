@@ -31,6 +31,7 @@ namespace DIMSApis.Controllers
         {
             var Hotel = await _usermanage.GetListSearchHotel(Location,LocationName,ArrivalDate,TotalNight);
             if (Hotel.Count() == 0) { return NotFound("out of room");}
+            Console.Write(Hotel);
             return Ok(Hotel);
         }
 
