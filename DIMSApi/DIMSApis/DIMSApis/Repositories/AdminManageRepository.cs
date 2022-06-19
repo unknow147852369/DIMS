@@ -9,7 +9,7 @@ namespace DIMSApis.Repositories
 {
     public class AdminManageRepository : IAdminManage
     {
-        private readonly DIMSContext _context;
+        private readonly fptdimsContext _context;
         private readonly IMapper _mapper;
         private readonly IOtherService _otherservice;
         private readonly IMail _mail;
@@ -17,7 +17,7 @@ namespace DIMSApis.Repositories
         private string purpose2 = "CHANGE PASS";
         private string role1 = "HOST";
 
-        public AdminManageRepository(IMail mail, IOtherService otherservice, DIMSContext context, IMapper mapper)
+        public AdminManageRepository(IMail mail, IOtherService otherservice, fptdimsContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
@@ -44,7 +44,7 @@ namespace DIMSApis.Repositories
             var hotel = await _context.Hotels.Where(u => u.HotelId == hotelId ).FirstOrDefaultAsync();
             if (hotel != null)
             {
-                hotel.Status = 1;
+                hotel.Status = true;
                 if (await _context.SaveChangesAsync() > 0)
                     return 1;
                 return 3;

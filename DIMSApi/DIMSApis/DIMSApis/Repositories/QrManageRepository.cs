@@ -8,11 +8,11 @@ namespace DIMSApis.Repositories
 {
     public class QrManageRepository : IQrManage
     {
-        private readonly DIMSContext _context;
+        private readonly fptdimsContext _context;
         private readonly IGenerateQr _generateqr;
         private readonly IMapper _mapper;
 
-        public QrManageRepository(DIMSContext context, IMapper mapper, IGenerateQr generateqr)
+        public QrManageRepository(fptdimsContext context, IMapper mapper, IGenerateQr generateqr)
         {
             _context = context;
             _mapper = mapper;
@@ -91,7 +91,7 @@ namespace DIMSApis.Repositories
                           .Include(b => b.Booking)
                           .Include(r => r.Room)
                           .Include(q => q.Qr)
-                          .Where(op => op.Status == 1 && op.Booking.HotelId == hotel && op.Room.RoomName.Equals(roomName))
+                          .Where(op => op.Status == true && op.Booking.HotelId == hotel && op.Room.RoomName.Equals(roomName))
                           .Where(op => ((op.StartDate < today && op.EndDate > today)))
                           .FirstOrDefaultAsync();
 

@@ -26,7 +26,7 @@ namespace DIMSApis.Models.Data
         public double? TotalPrice { get; set; }
         public DateTime? CreateDate { get; set; }
         public string? Condition { get; set; }
-        public int? Status { get; set; }
+        public bool? Status { get; set; }
 
         public virtual Hotel? Hotel { get; set; }
         public virtual User? User { get; set; }

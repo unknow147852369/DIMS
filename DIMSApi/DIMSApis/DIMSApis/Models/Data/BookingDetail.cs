@@ -16,7 +16,7 @@ namespace DIMSApis.Models.Data
         public double? Price { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public int? Status { get; set; }
+        public bool? Status { get; set; }
 
         public virtual Booking? Booking { get; set; }
         public virtual Room? Room { get; set; }

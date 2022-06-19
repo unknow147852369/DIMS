@@ -9,14 +9,14 @@ namespace DIMSApis.Repositories
 {
     public class AuthRepository : IAuth
     {
-        private readonly DIMSContext _context;
+        private readonly fptdimsContext _context;
         private readonly IOtherService _otherservice;
         private readonly IMail _mail;
         private readonly IMapper _mapper;
         private string purpose1 = "ACTIVE ACCOUNT";
         private string purpose2 = "CHANGE PASS";
 
-        public  AuthRepository(DIMSContext context, IOtherService otherservice, IMail mail, IMapper mapper)
+        public  AuthRepository(fptdimsContext context, IOtherService otherservice, IMail mail, IMapper mapper)
         {
             _context = context;
             _otherservice = otherservice;

@@ -69,7 +69,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddDbContext<DIMSContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("concac")));
+builder.Services.AddDbContext<fptdimsContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("concac")));
 
 
 builder.Services.AddScoped<IAuth, AuthRepository>();

@@ -65,6 +65,7 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.WardName, option => option.MapFrom(tbl => tbl.WardNavigation.Name))
                 .ForMember(a => a.ProvinceName, option => option.MapFrom(tbl => tbl.ProvinceNavigation.Name))
                 .ForMember(a => a.DistrictName, option => option.MapFrom(tbl => tbl.DistrictNavigation.Name))
+                .ForMember(a => a.HotelTypeName, option => option.MapFrom(tbl => tbl.HotelType.HotelTypeName))
                 ;
             CreateMap<HotelCateOutput, HotelCateInfoOutput>()
                  .ForMember(a => a.LsCate, option => option.MapFrom(tbl => tbl))
@@ -82,6 +83,7 @@ namespace DIMSApis.Configtuations.AutoMap
             //
             CreateMap<Hotel, HotelOutput>()
                 .ForMember(a => a.TotalRoom, option => option.MapFrom(tbl => tbl.Rooms.Count))
+                .ForMember(a => a.HotelTypeName, option => option.MapFrom(tbl => tbl.HotelType.HotelTypeName))
                 .ForMember(a => a.WardName, option => option.MapFrom(tbl => tbl.WardNavigation.Name))
                 .ForMember(a => a.SmallPrice, option => option.MapFrom(tbl => tbl.Rooms.Min(r => r.Price)))
                 .ForMember(a => a.ProvinceName, option => option.MapFrom(tbl => tbl.ProvinceNavigation.Name))

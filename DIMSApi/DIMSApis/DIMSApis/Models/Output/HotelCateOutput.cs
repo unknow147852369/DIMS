@@ -7,7 +7,7 @@
         public string? CategoryName { get; set; }
         public string? CateDescrpittion { get; set; }
         public int? Quanity { get; set; }
-        public int? CateStatus { get; set; }
+        public bool? CateStatus { get; set; }
         public virtual ICollection<HotelCatePhotosOutput>? CatePhotos { get; set; }
         public virtual ICollection<HotelCateRoomOutput>? Rooms { get; set; }
     }

@@ -34,7 +34,6 @@ namespace DIMSApis.Controllers
             return Ok(Hotel);
         }
 
-
         [HttpGet("Avaiable-Hotel-Cate")]
         public async Task<IActionResult> GetAllHotelCate(int? hotelId, DateTime ArrivalDate, int TotalNight, int peopleQuanity)
         {

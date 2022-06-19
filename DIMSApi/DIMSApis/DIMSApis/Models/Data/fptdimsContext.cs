@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace DIMSApis.Models.Data
 {
-    public partial class DIMSContext : DbContext
+    public partial class fptdimsContext : DbContext
     {
-        public DIMSContext()
+        public fptdimsContext()
         {
         }
 
-        public DIMSContext(DbContextOptions<DIMSContext> options)
+        public fptdimsContext(DbContextOptions<fptdimsContext> options)
             : base(options)
         {
         }
@@ -20,8 +20,10 @@ namespace DIMSApis.Models.Data
         public virtual DbSet<BookingDetail> BookingDetails { get; set; } = null!;
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<District> Districts { get; set; } = null!;
+        public virtual DbSet<Facility> Facilities { get; set; } = null!;
         public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
         public virtual DbSet<Hotel> Hotels { get; set; } = null!;
+        public virtual DbSet<HotelType> HotelTypes { get; set; } = null!;
         public virtual DbSet<InboundUser> InboundUsers { get; set; } = null!;
         public virtual DbSet<Otp> Otps { get; set; } = null!;
         public virtual DbSet<Photo> Photos { get; set; } = null!;
@@ -145,6 +147,19 @@ namespace DIMSApis.Models.Data
                     .HasConstraintName("FK_level2s_level1s");
             });
 
+            modelBuilder.Entity<Facility>(entity =>
+            {
+                entity.Property(e => e.FacilityId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("FacilityID");
+
+                entity.Property(e => e.FacilityImage).IsUnicode(false);
+
+                entity.Property(e => e.FacilityName).HasMaxLength(100);
+
+                entity.Property(e => e.Status).HasColumnName("status");
+            });
+
             modelBuilder.Entity<Feedback>(entity =>
             {
                 entity.ToTable("Feedback");
@@ -185,6 +200,8 @@ namespace DIMSApis.Models.Data
 
                 entity.Property(e => e.HotelNameNoMark).IsUnicode(false);
 
+                entity.Property(e => e.HotelTypeId).HasColumnName("HotelTypeID");
+
                 entity.Property(e => e.Province)
                     .HasMaxLength(50)
                     .IsUnicode(false);
@@ -200,6 +217,11 @@ namespace DIMSApis.Models.Data
                     .HasForeignKey(d => d.District)
                     .HasConstraintName("FK_Hotels_Districts1");
 
+                entity.HasOne(d => d.HotelType)
+                    .WithMany(p => p.Hotels)
+                    .HasForeignKey(d => d.HotelTypeId)
+                    .HasConstraintName("FK_Hotels_HotelTypes");
+
                 entity.HasOne(d => d.ProvinceNavigation)
                     .WithMany(p => p.Hotels)
                     .HasForeignKey(d => d.Province)
@@ -214,6 +236,17 @@ namespace DIMSApis.Models.Data
                     .WithMany(p => p.Hotels)
                     .HasForeignKey(d => d.Ward)
                     .HasConstraintName("FK_Hotels_Wards1");
+            });
+
+            modelBuilder.Entity<HotelType>(entity =>
+            {
+                entity.Property(e => e.HotelTypeId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("HotelTypeID");
+
+                entity.Property(e => e.HotelTypeName).HasMaxLength(50);
+
+                entity.Property(e => e.Status).HasColumnName("status");
             });
 
             modelBuilder.Entity<InboundUser>(entity =>
@@ -285,9 +318,7 @@ namespace DIMSApis.Models.Data
 
                 entity.Property(e => e.Name).HasColumnName("name");
 
-                entity.Property(e => e.ProvinceNoMark)
-                    .IsUnicode(false)
-                    .HasColumnName("provinceNoMark");
+                entity.Property(e => e.ProvinceNoMark).HasColumnName("provinceNoMark");
 
                 entity.Property(e => e.Type).HasColumnName("type");
             });

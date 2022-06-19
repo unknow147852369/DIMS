@@ -19,9 +19,9 @@ namespace DIMSApis.Controllers
     {
         private readonly IAuth _auth;
         private readonly ITokenService _tokenService;
-        private readonly DIMSContext _context;
+        private readonly fptdimsContext _context;
 
-        public AuthController(IAuth auth, ITokenService tokenService , DIMSContext context)
+        public AuthController(IAuth auth, ITokenService tokenService , fptdimsContext context)
         {
             _auth = auth;
             _tokenService = tokenService;

@@ -45,7 +45,7 @@ namespace DIMSApis.Controllers
             }
             else
             {
-                return BadRequest("Error");
+                return BadRequest(check);
             }
         }
         [HttpGet("user-Booking-list")]

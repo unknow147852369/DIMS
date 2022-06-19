@@ -16,7 +16,7 @@ namespace DIMSApis.Models.Data
         public string? CategoryName { get; set; }
         public string? CateDescrpittion { get; set; }
         public int? Quanity { get; set; }
-        public int? Status { get; set; }
+        public bool? Status { get; set; }
 
         public virtual Hotel? Hotel { get; set; }
         public virtual ICollection<Photo> Photos { get; set; }

@@ -9,10 +9,10 @@ namespace DIMSApis.Repositories
 {
     public class HostManageRepository : IHostManage
     {
-        private readonly DIMSContext _context;
+        private readonly fptdimsContext _context;
         private readonly IMapper _mapper;
 
-        public HostManageRepository(DIMSContext context, IMapper mapper)
+        public HostManageRepository(fptdimsContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
