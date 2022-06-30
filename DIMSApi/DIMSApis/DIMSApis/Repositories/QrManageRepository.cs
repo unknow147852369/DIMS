@@ -2,6 +2,7 @@
 using DIMSApis.Interfaces;
 using DIMSApis.Models.Data;
 using DIMSApis.Models.Input;
+using DIMSApis.Models.Output;
 using Microsoft.EntityFrameworkCore;
 
 namespace DIMSApis.Repositories
@@ -83,10 +84,9 @@ namespace DIMSApis.Repositories
             return content;
         }
 
-        public async Task<string> getStringToCheckRoom(int hotel, string roomName)
+        public async Task<QrOutput> getStringToCheckRoom(int hotel, string roomName)
         {
             var today = DateTime.Now.Date;
-            var check = "empty";
             var lsHotelRoom = await _context.BookingDetails
                           .Include(b => b.Booking)
                           .Include(r => r.Room)
@@ -97,15 +97,14 @@ namespace DIMSApis.Repositories
 
             if (lsHotelRoom != null)
             {
-                check = lsHotelRoom.Qr.QrContent;
+                return _mapper.Map<QrOutput>(lsHotelRoom.Qr);
             }
 
-            return check;
+            return null;
         }
 
         public async Task<Booking> vertifyMainQrCheckIn(VertifyMainQrInput qrIn)
         {
-            var condition = "";
             string BookingId, HotelId;
             _generateqr.GetMainQrDetail(qrIn, out BookingId,out HotelId);
             if(BookingId == "" || HotelId == "")
@@ -125,6 +124,11 @@ namespace DIMSApis.Repositories
                 qrvertify.Status = true;
                 qrvertify.CheckIn = DateTime.Now;
             }
+            var qrs = await _context.Qrs
+                .Where(op => op.BookingDetail.Booking.BookingId.Equals(int.Parse(BookingId)))
+                .ToListAsync();
+            qrs.ForEach(op => op.Status = true);
+
             if (await _context.SaveChangesAsync() > 0)
             { 
                 var bookinginfo = await _context.Bookings
@@ -147,7 +151,7 @@ namespace DIMSApis.Repositories
                 .Include(b => b.BookingDetail).ThenInclude(a => a.Booking)
                 .Where(c => c.BookingDetail.BookingId.Equals(int.Parse(BookingId))
                 && c.BookingDetail.RoomId.Equals(int.Parse(RoomId))
-                && c.Status == 1)
+                && c.Status == true)
                 .FirstOrDefaultAsync();
 
             if (qrvertify != null)

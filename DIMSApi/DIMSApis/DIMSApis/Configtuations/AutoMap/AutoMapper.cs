@@ -131,7 +131,7 @@ namespace DIMSApis.Configtuations.AutoMap
             //
             CreateMap<Qr, QrOutput>()
                 ;
-
+            //
             CreateMap<BookingDetail, QrInput>()
                 .ForMember(a => a.UserId, option => option.MapFrom(tbl => tbl.Booking.UserId))
                 .ForMember(a => a.RoomName, option => option.MapFrom(tbl => tbl.Room.RoomName))

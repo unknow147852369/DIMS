@@ -72,7 +72,7 @@ namespace DIMSApis.Repositories
                 }
                 //
                 var paymentstatus = condition4;
-                //_stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
+                //var paymentstatus =_stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
                 if (paymentstatus.Contains(condition4))
                 {
                     if (ppi.Condition.ToLower().Trim().Contains("online"))
