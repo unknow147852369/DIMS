@@ -194,7 +194,7 @@ namespace DIMSApis.Repositories
                 if (bok.Voucher != null)
                 {
                     sale = ((float)(total * bok.TotalNight * bok.Voucher.VoucherSale / 100));
-                    bok.VoucherDiscoundPrice = sale;
+                    bok.VoucherDiscoundPrice = Math.Round(sale,2);
                     bok.Voucher.Quantitylimited = bok.Voucher.Quantitylimited - 1;
                 }
             }
@@ -202,8 +202,8 @@ namespace DIMSApis.Repositories
             {
                 bok.VoucherDiscoundPrice = 0;
             }
-            bok.SubTotal = total * bok.TotalNight;
-            bok.TotalPrice = bok.SubTotal - bok.VoucherDiscoundPrice;
+            bok.SubTotal = Math.Round((double)(total * bok.TotalNight), 2);
+            bok.TotalPrice = Math.Round((double)(bok.SubTotal - bok.VoucherDiscoundPrice), 2);
 
             return bok;
         }
