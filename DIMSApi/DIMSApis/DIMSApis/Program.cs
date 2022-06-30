@@ -3,11 +3,13 @@ using DIMSApis.Models.Data;
 using DIMSApis.Repositories;
 using DIMSApis.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using DIMSApis.Models.Helper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Stripe;
 using System.Configuration;
+using System.Net;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -97,6 +99,7 @@ var app = builder.Build();
 //{
 
 //}
+
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();

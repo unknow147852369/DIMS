@@ -15,6 +15,7 @@ namespace DIMSApis.Models.Data
         public string? VoucherName { get; set; }
         public string? VoucherCode { get; set; }
         public int? VoucherSale { get; set; }
+        public int? Quantitylimited { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public bool? Status { get; set; }

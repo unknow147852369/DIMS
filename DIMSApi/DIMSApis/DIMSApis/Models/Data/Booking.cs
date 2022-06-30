@@ -8,6 +8,7 @@ namespace DIMSApis.Models.Data
         public Booking()
         {
             BookingDetails = new HashSet<BookingDetail>();
+            InboundUsers = new HashSet<InboundUser>();
         }
 
         public int BookingId { get; set; }
@@ -32,6 +33,8 @@ namespace DIMSApis.Models.Data
         public virtual User? User { get; set; }
         public virtual Voucher? Voucher { get; set; }
         public virtual Feedback? Feedback { get; set; }
+        public virtual QrCheckUp? QrCheckUp { get; set; }
         public virtual ICollection<BookingDetail> BookingDetails { get; set; }
+        public virtual ICollection<InboundUser> InboundUsers { get; set; }
     }
 }

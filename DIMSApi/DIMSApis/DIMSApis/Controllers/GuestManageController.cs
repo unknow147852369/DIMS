@@ -11,6 +11,7 @@ using DIMSApis.Interfaces;
 using System.Security.Claims;
 using AutoMapper;
 using DIMSApis.Models.Output;
+using DIMSApis.Models.Helper;
 
 namespace DIMSApis.Controllers
 {
@@ -30,7 +31,8 @@ namespace DIMSApis.Controllers
         public async Task<IActionResult> GetListSearchHotel(string Location, string LocationName, DateTime ArrivalDate, int TotalNight)
         {
             var Hotel = await _usermanage.GetListSearchHotel(Location,LocationName,ArrivalDate,TotalNight);
-            if (Hotel.Count() == 0) { return NotFound("out of room");}
+            if (Hotel == null) { return BadRequest(new DataRespone { Message = "Some field wrong" }); }
+            else if (Hotel.Count() == 0) { return NotFound(new DataRespone { Message = "out of room" }); }
             return Ok(Hotel);
         }
 
@@ -38,7 +40,7 @@ namespace DIMSApis.Controllers
         public async Task<IActionResult> GetAllHotelCate(int? hotelId, DateTime ArrivalDate, int TotalNight, int peopleQuanity)
         {
             var HotelRoom = await _usermanage.GetListAvaiableHotelCate(hotelId, ArrivalDate, TotalNight, peopleQuanity);
-            if (HotelRoom == null) { return NotFound("Wrong fill"); }
+            if (HotelRoom == null) { return BadRequest(new DataRespone { Message = "Some field wrong" }); }
             return Ok(HotelRoom);
         }
 
@@ -46,7 +48,7 @@ namespace DIMSApis.Controllers
         public async Task<IActionResult> SearchProvince(string ProvinceName)
         {
             var provinces = await _usermanage.SearchProvince(ProvinceName);
-            if (provinces == null) { return NotFound("not found"); }
+            if (provinces == null || provinces.Count() == 0) { return NotFound(new DataRespone { Message = "not found" }); }
             return Ok(provinces);
         }
 
@@ -54,7 +56,7 @@ namespace DIMSApis.Controllers
         public async Task<IActionResult> SearchWard(string WardName)
         {
             var wards = await _usermanage.SearchWard(WardName);
-            if (wards == null) { return NotFound("not found"); }
+            if (wards == null || wards.Count() == 0) { return NotFound(new DataRespone { Message = "not found" }); }
             return Ok(wards);
         }
 
@@ -62,7 +64,7 @@ namespace DIMSApis.Controllers
         public async Task<IActionResult> SearchDistrict(string DistrictName)
         {
             var districts = await _usermanage.SearchDistrict(DistrictName);
-            if (districts == null) { return NotFound("not found"); }
+            if (districts == null || districts.Count() == 0) { return NotFound(new DataRespone { Message = "not found" }); }
             return Ok(districts);
         }
 
@@ -76,9 +78,9 @@ namespace DIMSApis.Controllers
         [HttpGet("Search-Loaction")]
         public async Task<IActionResult> SearchLocation(string LocationName)
         {
-            var districts = await _usermanage.SearchLocation(LocationName);
-            if (districts == null) { return NotFound("not found"); }
-            return Ok(districts);
+            var search = await _usermanage.SearchLocation(LocationName);
+            if (search.Areas.Count() == 0 && search.Hotels.Count() == 0) { return NotFound(new DataRespone { Message = "not found" }); }
+            return Ok(search);
         }
 
         [HttpGet("No-Mark_Colum-CHEAT")]

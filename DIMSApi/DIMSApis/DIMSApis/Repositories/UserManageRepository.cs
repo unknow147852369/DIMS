@@ -64,18 +64,15 @@ namespace DIMSApis.Repositories
             }
             if (await _context.SaveChangesAsync() > 0)
                 return "1";
-            return "0";
+            return "2";
         }
 
         public async Task<int> GetActiveCodeMailSend(int userId)
         {
-            if (userId == null)
-                return 0;
             var otpCode = await _context.Otps.Include(u => u.User)
                 .Where(a => a.Purpose.Equals(purpose1) && userId == a.UserId).SingleOrDefaultAsync();
-            if (otpCode == null)
-                return 0;
             otpCode.CodeOtp = _other.RandomString(6);
+
             if (await _context.SaveChangesAsync() > 0)
             {
                 try
@@ -153,40 +150,24 @@ namespace DIMSApis.Repositories
             if (terms != null)
             {
                 var returnLocation = new SearchLocationOutput();
-                var lsPr = await _context.Provinces.ToListAsync();
-                var lsdis = await _context.Districts.ToListAsync();
+                var lsPr = await _context.Provinces
+                    .Where(p => p.ProvinceNoMark.Contains(terms))
+                    .ToListAsync();
+                var lsdis = await _context.Districts
+                    .Where(p => p.DistrictNoMark.Contains(terms))
+                    .ToListAsync();
                 var lsProvince = new List<SearchLocationAreaOutput>();
-                foreach (var item in lsPr)
-                {
-                    if (_other.RemoveMark(item.Name).Contains(terms))
-                    {
-                        lsProvince.Add(_mapper.Map<SearchLocationAreaOutput>(item));
-                    }
-                }
-                foreach (var item in lsdis)
-                {
-                    if (_other.RemoveMark(item.Name).Contains(terms))
-                    {
-                        lsProvince.Add(
-                            new SearchLocationAreaOutput
-                            {
-                                Id = item.Id,
-                                Name = item.Name,
-                                Type = item.Type,
-                            });
-                    }
-                }
-                var lsHo = await _context.Hotels.Where(op => op.Status == true).ToListAsync();
+                lsProvince.AddRange( _mapper.Map<IEnumerable<SearchLocationAreaOutput>>(lsdis));
+                lsProvince.AddRange( _mapper.Map<IEnumerable<SearchLocationAreaOutput>>(lsPr));
+
+                var lsHo = await _context.Hotels
+                    .Where(op => op.Status == true 
+                    && op.DistrictNavigation.DistrictNoMark.Contains(terms)
+                    || op.ProvinceNavigation.ProvinceNoMark.Contains(terms))
+                    .ToListAsync();
                 var lsHotel = new List<SearchLocationHotelOutput>();
-                foreach (var item in lsHo)
-                {
-                    if (_other.RemoveMark(item.HotelName).Contains(terms)
-                        || _other.RemoveMark(item.DistrictNavigation.Name).Contains(terms)
-                        || _other.RemoveMark(item.ProvinceNavigation.Name).Contains(terms))
-                    {
-                        lsHotel.Add(_mapper.Map<SearchLocationHotelOutput>(item));
-                    }
-                }
+                lsHotel.AddRange( _mapper.Map<IEnumerable<SearchLocationHotelOutput>>(lsHo));
+
                 returnLocation.Areas = lsProvince;
                 returnLocation.Hotels = lsHotel;
                 return returnLocation;
@@ -199,7 +180,7 @@ namespace DIMSApis.Repositories
             DateTime StartDate = ArrivalDate;
             DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight);
             var terms = _other.RemoveMark(LocationName);
-
+            if(ArrivalDate.Date < DateTime.Now.Date  || TotalNight <=0 ) { return null; }
             IQueryable<Hotel> hotels = _context.Hotels
                 .Include(p => p.Photos)
                 .Include(h => h.HotelType)
@@ -233,7 +214,7 @@ namespace DIMSApis.Repositories
         {
             DateTime StartDate = ArrivalDate;
             DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight);
-            if (hotelId == null || StartDate == null || EndDate == null || peopleQuanity == null) { return null; }
+            if (ArrivalDate.Date < DateTime.Now.Date || TotalNight <= 0||peopleQuanity<=0) { return null; }
 
             IQueryable<Room> lsRoom = _context.Rooms
                                         .Include(c => c.Category).ThenInclude(b => b.Photos)
@@ -243,6 +224,7 @@ namespace DIMSApis.Repositories
                                                                       || (op.StartDate < EndDate && op.EndDate > EndDate)
                                                                       || (op.StartDate < StartDate && op.EndDate > StartDate))
                                                                     ));
+            if(lsRoom == null) { return null; }
             IQueryable<Photo> catephoto =  _context.Photos
                 .Where(op => op.HotelId == hotelId);
 
@@ -292,7 +274,7 @@ namespace DIMSApis.Repositories
                     RoomId = op.RoomId,
                     RoomName = op.RoomName,
                     RoomDescription = op.RoomDescription,
-                    Price = op.Price,
+                    //Price = op.Price,
                     Status = op.Status,
                 }).Where(a => a.CategoryId == (int)gr.Key.CategoryId ).ToList(),
             }).ToList();
@@ -320,7 +302,6 @@ namespace DIMSApis.Repositories
                 return 2;
             }
             var newFb = new Feedback();
-            newFb.UserId = userId;
             newFb.BookingId = BookingId;
             newFb.Comment = fb.Comment;
             newFb.Rating = fb.Rating;
@@ -383,9 +364,6 @@ namespace DIMSApis.Repositories
         public async Task<int> CreateNoMarkColumCHEAT()
         {
             var a = await _context.Hotels.ToListAsync();
-            var b = await _context.Provinces.ToListAsync();
-            var c = await _context.Wards.ToListAsync();
-            var d = await _context.Districts.ToListAsync();
 
             foreach (var aa in a)
             {

@@ -13,6 +13,7 @@ using DIMSApis.Models.Output;
 using DIMSApis.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
+using DIMSApis.Models.Helper;
 
 namespace DIMSApis.Controllers
 {
@@ -37,15 +38,15 @@ namespace DIMSApis.Controllers
             string check = await _book.PaymentProcessing(ppi , userId);
             if (check.Equals("1"))
             {
-                return Ok("Paid Success");
+                return Ok(new DataRespone { Message = "Paid Success" });
             }
             else if (check.Equals("3"))
             {
-                return NoContent();
+                return Ok(new DataRespone { Message = "" });
             }
             else
             {
-                return BadRequest(check);
+                return BadRequest(new DataRespone { Message = check });
             }
         }
         [HttpGet("user-Booking-list")]
@@ -62,7 +63,7 @@ namespace DIMSApis.Controllers
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var voucher = await _book.VertifyVouvher(hotelId, VoucherCode);
-            if(voucher == null) { return BadRequest("Wrong code"); }
+            if(voucher == null) { return BadRequest(new DataRespone { Message = "Wrong code" }); }
             return Ok(voucher);
         }
     }

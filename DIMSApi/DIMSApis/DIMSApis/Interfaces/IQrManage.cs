@@ -8,6 +8,7 @@ namespace DIMSApis.Interfaces
     {
         Task<IEnumerable<Qr>> getListQrString(int bookingID);
         Task<string> vertifyQrContent(VertifyQrInput qrIn);
+        Task<Booking> vertifyMainQrCheckIn(VertifyMainQrInput qrIn);
         Task<string> getStringToCheckRoom(int hotel , string roomName );
         Task<string> checkIn(checkInInput checkIn);
         Task<string> CheckOut(CheckOutInput checkOut);

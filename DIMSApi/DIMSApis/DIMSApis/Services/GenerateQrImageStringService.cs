@@ -1,4 +1,5 @@
 ﻿using DIMSApis.Interfaces;
+using DIMSApis.Models.Data;
 using DIMSApis.Models.Input;
 using IronBarCode;
 using Microsoft.IdentityModel.Tokens;
@@ -19,21 +20,21 @@ namespace DIMSApis.Services
             _otherService = otherService;
         }
 
-        public string GenerateQrString(QrInput qri, string imagePath, string imageName)
+        public void GenerateQr(QrInput qri, string imagePath, string imageName)
         {
             var fullPath = imagePath + imageName;
             var conntent = createQrContent(qri);
             var MyQRWithLogo = QRCodeWriter.CreateQrCodeWithLogo(conntent, @"Material/images/logo.png", 500);
             MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.DarkGreen).SaveAsPng($@"{fullPath}");
 
-            byte[] vs = MyQRWithLogo.ToPngBinaryData();
-            //
-            string base64ImageRepresentation = Convert.ToBase64String(vs);
-            if (base64ImageRepresentation != null)
-            {
-                return base64ImageRepresentation;
-            }
-            return null;
+            //byte[] vs = MyQRWithLogo.ToPngBinaryData();
+            
+            //string base64ImageRepresentation = Convert.ToBase64String(vs);
+            //if (base64ImageRepresentation != null)
+            //{
+            //    return base64ImageRepresentation;
+            //}
+            //return null;
         }
 
         public string createQrContent(QrInput qri)
@@ -69,6 +70,53 @@ namespace DIMSApis.Services
             bookingID = tokenS.Claims.First(claim => claim.Type == "BookingId").Value;
 
             RoomID = tokenS.Claims.First(claim => claim.Type == "RoomId").Value;
+        }
+
+        public void GenerateMainQr(Booking bookingFullDetail, string imageMainPath, string imageMainName)
+        {
+            var fullPath = imageMainPath + imageMainName;
+            var conntent = createMainQrContent(bookingFullDetail);
+            var MyQRWithLogo = QRCodeWriter.CreateQrCodeWithLogo(conntent, @"Material/images/logo.png", 500);
+            MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.Red).SaveAsPng($@"{fullPath}");
+        }
+
+        public string createMainQrContent(Booking bookingFullDetail)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim("HotelId",bookingFullDetail.HotelId.ToString()),
+                new Claim("BookingId",bookingFullDetail.BookingId.ToString()),
+                new Claim("userId",bookingFullDetail.UserId.ToString()),
+            };
+            var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
+            var tokenDes = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                SigningCredentials = creds
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDes);
+            var fomattoken = tokenHandler.WriteToken(token);
+            var content = fomattoken;
+            return content;
+        }
+
+        public void GetMainQrDetail(VertifyMainQrInput qri, out string bookingID, out string HotelId)
+        {
+            try
+            {
+                var token = qri.QrContent;
+                var handler = new JwtSecurityTokenHandler();
+                var jsonToken = handler.ReadToken(token);
+                var tokenS = jsonToken as JwtSecurityToken;
+
+                bookingID = tokenS.Claims.First(claim => claim.Type == "BookingId").Value;
+                HotelId = tokenS.Claims.First(claim => claim.Type == "HotelId").Value;
+            }catch (Exception ex)
+            {
+                bookingID = "";
+                HotelId = "";
+            }
         }
     }
 }
