@@ -179,21 +179,29 @@ namespace DIMSApis.Repositories
         {
             DateTime StartDate = ArrivalDate;
             DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight);
-            var a = GetAveragePrice(StartDate, EndDate);
             var terms = _other.RemoveMark(LocationName);
+
             if (ArrivalDate.Date < DateTime.Now.Date || TotalNight <= 0) { return null; }
             IQueryable<Hotel> hotels = _context.Hotels
                 .Include(p => p.Photos)
+                .Include(p => p.Categories)
                 .Include(h => h.HotelType)
                 .Include(w => w.WardNavigation)
                 .Include(d => d.DistrictNavigation)
                 .Include(pr => pr.ProvinceNavigation)
-                .Include(r => r.Rooms.Where(bd => bd.BookingDetails.All(op => !(op.EndDate > DateTime.Today &&
-                                                                    ((op.StartDate > StartDate && op.StartDate < EndDate) && (op.EndDate > StartDate && op.EndDate < EndDate))
-                                                                    || (op.StartDate < EndDate && op.EndDate > EndDate)
-                                                                    || (op.StartDate < StartDate && op.EndDate > StartDate))
-                                                                    )))
-                .Where(op => op.Rooms.Count() > 0);
+                .Include(r => r.Rooms.Where(bd => bd.BookingDetails.All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
+                                                  !(((op.StartDate.Value.Date > StartDate.Date && op.StartDate.Value.Date < EndDate.Date)
+                                                  && (op.EndDate.Value.Date > StartDate.Date && op.EndDate.Value.Date < EndDate.Date))
+                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > EndDate.Date)
+                                                  || (op.StartDate.Value.Date < EndDate.Date && op.EndDate.Value.Date > EndDate.Date)
+                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > StartDate.Date)
+                                                  || (op.StartDate.Value.Date == StartDate.Date
+                                                  || op.StartDate.Value.Date == EndDate.Date
+                                                  || op.EndDate.Value.Date == StartDate.Date
+                                                  || op.EndDate.Value.Date == EndDate.Date)
+                                                  ))
+                                                )))
+                .Where(op => op.Rooms.Count() > 0 );
 
             if (Location.ToLower().Trim() == "areas")
             {
@@ -207,8 +215,9 @@ namespace DIMSApis.Repositories
             }
 
             await hotels.ToListAsync();
+            var returnls = _mapper.Map<IEnumerable<HotelOutput>>(hotels.OrderByDescending(r => r.TotalRate));
 
-            return _mapper.Map<IEnumerable<HotelOutput>>(hotels.OrderByDescending(r => r.TotalRate));
+            return returnls;
         }
 
         public async Task<HotelCateInfoOutput> GetListAvaiableHotelCate(int? hotelId, DateTime ArrivalDate, int TotalNight, int peopleQuanity)
@@ -375,17 +384,5 @@ namespace DIMSApis.Repositories
                 return 3;
             return 0;
         }
-
-        private async Task<bool> GetAveragePrice(DateTime startDate, DateTime endDate)
-        {
-            IQueryable<RoomPrice> roomprice = _context.RoomPrices
-                .Include(c => c.Category)
-                .Where(op => op.Date > DateTime.Now.Date
-                     && op.Date >= startDate.Date
-                     && op.Date <= endDate.Date
-                     && op.Status == true)
-                    .Where(op => op.Category.Rooms.Count() > 0)
-                        ;
-            return true;
-        }
-    }}
+    }
+}

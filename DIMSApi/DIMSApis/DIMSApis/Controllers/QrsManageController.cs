@@ -45,7 +45,7 @@ namespace DIMSApis.Controllers
         public async Task<IActionResult> getStringToCheckRoom(int hotelId, String roomName)
         {
             var check = await _qrmanage.getStringToCheckRoom(hotelId, roomName);
-            if(check == "") { return BadRequest( "Room Empty" ); }
+            if(check == "") { return BadRequest( "null" ); }
             return Ok(check);
         }
 

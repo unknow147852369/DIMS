@@ -85,7 +85,7 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.TotalRoom, option => option.MapFrom(tbl => tbl.Rooms.Count))
                 .ForMember(a => a.HotelTypeName, option => option.MapFrom(tbl => tbl.HotelType.HotelTypeName))
                 .ForMember(a => a.WardName, option => option.MapFrom(tbl => tbl.WardNavigation.Name))
-                //.ForMember(a => a.SmallPrice, option => option.MapFrom(tbl => tbl.Rooms.Min(r => r.Price)))
+                .ForMember(a => a.SmallPrice, option => option.MapFrom(tbl => tbl.Categories.Min(m=>Math.Round((double)m.RoomPrices.Average(a=>a.Price),2))))
                 .ForMember(a => a.ProvinceName, option => option.MapFrom(tbl => tbl.ProvinceNavigation.Name))
                 .ForMember(a => a.DistrictName, option => option.MapFrom(tbl => tbl.DistrictNavigation.Name))
                 ;

@@ -160,7 +160,7 @@ namespace DIMSApis.Repositories
             IQueryable<RoomPrice> roomprice = _context.RoomPrices
                 .Include(c => c.Category)
                 .ThenInclude(r => r.Rooms.Where(op => ppi.BookingDetails.Select(s => s.RoomId).Contains(op.RoomId)))
-                 .Where(op => op.Date > DateTime.Now.Date
+                 .Where(op => op.Date >= DateTime.Now.Date
                  && op.Date >= bok.StartDate.Value.Date
                  && op.Date <= bok.EndDate.Value.Date
                  && op.Status == true)
@@ -227,6 +227,7 @@ namespace DIMSApis.Repositories
             
             var checkExist = bok.BookingDetails.Select(b => b.RoomId).ToList()
                 .Any(op => !lsHotelRoomNotBooked.Select(a => a.RoomId).ToList().Contains(op.Value));
+            
             return checkExist;
         }
     }
