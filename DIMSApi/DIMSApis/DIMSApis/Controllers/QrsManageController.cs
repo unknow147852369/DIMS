@@ -45,26 +45,26 @@ namespace DIMSApis.Controllers
         public async Task<IActionResult> getStringToCheckRoom(int hotelId, String roomName)
         {
             var check = await _qrmanage.getStringToCheckRoom(hotelId, roomName);
-            if(check == null) { return BadRequest(new DataRespone { Message = "Room Empty" }); }
+            if(check == "") { return BadRequest( "Room Empty" ); }
             return Ok(check);
         }
 
         [HttpPost("Add-inbound-user-id")]
-        public async Task<IActionResult> CheckIn(checkInInput ckIn)
+        public async Task<IActionResult> AddInboundUser(checkInInput ckIn)
         {
-            var checkIn = await _qrmanage.checkIn(ckIn);
+            var checkIn = await _qrmanage.AddInboundUser(ckIn);
 
             if (checkIn.Equals("1"))
             {
-                return Ok();
+                return Ok(new DataRespone { Message = "Add success" });
             }
             else if (checkIn.Equals("3"))
             {
-                return NoContent();
+                return Ok(new DataRespone { Message = "nothing change" });
             }
             else
             {
-                return BadRequest();
+                return BadRequest(new DataRespone { Message = "Wrong inform" });
             }
         }
 

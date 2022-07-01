@@ -157,16 +157,16 @@ namespace DIMSApis.Repositories
                     .Where(p => p.DistrictNoMark.Contains(terms))
                     .ToListAsync();
                 var lsProvince = new List<SearchLocationAreaOutput>();
-                lsProvince.AddRange( _mapper.Map<IEnumerable<SearchLocationAreaOutput>>(lsdis));
-                lsProvince.AddRange( _mapper.Map<IEnumerable<SearchLocationAreaOutput>>(lsPr));
+                lsProvince.AddRange(_mapper.Map<IEnumerable<SearchLocationAreaOutput>>(lsdis));
+                lsProvince.AddRange(_mapper.Map<IEnumerable<SearchLocationAreaOutput>>(lsPr));
 
                 var lsHo = await _context.Hotels
-                    .Where(op => op.Status == true 
+                    .Where(op => op.Status == true
                     && op.DistrictNavigation.DistrictNoMark.Contains(terms)
                     || op.ProvinceNavigation.ProvinceNoMark.Contains(terms))
                     .ToListAsync();
                 var lsHotel = new List<SearchLocationHotelOutput>();
-                lsHotel.AddRange( _mapper.Map<IEnumerable<SearchLocationHotelOutput>>(lsHo));
+                lsHotel.AddRange(_mapper.Map<IEnumerable<SearchLocationHotelOutput>>(lsHo));
 
                 returnLocation.Areas = lsProvince;
                 returnLocation.Hotels = lsHotel;
@@ -179,8 +179,9 @@ namespace DIMSApis.Repositories
         {
             DateTime StartDate = ArrivalDate;
             DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight);
+            var a = GetAveragePrice(StartDate, EndDate);
             var terms = _other.RemoveMark(LocationName);
-            if(ArrivalDate.Date < DateTime.Now.Date  || TotalNight <=0 ) { return null; }
+            if (ArrivalDate.Date < DateTime.Now.Date || TotalNight <= 0) { return null; }
             IQueryable<Hotel> hotels = _context.Hotels
                 .Include(p => p.Photos)
                 .Include(h => h.HotelType)
@@ -214,18 +215,18 @@ namespace DIMSApis.Repositories
         {
             DateTime StartDate = ArrivalDate;
             DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight);
-            if (ArrivalDate.Date < DateTime.Now.Date || TotalNight <= 0||peopleQuanity<=0) { return null; }
+            if (ArrivalDate.Date < DateTime.Now.Date || TotalNight <= 0 || peopleQuanity <= 0) { return null; }
 
             IQueryable<Room> lsRoom = _context.Rooms
                                         .Include(c => c.Category).ThenInclude(b => b.Photos)
-                                        .Where(op => op.HotelId == hotelId && op.Category.Quanity >= peopleQuanity &&  op.Status ==true)
+                                        .Where(op => op.HotelId == hotelId && op.Category.Quanity >= peopleQuanity && op.Status == true)
                                         .Where(a => a.BookingDetails.All(op => !(op.EndDate > DateTime.Today &&
                                                                       ((op.StartDate > StartDate && op.StartDate < EndDate) && (op.EndDate > StartDate && op.EndDate < EndDate))
                                                                       || (op.StartDate < EndDate && op.EndDate > EndDate)
                                                                       || (op.StartDate < StartDate && op.EndDate > StartDate))
                                                                     ));
-            if(lsRoom == null) { return null; }
-            IQueryable<Photo> catephoto =  _context.Photos
+            if (lsRoom == null) { return null; }
+            IQueryable<Photo> catephoto = _context.Photos
                 .Where(op => op.HotelId == hotelId);
 
             var AHotel = await _context.Hotels
@@ -261,12 +262,12 @@ namespace DIMSApis.Repositories
                 CatePhotos = catephoto.Select(op => new HotelCatePhotosOutput
                 {
                     PhotoId = op.PhotoId,
-                    CategoryId=op.CategoryId,
-                    PhotoUrl=op.PhotoUrl,
-                    CreateDate=op.CreateDate,
-                    IsMain=op.IsMain,
-                    Status=op.Status,
-                }).Where(a => a.CategoryId == (int)gr.Key.CategoryId).OrderBy(s =>s.IsMain).ToList(),
+                    CategoryId = op.CategoryId,
+                    PhotoUrl = op.PhotoUrl,
+                    CreateDate = op.CreateDate,
+                    IsMain = op.IsMain,
+                    Status = op.Status,
+                }).Where(a => a.CategoryId == (int)gr.Key.CategoryId).OrderBy(s => s.IsMain).ToList(),
 
                 Rooms = lsRoom.Select(op => new HotelCateRoomOutput
                 {
@@ -276,7 +277,7 @@ namespace DIMSApis.Repositories
                     RoomDescription = op.RoomDescription,
                     //Price = op.Price,
                     Status = op.Status,
-                }).Where(a => a.CategoryId == (int)gr.Key.CategoryId ).ToList(),
+                }).Where(a => a.CategoryId == (int)gr.Key.CategoryId).ToList(),
             }).ToList();
 
             var HotelDetail = new HotelCateInfoOutput();
@@ -374,5 +375,17 @@ namespace DIMSApis.Repositories
                 return 3;
             return 0;
         }
-    }
-}
+
+        private async Task<bool> GetAveragePrice(DateTime startDate, DateTime endDate)
+        {
+            IQueryable<RoomPrice> roomprice = _context.RoomPrices
+                .Include(c => c.Category)
+                .Where(op => op.Date > DateTime.Now.Date
+                     && op.Date >= startDate.Date
+                     && op.Date <= endDate.Date
+                     && op.Status == true)
+                    .Where(op => op.Category.Rooms.Count() > 0)
+                        ;
+            return true;
+        }
+    }}

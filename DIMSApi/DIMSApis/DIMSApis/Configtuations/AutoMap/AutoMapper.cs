@@ -44,7 +44,9 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.Quanity, option => option.MapFrom(tbl => tbl.Category.Quanity))
                 ;
             //
-            CreateMap<BookingDetail, InboundUser>();
+            CreateMap<NewInboundUser, InboundUser>();
+
+
             //
 
             CreateMap<NewOtpInput, Otp>();

@@ -20,43 +20,21 @@ namespace DIMSApis.Repositories
             _generateqr = generateqr;
         }
 
-        public async Task<string> checkIn(checkInInput checkIn)
+        public async Task<string> AddInboundUser(checkInInput checkIn)
         {
-           // var bokingdetailInfo = await _context.Qrs
-           //     .Include(a => a.BookingDetail).ThenInclude(b=>b.InboundUsers)
-           //     .Where(a => a.BookingDetail.BookingId == checkIn.BookingId && a.BookingDetail.RoomId == checkIn.RoomId)
-           // .FirstOrDefaultAsync();
-
-           // var detail = await _context.BookingDetails
-           //    .Include(a => a.Booking)
-           //    .Include(b => b.InboundUsers)
-           //    .Where(a => a.BookingId == checkIn.BookingId && a.RoomId == checkIn.RoomId)
-           //.FirstOrDefaultAsync();
-           // if (detail != null)
-           // {
-           //     foreach (var people in checkIn.InboundUsers)
-           //     {
-           //         InboundUser ib = new()
-           //         {
-           //             UserName = people.UserName,
-           //             UserIdCard = people.UserIdCard,
-           //             UserBirthday = people.UserBirthday,
-           //             Status = 1,
-           //         };
-           //         _mapper.Map(detail, ib);
-           //         await _context.InboundUsers.AddAsync(ib);
-           //     }
-           // }
-
-           // if (bokingdetailInfo != null)
-           // {
-           //     bokingdetailInfo.Status = 1;
-           //     bokingdetailInfo.CheckIn = checkIn.CheckIn;
-           // }
-
-           // if (await _context.SaveChangesAsync() > 0)
-           //     return "1";
-            return "3";
+            var detail = await _context.Bookings
+               .Include(b => b.InboundUsers)
+               .Where(a => a.BookingId == checkIn.BookingId && a.HotelId == checkIn.HotelId && a.Status == true)
+           .FirstOrDefaultAsync();
+            if (detail != null)
+            {
+                var people = new List<InboundUser>();
+                _mapper.Map(checkIn.InboundUsers, detail.InboundUsers);
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }
+            return "0";
         }
 
         public async Task<string> CheckOut(CheckOutInput checkOut)
@@ -84,30 +62,32 @@ namespace DIMSApis.Repositories
             return content;
         }
 
-        public async Task<QrOutput> getStringToCheckRoom(int hotel, string roomName)
+        public async Task<string> getStringToCheckRoom(int hotel, string roomName)
         {
+            var st = "";
             var today = DateTime.Now.Date;
             var lsHotelRoom = await _context.BookingDetails
                           .Include(b => b.Booking)
                           .Include(r => r.Room)
                           .Include(q => q.Qr)
-                          .Where(op =>  op.Booking.HotelId == hotel && op.Room.RoomName.Equals(roomName.Trim().ToLower()))
+                          .Where(op => op.Status == true && op.Booking.HotelId == hotel && op.Room.RoomName.Equals(roomName.Trim().ToLower()))
                           .Where(op => ((op.StartDate.Value.Date <= today && op.EndDate.Value >= today)))
                           .FirstOrDefaultAsync();
 
             if (lsHotelRoom != null)
             {
-                return _mapper.Map<QrOutput>(lsHotelRoom.Qr);
+                var qr = _mapper.Map<QrOutput>(lsHotelRoom.Qr);
+                st = qr.QrContent.ToString();
             }
 
-            return null;
+            return st;
         }
 
         public async Task<Booking> vertifyMainQrCheckIn(VertifyMainQrInput qrIn)
         {
             string BookingId, HotelId;
-            _generateqr.GetMainQrDetail(qrIn, out BookingId,out HotelId);
-            if(BookingId == "" || HotelId == "")
+            _generateqr.GetMainQrDetail(qrIn, out BookingId, out HotelId);
+            if (BookingId == "" || HotelId == "")
             {
                 return null;
             }
@@ -117,7 +97,7 @@ namespace DIMSApis.Repositories
             }
             var qrvertify = await _context.QrCheckUps
                 .Include(b => b.Booking)
-                .Where(op=>op.BookingId.Equals(int.Parse(BookingId)))
+                .Where(op => op.BookingId.Equals(int.Parse(BookingId)))
                 .FirstOrDefaultAsync();
             if (qrvertify != null)
             {
@@ -130,7 +110,7 @@ namespace DIMSApis.Repositories
             qrs.ForEach(op => op.Status = true);
 
             if (await _context.SaveChangesAsync() > 0)
-            { 
+            {
                 var bookinginfo = await _context.Bookings
                     .Include(bd => bd.BookingDetails)
                     .Where(op => op.BookingId.Equals(int.Parse(BookingId)))
@@ -139,7 +119,6 @@ namespace DIMSApis.Repositories
             }
             return null;
         }
-
 
         public async Task<string> vertifyQrContent(VertifyQrInput qrIn)
         {

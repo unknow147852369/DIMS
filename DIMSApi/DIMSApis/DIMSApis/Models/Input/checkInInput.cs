@@ -4,8 +4,6 @@
     {
         public int? HotelId { get; set; }
         public int? BookingId { get; set; }
-        public DateTime? CheckIn { get; set; }
-
         public virtual ICollection<NewInboundUser> InboundUsers { get; set; }
     }
 }
