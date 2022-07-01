@@ -71,8 +71,8 @@ namespace DIMSApis.Repositories
                     error += "Your voucher have reach limit ;";
                 }
                 //
-                var paymentstatus = condition4;
-                //var paymentstatus =_stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
+                //var paymentstatus = condition4;
+                var paymentstatus =_stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
                 if (paymentstatus.Contains(condition4))
                 {
                     if (ppi.Condition.ToLower().Trim().Contains("online"))
