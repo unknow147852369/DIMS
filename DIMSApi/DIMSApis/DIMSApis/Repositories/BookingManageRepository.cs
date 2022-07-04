@@ -71,10 +71,10 @@ namespace DIMSApis.Repositories
                 {
                     return "some date out of service";
                 }
-                if (bok.Voucher == null)
-                {
-                    error += "Your voucher have reach limit ;";
-                }
+                //if (bok.Voucher == null)
+                //{
+                //    error += "Your voucher have reach limit ;";
+                //}
                 //
                 //var paymentstatus = condition4;
                 var paymentstatus = _stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
