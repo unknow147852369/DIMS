@@ -284,7 +284,7 @@ namespace DIMSApis.Repositories
                     RoomId = op.RoomId,
                     RoomName = op.RoomName,
                     RoomDescription = op.RoomDescription,
-                    //Price = op.Price,
+                    Price = op.RoomPrice,
                     Status = op.Status,
                 }).Where(a => a.CategoryId == (int)gr.Key.CategoryId).ToList(),
             }).ToList();
@@ -374,7 +374,14 @@ namespace DIMSApis.Repositories
         public async Task<int> CreateNoMarkColumCHEAT()
         {
             var a = await _context.Hotels.ToListAsync();
+            var b = await _context.Rooms
+                .Include(a=>a.Category)
+                .ToListAsync();
 
+            foreach (var bb in b)
+            {
+                bb.RoomPrice = bb.Category.PriceDefault;
+            }
             foreach (var aa in a)
             {
                 aa.HotelNameNoMark = _other.RemoveMark(aa.HotelName);

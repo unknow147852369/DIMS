@@ -14,6 +14,7 @@ namespace DIMSApis.Models.Data
         public string? RoomName { get; set; }
         public int? HotelId { get; set; }
         public int? CategoryId { get; set; }
+        public double? RoomPrice { get; set; }
         public string? RoomDescription { get; set; }
         public bool? Status { get; set; }
 

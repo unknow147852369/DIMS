@@ -16,6 +16,7 @@ namespace DIMSApis.Repositories
         private readonly IFireBaseService _fireBase;
         private readonly IMailQrService _qrmail;
         private readonly IMailBillService _billmail;
+        private string error = "";
 
         private string condition1 = "ONLINE";
         private string condition2 = "LOCAl";
@@ -66,13 +67,17 @@ namespace DIMSApis.Repositories
                     error += "Wrong date ;";
                 }
                 Booking bok = await PaymentCalculateData(ppi, userId);
+                if (bok == null)
+                {
+                    return "some date out of service";
+                }
                 if (bok.Voucher == null)
                 {
                     error += "Your voucher have reach limit ;";
                 }
                 //
-                //var paymentstatus = condition4;
-                var paymentstatus =_stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
+                var paymentstatus = condition4;
+                //var paymentstatus = _stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
                 if (paymentstatus.Contains(condition4))
                 {
                     if (ppi.Condition.ToLower().Trim().Contains("online"))
@@ -119,7 +124,6 @@ namespace DIMSApis.Repositories
                         var ListRoom = _mapper.Map<IEnumerable<QrInput>>(bok.BookingDetails);
                         foreach (var room in ListRoom)
                         {
-
                             //
                             Qr qrdetail = new();
                             _fireBase.createFilePath(room, out string imagePath, out string imageName);
@@ -156,33 +160,64 @@ namespace DIMSApis.Repositories
             _mapper.Map(ppi, bok);
             float total = 0;
             float sale = 0;
+            var error = "";
 
-            IQueryable<RoomPrice> roomprice = _context.RoomPrices
-                .Include(c => c.Category)
-                .ThenInclude(r => r.Rooms.Where(op => ppi.BookingDetails.Select(s => s.RoomId).Contains(op.RoomId)))
-                 .Where(op => op.Date >= DateTime.Now.Date
-                 && op.Date >= bok.StartDate.Value.Date
-                 && op.Date <= bok.EndDate.Value.Date
-                 && op.Status == true)
-                 .Where(op => op.Category.Rooms.Count() > 0)
+            IQueryable<SpecialPrice> DatePrice = _context.SpecialPrices
+                .Include(c => c.Category).ThenInclude(r => r.Rooms.Where(op => ppi.BookingDetails.Select(s => s.RoomId).Contains(op.RoomId)))
+                 .Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date
+                 && op.SpecialDate.Value.Date >= bok.StartDate.Value.Date
+                 && op.SpecialDate.Value.Date <= bok.EndDate.Value.Date
+                 && op.Status == true
+                 && op.Category.Rooms.Where(op => ppi.BookingDetails.Select(s => s.RoomId).Contains(op.RoomId)).Count() > 0)
                 ;
 
+            IQueryable<Room> roomprice = _context.Rooms
+                .Include(c => c.Category)
+                .ThenInclude(sp => sp.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date
+                                    && op.SpecialDate.Value.Date >= bok.StartDate.Value.Date
+                                    && op.SpecialDate.Value.Date <= bok.EndDate.Value.Date
+                                    && op.Status.Value))
+                .Where(op => ppi.BookingDetails.Select(s => s.RoomId).Contains(op.RoomId)
+                )
+                 ;
+
+            var checkDate = DatePrice.Any(op => op.SpecialPrice1 == null);
+            if (checkDate)
+            {
+                return null;
+            }
+            var data = await roomprice.ToListAsync();
             foreach (BookingDetail r in bok.BookingDetails)
             {
-                var AveragePrice = roomprice.Where(op => op.Category.Rooms.Any(op => op.RoomId == r.RoomId)).Select(s => s.Price).Average();
-                //
-                var detail = roomprice
-                    .Where(op => op.Category.Rooms.Any(op => op.RoomId == r.RoomId)).Select(s => new BookingDetailPrice { Date = s.Date, Price = s.Price, Status = s.Status });
-                foreach (var d in detail)
-                {
-                    r.BookingDetailPrices.Add(d);
-                }
-                //
-                r.AveragePrice = Math.Round((double)AveragePrice,2);
+                var detail = data
+                    .Where(op => op.RoomId == r.RoomId);
+
+                var specialDate = detail.Select(s => s.Category.SpecialPrices);
+                var sumSpecialPrice = specialDate.Select(s => s.Sum(op => op.SpecialPrice1));
+                var normalDate = bok.TotalNight - specialDate.Select(s => s.Count()).First();
+                var normalPrice = detail.Sum(op => op.RoomPrice);
+                var AveragePrice = (normalDate * normalPrice) + sumSpecialPrice.First();
+                r.AveragePrice = AveragePrice;
                 r.StartDate = bok.StartDate;
                 r.EndDate = bok.EndDate;
                 r.Status = true;
                 total = (float)(total + AveragePrice);
+                r.BookingDetailPrices.Add(new BookingDetailPrice
+                {
+                    Price = normalPrice,
+                    Status = true,
+                });
+                var oj = specialDate.ToList()[0];
+                foreach (var item in oj)
+                {
+                    
+                    r.BookingDetailPrices.Add(new BookingDetailPrice
+                    {
+                        Date = item.SpecialDate,
+                        Price = item.SpecialPrice1,
+                        Status = true,
+                    });
+                }
             }
 
             bok.UserId = userId;
@@ -194,8 +229,12 @@ namespace DIMSApis.Repositories
                 if (bok.Voucher != null)
                 {
                     sale = ((float)(total * bok.TotalNight * bok.Voucher.VoucherSale / 100));
-                    bok.VoucherDiscoundPrice = Math.Round(sale,2);
+                    bok.VoucherDiscoundPrice = Math.Round(sale, 2);
                     bok.Voucher.Quantitylimited = bok.Voucher.Quantitylimited - 1;
+                }
+                else
+                {
+                    error= "voucher out of limit";
                 }
             }
             else
@@ -211,23 +250,23 @@ namespace DIMSApis.Repositories
         private async Task<bool> PaymentCheckRoomExist(Booking bok)
         {
             IQueryable<Room> lsHotelRoomNotBooked = _context.Rooms
-                    .Where(op => op.Status == true && op.HotelId == bok.HotelId  )
+                    .Where(op => op.Status == true && op.HotelId == bok.HotelId)
                     .Where(a => a.BookingDetails.All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
-                                                  !(((op.StartDate.Value.Date > bok.StartDate.Value.Date && op.StartDate.Value.Date < bok.EndDate.Value.Date) 
+                                                  !(((op.StartDate.Value.Date > bok.StartDate.Value.Date && op.StartDate.Value.Date < bok.EndDate.Value.Date)
                                                   && (op.EndDate.Value.Date > bok.StartDate.Value.Date && op.EndDate.Value.Date < bok.EndDate.Value.Date))
                                                   || (op.StartDate.Value.Date < bok.StartDate.Value.Date && op.EndDate.Value.Date > bok.EndDate.Value.Date)
                                                   || (op.StartDate.Value.Date < bok.EndDate.Value.Date && op.EndDate.Value.Date > bok.EndDate.Value.Date)
                                                   || (op.StartDate.Value.Date < bok.StartDate.Value.Date && op.EndDate.Value.Date > bok.StartDate.Value.Date)
-                                                  || (op.StartDate.Value.Date == bok.StartDate.Value.Date 
-                                                  || op.StartDate.Value.Date == bok.EndDate.Value.Date 
-                                                  || op.EndDate.Value.Date == bok.StartDate.Value.Date 
+                                                  || (op.StartDate.Value.Date == bok.StartDate.Value.Date
+                                                  || op.StartDate.Value.Date == bok.EndDate.Value.Date
+                                                  || op.EndDate.Value.Date == bok.StartDate.Value.Date
                                                   || op.EndDate.Value.Date == bok.EndDate.Value.Date)
                                                   ))
                                                 ));
-            
+
             var checkExist = bok.BookingDetails.Select(b => b.RoomId).ToList()
                 .Any(op => !lsHotelRoomNotBooked.Select(a => a.RoomId).ToList().Contains(op.Value));
-            
+
             return checkExist;
         }
     }

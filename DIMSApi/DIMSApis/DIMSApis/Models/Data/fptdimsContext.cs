@@ -32,7 +32,7 @@ namespace DIMSApis.Models.Data
         public virtual DbSet<Qr> Qrs { get; set; } = null!;
         public virtual DbSet<QrCheckUp> QrCheckUps { get; set; } = null!;
         public virtual DbSet<Room> Rooms { get; set; } = null!;
-        public virtual DbSet<RoomPrice> RoomPrices { get; set; } = null!;
+        public virtual DbSet<SpecialPrice> SpecialPrices { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Voucher> Vouchers { get; set; } = null!;
         public virtual DbSet<Ward> Wards { get; set; } = null!;
@@ -402,20 +402,22 @@ namespace DIMSApis.Models.Data
                     .HasConstraintName("FK_Rooms_Hotels1");
             });
 
-            modelBuilder.Entity<RoomPrice>(entity =>
+            modelBuilder.Entity<SpecialPrice>(entity =>
             {
-                entity.ToTable("RoomPrice");
+                entity.ToTable("SpecialPrice");
 
-                entity.Property(e => e.RoomPriceId).HasColumnName("RoomPriceID");
+                entity.Property(e => e.SpecialPriceId).HasColumnName("SpecialPriceID");
 
                 entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
 
-                entity.Property(e => e.Date).HasColumnType("datetime");
+                entity.Property(e => e.SpecialDate).HasColumnType("datetime");
+
+                entity.Property(e => e.SpecialPrice1).HasColumnName("SpecialPrice");
 
                 entity.HasOne(d => d.Category)
-                    .WithMany(p => p.RoomPrices)
+                    .WithMany(p => p.SpecialPrices)
                     .HasForeignKey(d => d.CategoryId)
-                    .HasConstraintName("FK_RoomPrice_Categories");
+                    .HasConstraintName("FK_SpecialPrice_Categories");
             });
 
             modelBuilder.Entity<User>(entity =>

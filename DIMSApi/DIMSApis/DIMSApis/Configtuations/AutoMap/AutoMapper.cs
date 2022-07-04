@@ -85,7 +85,7 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.TotalRoom, option => option.MapFrom(tbl => tbl.Rooms.Count))
                 .ForMember(a => a.HotelTypeName, option => option.MapFrom(tbl => tbl.HotelType.HotelTypeName))
                 .ForMember(a => a.WardName, option => option.MapFrom(tbl => tbl.WardNavigation.Name))
-                .ForMember(a => a.SmallPrice, option => option.MapFrom(tbl => tbl.Categories.Min(m=>Math.Round((double)m.RoomPrices.Average(a=>a.Price),2))))
+                .ForMember(a => a.SmallPrice, option => option.MapFrom(tbl => tbl.Rooms.Min(m=>m.RoomPrice)))
                 .ForMember(a => a.ProvinceName, option => option.MapFrom(tbl => tbl.ProvinceNavigation.Name))
                 .ForMember(a => a.DistrictName, option => option.MapFrom(tbl => tbl.DistrictNavigation.Name))
                 ;
@@ -152,7 +152,7 @@ namespace DIMSApis.Configtuations.AutoMap
             CreateMap<BookingDetail, BookingDetailInfoOutput>()
                 .ForMember(a => a.CategoryName, option => option.MapFrom(tbl => tbl.Room.Category.CategoryName))
                 .ForMember(a => a.RoomName, option => option.MapFrom(tbl => tbl.Room.RoomName))
-                //.ForMember(a => a.RoomPrice, option => option.MapFrom(tbl => tbl.Room.Price))
+                .ForMember(a => a.RoomPrice, option => option.MapFrom(tbl => tbl.Room.RoomPrice))
                 .ForMember(a => a.CategoryId, option => option.MapFrom(tbl => tbl.Room.CategoryId))
                 ;
         }
