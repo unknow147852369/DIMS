@@ -284,7 +284,7 @@ namespace DIMSApis.Repositories
                     RoomId = op.RoomId,
                     RoomName = op.RoomName,
                     RoomDescription = op.RoomDescription,
-                    Price = op.RoomPrice,
+                    RoomPrice = op.RoomPrice,
                     Status = op.Status,
                 }).Where(a => a.CategoryId == (int)gr.Key.CategoryId).ToList(),
             }).ToList();

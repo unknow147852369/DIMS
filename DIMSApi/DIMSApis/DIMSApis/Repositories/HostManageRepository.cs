@@ -60,24 +60,11 @@ namespace DIMSApis.Repositories
             return duplicateRoom;
         }
 
-        public async Task<AHotelOutput> GetAHotelAllRoom(int hotelId, int userId)
-        {
-            var AHotel = await _context.Hotels
-                .Include(h => h.Rooms).ThenInclude(c => c.Category)
-                .Include(w => w.WardNavigation)
-                .Include(d => d.DistrictNavigation)
-                .Include(pr => pr.ProvinceNavigation)
-                .Where(op => op.UserId == userId && op.HotelId == hotelId)
-                .FirstOrDefaultAsync();
-            var returnHotelRoom = _mapper.Map<AHotelOutput>(AHotel);
-
-            return returnHotelRoom;
-        }
-
         public async Task<IEnumerable<HotelOutput>> GetListAllHotel(int userId)
         {
             var lsHotel = await _context.Hotels
                 .Include(p => p.Photos)
+                .Include(ht=>ht.HotelType)
                 .Include(h => h.Rooms)
                 .Include(w => w.WardNavigation)
                 .Include(d => d.DistrictNavigation)
@@ -87,14 +74,38 @@ namespace DIMSApis.Repositories
             return returnHotel;
         }
 
-        public async Task<IEnumerable<HotelRoomOutput>> GetListAllHotelRoom(int hotelId, int userId)
+        public async Task<HotelCateInfoOutput> GetAHotelAllInfo(int hotelId, int userId)
         {
-            var lsHotelRoom = await _context.Rooms
-                .Include(h => h.Category)
-                .Where(op => op.HotelId == hotelId).ToListAsync();
-            var returnHotelRoom = _mapper.Map<IEnumerable<HotelRoomOutput>>(lsHotelRoom);
+            IQueryable<Category> lsCateRooms = _context.Categories
+                .Include(p => p.Photos)
+                .Include(pr => pr.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date))
+                .Include(r => r.Rooms)
+                .Where(op => op.HotelId == hotelId && op.Hotel.UserId == userId);
 
-            return returnHotelRoom;
+            if (lsCateRooms == null) { return null; }
+
+            var AHotel = await _context.Hotels
+                .Include(p => p.Vouchers.Where(op => op.EndDate.Value.Date >= DateTime.Now.Date))
+                .Include(p => p.Photos)
+                .Include(h => h.HotelType)
+                .Include(c => c.Categories)
+                .Include(r => r.Rooms)
+                .Include(w => w.WardNavigation)
+                .Include(d => d.DistrictNavigation)
+                .Include(pr => pr.ProvinceNavigation)
+                .Where(op => op.Status == true && op.HotelId == hotelId && op.UserId == userId)
+                .SingleOrDefaultAsync();
+
+            var result = await lsCateRooms.ToListAsync();
+
+            var HotelDetail = new HotelCateInfoOutput();
+            _mapper.Map(AHotel, HotelDetail);
+
+            var fullCateRoom = new List<HotelCateOutput>();
+            _mapper.Map(result, fullCateRoom);
+            HotelDetail.LsCate = fullCateRoom;
+
+            return HotelDetail;
         }
 
         public async Task<IEnumerable<HotelPhotosOutput>> GetListHotelPhotos(int userId, int hotelId)

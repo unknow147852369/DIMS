@@ -10,5 +10,6 @@
         public bool? CateStatus { get; set; }
         public virtual ICollection<HotelCatePhotosOutput>? CatePhotos { get; set; }
         public virtual ICollection<HotelCateRoomOutput>? Rooms { get; set; }
+        public virtual ICollection<HotelCateSpecialPricesOutput>? SpecialPPrice { get; set; }
     }
 }

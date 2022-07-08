@@ -25,13 +25,13 @@ namespace DIMSApis.Controllers
              _admin = admin;
         }
 
-        [HttpPost("Admin-Acecpt-Host")]
+        [HttpPut("Admin-Acecpt-Host")]
         public async Task<IActionResult> AcecptHost(int userId)
         {
             int check = await _admin.AcpectHost(userId);
             if (check == 1)
             {
-                return Ok();
+                return Ok("Accpect complete!");
             }
             else if (check == 3)
             {
@@ -39,18 +39,17 @@ namespace DIMSApis.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest("User not exist!");
             }
         }
 
-        [HttpPost("Admin-Acecpt-Hotel")]
+        [HttpPut("Admin-Acecpt-Hotel")]
         public async Task<IActionResult> AcecptHotel(int HotelId)
         {
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             int check = await _admin.AcpectHotel(HotelId);
             if (check == 1)
             {
-                return Ok();
+                return Ok("Accpect Success!");
             }
             else if (check == 3)
             {
@@ -58,9 +57,10 @@ namespace DIMSApis.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Hotel not exist!");
             }
         }
+
         [HttpGet("List-All-Hotel")]
         public async Task<IActionResult> ListAllHotel()
         {
@@ -68,6 +68,7 @@ namespace DIMSApis.Controllers
             if (Hotel.Count() == 0) { return NotFound("No request"); }
             return Ok(Hotel);
         }
+
         [HttpGet("List-All-User")]
         public async Task<IActionResult> ListAllHost()
         {
@@ -93,5 +94,7 @@ namespace DIMSApis.Controllers
                 return BadRequest("Create failed");
             }
         }
+
+
     }
 }

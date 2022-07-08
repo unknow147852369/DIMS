@@ -26,82 +26,82 @@ namespace DIMSApis.Controllers
         }
 
 
-        [HttpPost("Crete-Hotel")]
-        public async Task<IActionResult> CreateHotel(HotelInput htInput)
-        {
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            int check = await _host.CreateHotel(htInput,userId);
-            if (check == 1)
-            {
-                return Ok();
-            }
-            else if (check == 3)
-            {
-                return NoContent();
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
+        //[HttpPost("Create-Hotel")]
+        //public async Task<IActionResult> CreateHotel(HotelInput htInput)
+        //{
+        //    int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        //    int check = await _host.CreateHotel(htInput,userId);
+        //    if (check == 1)
+        //    {
+        //        return Ok();
+        //    }
+        //    else if (check == 3)
+        //    {
+        //        return NoContent();
+        //    }
+        //    else
+        //    {
+        //        return BadRequest();
+        //    }
+        //}
 
-        [HttpPut("Update-Hotel")]
-        public async Task<IActionResult> UpdateHotel(int hotelId,HotelInput htInput)
-        {
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var check = await _host.UpdateHotel(htInput, hotelId ,userId);
-            if (check.Equals("1"))
-            {
-                return Ok();
-            }
-            else if (check.Equals("3"))
-            {
-                return NoContent();
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
+        //[HttpPut("Update-Hotel")]
+        //public async Task<IActionResult> UpdateHotel(int hotelId,HotelInput htInput)
+        //{
+        //    int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        //    var check = await _host.UpdateHotel(htInput, hotelId ,userId);
+        //    if (check.Equals("1"))
+        //    {
+        //        return Ok();
+        //    }
+        //    else if (check.Equals("3"))
+        //    {
+        //        return NoContent();
+        //    }
+        //    else
+        //    {
+        //        return BadRequest();
+        //    }
+        //}
 
-        [HttpPost("Crete-Room")]
-        public async Task<IActionResult> CreateRoom(NewRoomInput roomInput)
-        {
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var check = await _host.CreateRoom(roomInput, userId);
-            if (check.Equals(1))
-            {
-                return Ok();
-            }
-            else if (check.Equals(3))
-            {
-                return NoContent();
-            }
-            else
-            {
-                return BadRequest("Some rooms are existed "+check );
-            }
-        }
+        //[HttpPost("Crete-Room")]
+        //public async Task<IActionResult> CreateRoom(NewRoomInput roomInput)
+        //{
+        //    int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        //    var check = await _host.CreateRoom(roomInput, userId);
+        //    if (check.Equals(1))
+        //    {
+        //        return Ok();
+        //    }
+        //    else if (check.Equals(3))
+        //    {
+        //        return NoContent();
+        //    }
+        //    else
+        //    {
+        //        return BadRequest("Some rooms are existed "+check );
+        //    }
+        //}
 
 
 
         [HttpGet("Host-All-Hotel")]
-        public async Task<IActionResult> GetAllHotel()
+        public async Task<IActionResult> GetListAllHotel()
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var Hotel = await _host.GetListAllHotel(userId);
             return Ok(Hotel);
         }
 
-        [HttpGet("Host-A-Hotel-All-Room")]
-        public async Task<IActionResult> GetAHotelAllRoom(int hotelId)
+        [HttpGet("Host-A-Hotel-All-Info")]
+        public async Task<IActionResult> GetAHotelAllInfo(int hotelId)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var HotelRoom = await _host.GetAHotelAllRoom(hotelId, userId);
+            var HotelRoom = await _host.GetAHotelAllInfo(hotelId, userId);
             return Ok(HotelRoom);
         }
 
-        [HttpGet("List-All-Photo")]
+        [HttpGet("List-A-Hotel-Photo")]
         public async Task<IActionResult> GetListHotelPhotos(int hotelId)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);

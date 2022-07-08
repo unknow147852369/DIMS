@@ -16,11 +16,12 @@ namespace DIMSApis.Repositories
         private readonly IFireBaseService _fireBase;
         private readonly IMailQrService _qrmail;
         private readonly IMailBillService _billmail;
-        private string error = "";
+        
 
         private string condition1 = "ONLINE";
         private string condition2 = "LOCAl";
         private string condition4 = "succeeded";
+        private string error = "";
 
         public BookingManageRepository(IMailBillService billmail, IMailQrService qrmail, IFireBaseService fireBase, fptdimsContext context, IMapper mapper, IStripePayment stripe, IGenerateQr generateqr)
         {
@@ -61,23 +62,13 @@ namespace DIMSApis.Repositories
         {
             try
             {
-                string error = "";
                 if (ppi.ArrivalDate.Date < DateTime.Now.Date)
                 {
                     error += "Wrong date ;";
                 }
                 Booking bok = await PaymentCalculateData(ppi, userId);
-                if (bok == null)
-                {
-                    return "some date out of service";
-                }
-                //if (bok.Voucher == null)
-                //{
-                //    error += "Your voucher have reach limit ;";
-                //}
-                //
-                //var paymentstatus = condition4;
-                var paymentstatus = _stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
+                var paymentstatus = condition4;
+                //var paymentstatus = _stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
                 if (paymentstatus.Contains(condition4))
                 {
                     if (ppi.Condition.ToLower().Trim().Contains("online"))
@@ -160,7 +151,6 @@ namespace DIMSApis.Repositories
             _mapper.Map(ppi, bok);
             float total = 0;
             float sale = 0;
-            var error = "";
 
             IQueryable<SpecialPrice> DatePrice = _context.SpecialPrices
                 .Include(c => c.Category).ThenInclude(r => r.Rooms.Where(op => ppi.BookingDetails.Select(s => s.RoomId).Contains(op.RoomId)))
@@ -184,7 +174,7 @@ namespace DIMSApis.Repositories
             var checkDate = DatePrice.Any(op => op.SpecialPrice1 == null);
             if (checkDate)
             {
-                return null;
+                error += "Some Date out of service ;";
             }
             var data = await roomprice.ToListAsync();
             foreach (BookingDetail r in bok.BookingDetails)
@@ -210,7 +200,6 @@ namespace DIMSApis.Repositories
                 var oj = specialDate.ToList()[0];
                 foreach (var item in oj)
                 {
-                    
                     r.BookingDetailPrices.Add(new BookingDetailPrice
                     {
                         Date = item.SpecialDate,
@@ -234,13 +223,14 @@ namespace DIMSApis.Repositories
                 }
                 else
                 {
-                    error= "voucher out of limit";
+                    error += "voucher out of limit";
                 }
             }
             else
             {
                 bok.VoucherDiscoundPrice = 0;
             }
+            if(error != "") { throw new Exception(error); }
             bok.SubTotal = Math.Round((double)(total * bok.TotalNight), 2);
             bok.TotalPrice = Math.Round((double)(bok.SubTotal - bok.VoucherDiscoundPrice), 2);
 

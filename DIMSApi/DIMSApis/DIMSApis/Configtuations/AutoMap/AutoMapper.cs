@@ -54,18 +54,25 @@ namespace DIMSApis.Configtuations.AutoMap
             //
             CreateMap<Category, HotelCateOutput>()
                 .ForMember(a => a.CatePhotos, option => option.MapFrom(tbl => tbl.Photos))
+                .ForMember(a => a.SpecialPPrice, option => option.MapFrom(tbl => tbl.SpecialPrices))
                 ;
 
             CreateMap<Room, HotelCateRoomOutput>()
+
                 ;
    
             CreateMap<Photo, HotelCatePhotosOutput>()
+                ;
+            CreateMap<SpecialPrice, HotelCateSpecialPricesOutput>()
+                ;
+            CreateMap<Voucher, HotelCateInfoVouchersOutput>()
                 ;
             CreateMap<Hotel, HotelCateInfoOutput>()
                 .ForMember(a => a.WardName, option => option.MapFrom(tbl => tbl.WardNavigation.Name))
                 .ForMember(a => a.ProvinceName, option => option.MapFrom(tbl => tbl.ProvinceNavigation.Name))
                 .ForMember(a => a.DistrictName, option => option.MapFrom(tbl => tbl.DistrictNavigation.Name))
                 .ForMember(a => a.HotelTypeName, option => option.MapFrom(tbl => tbl.HotelType.HotelTypeName))
+                .ForMember(a => a.Vouchers, option => option.MapFrom(tbl => tbl.Vouchers))
                 ;
             CreateMap<HotelCateOutput, HotelCateInfoOutput>()
                  .ForMember(a => a.LsCate, option => option.MapFrom(tbl => tbl))

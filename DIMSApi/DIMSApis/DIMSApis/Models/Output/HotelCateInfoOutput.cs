@@ -18,7 +18,7 @@
         public int? TotalRate { get; set; }
         public int? Star { get; set; }
         public int? Status { get; set; }
-
+        public virtual ICollection<HotelCateInfoVouchersOutput> Vouchers { get; set; }
         public virtual ICollection<HotelPhotosOutput> Photos { get; set; }
         public virtual ICollection<HotelCateOutput> LsCate { get; set; }
 

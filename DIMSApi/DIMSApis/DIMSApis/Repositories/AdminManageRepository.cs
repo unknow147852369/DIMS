@@ -28,7 +28,8 @@ namespace DIMSApis.Repositories
         public async Task<int> AcpectHost(int UserId)
         {
             var user = await _context.Users
-                .Where(u => u.UserId == UserId).FirstOrDefaultAsync();
+                .Where(u => u.UserId == UserId && u.Status.Value)
+                .FirstOrDefaultAsync();
             if (user != null)
             {
                 user.Role = role1;
@@ -41,7 +42,9 @@ namespace DIMSApis.Repositories
 
         public async Task<int> AcpectHotel(int hotelId)
         {
-            var hotel = await _context.Hotels.Where(u => u.HotelId == hotelId ).FirstOrDefaultAsync();
+            var hotel = await _context.Hotels
+                .Where(u => u.HotelId == hotelId && u.Status.Value)
+                .FirstOrDefaultAsync();
             if (hotel != null)
             {
                 hotel.Status = true;
