@@ -31,7 +31,7 @@ namespace DIMSApis.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("user-Payment-Processing")]
+        [HttpPost("user-Online-Payment")]
         public async Task<IActionResult> UserPaymentProcessing(PaymentProcessingInput ppi)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);

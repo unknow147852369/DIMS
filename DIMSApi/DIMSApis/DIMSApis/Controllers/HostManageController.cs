@@ -83,7 +83,13 @@ namespace DIMSApis.Controllers
         //    }
         //}
 
-
+        [HttpGet("Host-A-Hotel-All-Room-Status")]
+        public async Task<IActionResult> GetListAHotelAllRoomStatus(int hotelId,DateTime today,int totalnight)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var Hotel = await _host.GetListAHotelAllRoomStatus(userId, hotelId, today,totalnight);
+            return Ok(Hotel);
+        }
 
         [HttpGet("Host-All-Hotel")]
         public async Task<IActionResult> GetListAllHotel()

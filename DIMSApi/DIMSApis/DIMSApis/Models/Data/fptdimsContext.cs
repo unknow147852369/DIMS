@@ -63,6 +63,8 @@ namespace DIMSApis.Models.Data
 
                 entity.Property(e => e.HotelId).HasColumnName("HotelID");
 
+                entity.Property(e => e.Method).HasMaxLength(50);
+
                 entity.Property(e => e.PhoneNumber).HasMaxLength(15);
 
                 entity.Property(e => e.StartDate).HasColumnType("datetime");

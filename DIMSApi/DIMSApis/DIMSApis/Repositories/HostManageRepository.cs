@@ -11,11 +11,13 @@ namespace DIMSApis.Repositories
     {
         private readonly fptdimsContext _context;
         private readonly IMapper _mapper;
+        private readonly IOtherService _other;
 
-        public HostManageRepository(fptdimsContext context, IMapper mapper)
+        public HostManageRepository(fptdimsContext context, IMapper mapper, IOtherService other)
         {
             _context = context;
             _mapper = mapper;
+            _other = other;
         }
 
         public Task<string> CreateCategory(NewRoomInput room, int userId)
@@ -153,10 +155,43 @@ namespace DIMSApis.Repositories
         }
 
 
-
-        public Task<string> UpdateRoom(NewRoomInput room, int userId)
+        public async Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelAllRoomStatus(int userId, int hotelId, DateTime today, int totalnight)
         {
-            throw new NotImplementedException();
+            DateTime StartDate = today;
+            DateTime EndDate = _other.GetEndDate(today, totalnight);
+            var allRoomStatus = await _context.Rooms
+                .Include(c=>c.Category)
+                .Where(op=>op.HotelId == hotelId)
+                .ToListAsync();
+            var lsHotelRoomNotBooked = await _context.Rooms
+                    .Where(op => op.HotelId == hotelId)
+                     .Where(a => a.BookingDetails.All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
+                                                  !(((op.StartDate.Value.Date > StartDate.Date && op.StartDate.Value.Date < EndDate.Date)
+                                                  && (op.EndDate.Value.Date > StartDate.Date && op.EndDate.Value.Date < EndDate.Date))
+                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > EndDate.Date)
+                                                  || (op.StartDate.Value.Date < EndDate.Date && op.EndDate.Value.Date > EndDate.Date)
+                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > StartDate.Date)
+                                                  || (op.StartDate.Value.Date == StartDate.Date
+                                                  || op.StartDate.Value.Date == EndDate.Date
+                                                  || op.EndDate.Value.Date == StartDate.Date
+                                                  || op.EndDate.Value.Date == EndDate.Date)
+                                                  ))
+                                                ))
+                                    .ToListAsync();
+
+            var returnResult = _mapper.Map<IEnumerable<AHotelAllRoomStatusOutput>>(allRoomStatus);
+            foreach(var result in returnResult)
+            {
+                if (lsHotelRoomNotBooked.Select(s=>s.RoomId).Contains(result.RoomId))
+                {
+                    result.BookedStatus = false;
+                }
+                else
+                {
+                    result.BookedStatus = true;
+                }
+            }
+            return returnResult;
         }
     }
 }

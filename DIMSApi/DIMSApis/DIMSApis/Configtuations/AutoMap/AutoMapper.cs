@@ -10,6 +10,10 @@ namespace DIMSApis.Configtuations.AutoMap
     {
         public AutoMapper()
         {
+            CreateMap<Room, AHotelAllRoomStatusOutput>()
+                .ForMember(a => a.CategoryName, option => option.MapFrom(tbl => tbl.Category.CategoryName))
+                ;
+            //
             CreateMap<Province, SearchLocationAreaOutput>()
                 ;
             CreateMap<District, SearchLocationAreaOutput>()

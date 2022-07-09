@@ -26,7 +26,9 @@ namespace DIMSApis.Models.Data
         public double? VoucherDiscoundPrice { get; set; }
         public double? TotalPrice { get; set; }
         public DateTime? CreateDate { get; set; }
+        public string? Method { get; set; }
         public string? Condition { get; set; }
+        public double? Deposit { get; set; }
         public bool? Status { get; set; }
 
         public virtual Hotel? Hotel { get; set; }
