@@ -161,8 +161,13 @@ namespace DIMSApis.Repositories
             DateTime EndDate = _other.GetEndDate(today, totalnight);
             var allRoomStatus = await _context.Rooms
                 .Include(c=>c.Category)
+                .ThenInclude(sp => sp.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date
+                        && op.SpecialDate.Value.Date >= StartDate.Date
+                        && op.SpecialDate.Value.Date <= EndDate.Date
+                        && op.Status.Value))
                 .Where(op=>op.HotelId == hotelId)
                 .ToListAsync();
+            if (allRoomStatus == null) { return null; }
             var lsHotelRoomNotBooked = await _context.Rooms
                     .Where(op => op.HotelId == hotelId)
                      .Where(a => a.BookingDetails.All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
@@ -178,10 +183,11 @@ namespace DIMSApis.Repositories
                                                   ))
                                                 ))
                                     .ToListAsync();
-
             var returnResult = _mapper.Map<IEnumerable<AHotelAllRoomStatusOutput>>(allRoomStatus);
+           
             foreach(var result in returnResult)
             {
+                
                 if (lsHotelRoomNotBooked.Select(s=>s.RoomId).Contains(result.RoomId))
                 {
                     result.BookedStatus = false;
@@ -190,7 +196,35 @@ namespace DIMSApis.Repositories
                 {
                     result.BookedStatus = true;
                 }
+                var ls = allRoomStatus.Where(s => s.RoomId == result.RoomId)
+                    .Select(s => s.Category.SpecialPrices)
+                    .ToList()[0];
+                var check = ls.Any(s => s.SpecialPrice1 == null);
+                if (check)
+                {
+                    result.SpecialDateStatus = true;
+                }
+                else
+                {
+                    result.SpecialDateStatus = false;
+                }
             }
+            return returnResult;
+        }
+
+        public async Task<RoomDetailInfoOutput> GetADetailRoom(int userId, int RoomId, DateTime today, int totalnight)
+        {
+            DateTime StartDate = today;
+            DateTime EndDate = _other.GetEndDate(today, totalnight);
+            var RoomDetail = await _context.Rooms.Where(op => op.RoomId == RoomId)
+                .Include(bd => bd.BookingDetails)
+                .ThenInclude(b=>b.Booking)
+                .ThenInclude(ib=>ib.InboundUsers)
+                .Include(c=>c.Category)
+                .SingleOrDefaultAsync();
+                ;
+            if(RoomDetail == null) { return null; }
+            var returnResult = _mapper.Map<RoomDetailInfoOutput>(RoomDetail);
             return returnResult;
         }
     }

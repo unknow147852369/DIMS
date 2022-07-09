@@ -51,8 +51,6 @@ namespace DIMSApis.Models.Data
             {
                 entity.Property(e => e.BookingId).HasColumnName("BookingID");
 
-                entity.Property(e => e.Condition).HasMaxLength(50);
-
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Email).HasMaxLength(100);
@@ -63,7 +61,9 @@ namespace DIMSApis.Models.Data
 
                 entity.Property(e => e.HotelId).HasColumnName("HotelID");
 
-                entity.Property(e => e.Method).HasMaxLength(50);
+                entity.Property(e => e.PaymentCondition).HasMaxLength(50);
+
+                entity.Property(e => e.PaymentMethod).HasMaxLength(50);
 
                 entity.Property(e => e.PhoneNumber).HasMaxLength(15);
 

@@ -73,9 +73,9 @@ namespace DIMSApis.Repositories
                 {
                     if (ppi.Condition.ToLower().Trim().Contains("online"))
                     {
-                        bok.Condition = condition1;
+                        bok.PaymentMethod = condition1;
                     }
-                    else { bok.Condition = condition2; }
+                    else { bok.PaymentMethod = condition2; }
                     //
                     bool checkExist = await PaymentCheckRoomExist(bok);
                     //

@@ -13,6 +13,7 @@ namespace DIMSApis.Interfaces
         Task<IEnumerable<HotelOutput>> GetListAllHotel( int userId);
         Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelAllRoomStatus( int userId, int hotelId, DateTime today, int totalnight);
         Task<HotelCateInfoOutput> GetAHotelAllInfo( int hotelId,int userId);
+        Task<RoomDetailInfoOutput> GetADetailRoom(int userId, int RoomId, DateTime today, int totalnight);
 
     }
 }

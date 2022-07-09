@@ -10,6 +10,9 @@ namespace DIMSApis.Configtuations.AutoMap
     {
         public AutoMapper()
         {
+            CreateMap<Room, RoomDetailInfoOutput>()
+                ;
+            //
             CreateMap<Room, AHotelAllRoomStatusOutput>()
                 .ForMember(a => a.CategoryName, option => option.MapFrom(tbl => tbl.Category.CategoryName))
                 ;
@@ -128,7 +131,7 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.TotalPrice, option => option.MapFrom(tbl => CalculateTotalPrice(tbl.BookingDetails) * (tbl.EndDate - tbl.StartDate).Value.TotalDays))
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
-                .ForMember(a => a.Condition, option => option.MapFrom(tbl => "WAIT"))
+                .ForMember(a => a.PaymentMethod, option => option.MapFrom(tbl => "WAIT"))
                 ;
 
             CreateMap<BookingDetailInput, BookingDetail>()

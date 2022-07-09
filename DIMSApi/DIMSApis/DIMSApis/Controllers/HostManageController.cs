@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using DIMSApis.Interfaces;
 using DIMSApis.Models.Input;
 using System.Security.Claims;
+using DIMSApis.Models.Helper;
 
 namespace DIMSApis.Controllers
 {
@@ -88,7 +89,17 @@ namespace DIMSApis.Controllers
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var Hotel = await _host.GetListAHotelAllRoomStatus(userId, hotelId, today,totalnight);
+            if(Hotel == null) { return BadRequest(new DataRespone { Message = "No Rooms Create!" }); }
             return Ok(Hotel);
+        }
+
+        [HttpGet("Host-A-Detail-Room")]
+        public async Task<IActionResult> GetADetailRoom(int RoomId, DateTime today, int totalnight)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var roomDetail = await _host.GetADetailRoom(userId, RoomId, today, totalnight);
+            if (roomDetail == null) { return BadRequest(new DataRespone { Message = "Room not Found!" }); }
+            return Ok(roomDetail);
         }
 
         [HttpGet("Host-All-Hotel")]
