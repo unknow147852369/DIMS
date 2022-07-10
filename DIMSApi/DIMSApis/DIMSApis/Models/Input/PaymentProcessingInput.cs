@@ -24,9 +24,6 @@ namespace DIMSApis.Models.Input
         [Required(ErrorMessage = "Can't be empty"), Range(1, 100, ErrorMessage = "Please enter a value bigger than {1}")]
         public int? PeopleQuanity { get; set; }
         public string? Description { get; set; }
-
-        [Required(ErrorMessage = "Can't be empty"), RegularExpression("online|local")]
-        public string Condition { get; set; }
         public int? VoucherId { get; set; }
 
         [Required(ErrorMessage = "Can't be empty")]

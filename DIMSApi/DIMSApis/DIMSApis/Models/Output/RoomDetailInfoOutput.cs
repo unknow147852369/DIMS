@@ -9,6 +9,8 @@
         public string? CategoryName { get; set; }
         public double? RoomPrice { get; set; }
         public int? Floor { get; set; }
+        public string? UserFullName { get; set; }
+        public string? Role { get; set; }
         public int? BookingId { get; set; }
         public int? BookingDetailId { get; set; }
         public string? FullName { get; set; }

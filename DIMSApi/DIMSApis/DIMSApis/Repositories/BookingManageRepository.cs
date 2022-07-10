@@ -71,11 +71,7 @@ namespace DIMSApis.Repositories
                 //var paymentstatus = _stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
                 if (paymentstatus.Contains(condition4))
                 {
-                    if (ppi.Condition.ToLower().Trim().Contains("online"))
-                    {
-                        bok.PaymentMethod = condition1;
-                    }
-                    else { bok.PaymentMethod = condition2; }
+                    bok.PaymentMethod = condition1;
                     //
                     bool checkExist = await PaymentCheckRoomExist(bok);
                     //

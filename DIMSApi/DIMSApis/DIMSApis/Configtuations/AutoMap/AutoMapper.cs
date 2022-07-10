@@ -11,6 +11,24 @@ namespace DIMSApis.Configtuations.AutoMap
         public AutoMapper()
         {
             CreateMap<Room, RoomDetailInfoOutput>()
+                .ForMember(a => a.LsCustomer, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.InboundUsers))
+                .ForMember(a => a.CategoryName, option => option.MapFrom(tbl => tbl.Category.CategoryName))
+                .ForMember(a => a.UserFullName, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.User.UserName))
+                .ForMember(a => a.Role, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.User.Role))
+                .ForMember(a => a.BookingId, option => option.MapFrom(tbl => tbl.BookingDetails.Count() ==0 ? -1 : tbl.BookingDetails.First().Booking.BookingId))
+                .ForMember(a => a.BookingDetailId, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? -1 : tbl.BookingDetails.Select(s => s.BookingDetailId).First()))
+                .ForMember(a => a.FullName, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.FullName))
+                .ForMember(a => a.Email, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.Email))
+                .ForMember(a => a.PhoneNumber, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.PhoneNumber))
+                .ForMember(a => a.StartDate, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.StartDate))
+                .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.EndDate))
+                .ForMember(a => a.TotalPrice, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.TotalPrice))
+                .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.CreateDate))
+                .ForMember(a => a.PaymentMethod, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.PaymentMethod))
+                .ForMember(a => a.PaymentCondition, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.PaymentCondition))
+                .ForMember(a => a.Deposit, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.Deposit))
+                ;
+            CreateMap<InboundUser, RoomDetailInfoPeopleOutput>()
                 ;
             //
             CreateMap<Room, AHotelAllRoomStatusOutput>()

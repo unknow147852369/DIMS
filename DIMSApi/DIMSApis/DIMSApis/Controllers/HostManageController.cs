@@ -25,79 +25,38 @@ namespace DIMSApis.Controllers
         {
             _host = host;
         }
-
-
-        //[HttpPost("Create-Hotel")]
-        //public async Task<IActionResult> CreateHotel(HotelInput htInput)
-        //{
-        //    int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        //    int check = await _host.CreateHotel(htInput,userId);
-        //    if (check == 1)
-        //    {
-        //        return Ok();
-        //    }
-        //    else if (check == 3)
-        //    {
-        //        return NoContent();
-        //    }
-        //    else
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
-
-        //[HttpPut("Update-Hotel")]
-        //public async Task<IActionResult> UpdateHotel(int hotelId,HotelInput htInput)
-        //{
-        //    int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        //    var check = await _host.UpdateHotel(htInput, hotelId ,userId);
-        //    if (check.Equals("1"))
-        //    {
-        //        return Ok();
-        //    }
-        //    else if (check.Equals("3"))
-        //    {
-        //        return NoContent();
-        //    }
-        //    else
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
-
-        //[HttpPost("Crete-Room")]
-        //public async Task<IActionResult> CreateRoom(NewRoomInput roomInput)
-        //{
-        //    int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        //    var check = await _host.CreateRoom(roomInput, userId);
-        //    if (check.Equals(1))
-        //    {
-        //        return Ok();
-        //    }
-        //    else if (check.Equals(3))
-        //    {
-        //        return NoContent();
-        //    }
-        //    else
-        //    {
-        //        return BadRequest("Some rooms are existed "+check );
-        //    }
-        //}
-
-        [HttpGet("Host-A-Hotel-All-Room-Status")]
-        public async Task<IActionResult> GetListAHotelAllRoomStatus(int hotelId,DateTime today,int totalnight)
+        [HttpGet("Host-A-Hotel-All-Room-Status-CheckOut")]
+        public async Task<IActionResult> GetListAHotelAllRoomStatusCheckOut(int hotelId, DateTime today)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var Hotel = await _host.GetListAHotelAllRoomStatus(userId, hotelId, today,totalnight);
+            var Hotel = await _host.GetListAHotelAllRoomStatusCheckOut(userId, hotelId, today);
+            if (Hotel == null) { return BadRequest(new DataRespone { Message = "No Rooms Create!" }); }
+            return Ok(Hotel);
+        }
+
+        [HttpGet("Host-A-Hotel-All-Room-Status-Today")]
+        public async Task<IActionResult> GetListAHotelAllRoomStatusToday(int hotelId, DateTime today)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var Hotel = await _host.GetListAHotelAllRoomStatusToday(userId, hotelId, today);
+            if (Hotel == null) { return BadRequest(new DataRespone { Message = "No Rooms Create!" }); }
+            return Ok(Hotel);
+        }
+
+        [HttpGet("Host-A-Hotel-All-Room-Status-Search")]
+        public async Task<IActionResult> GetListAHotelAllRoomStatusSearch(int hotelId,DateTime ArrivalDate, int totalnight)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var Hotel = await _host.GetListAHotelAllRoomStatusSearch(userId, hotelId, ArrivalDate, totalnight);
             if(Hotel == null) { return BadRequest(new DataRespone { Message = "No Rooms Create!" }); }
             return Ok(Hotel);
         }
 
         [HttpGet("Host-A-Detail-Room")]
-        public async Task<IActionResult> GetADetailRoom(int RoomId, DateTime today, int totalnight)
+        public async Task<IActionResult> GetADetailRoom(int RoomId, DateTime today)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var roomDetail = await _host.GetADetailRoom(userId, RoomId, today, totalnight);
+            var roomDetail = await _host.GetADetailRoom(userId, RoomId, today);
             if (roomDetail == null) { return BadRequest(new DataRespone { Message = "Room not Found!" }); }
             return Ok(roomDetail);
         }

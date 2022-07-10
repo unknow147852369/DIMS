@@ -20,53 +20,11 @@ namespace DIMSApis.Repositories
             _other = other;
         }
 
-        public Task<string> CreateCategory(NewRoomInput room, int userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<int> CreateHotel(HotelInput hotel, int userId)
-        {
-            Hotel ht = new();
-            ht.UserId = userId;
-            _mapper.Map(hotel, ht);
-            await _context.Hotels.AddAsync(ht);
-            if (await _context.SaveChangesAsync() > 0)
-                return 1;
-            return 3;
-        }
-
-        public async Task<string> CreateRoom(NewRoomInput room, int userId)
-        {
-            var lsRoom = await _context.Rooms.Where(op => op.HotelId == room.HotelId).ToListAsync();
-            var duplicateRoom = "";
-            if (lsRoom != null)
-            {
-                foreach (var r in lsRoom)
-                {
-                    if (r.RoomName == room.RoomName)
-                    {
-                        duplicateRoom += room.RoomName + ",";
-                    }
-                }
-            }
-            if (duplicateRoom == "")
-            {
-                Room ro = new();
-                _mapper.Map(room, ro);
-                await _context.Rooms.AddAsync(ro);
-                if (await _context.SaveChangesAsync() > 0)
-                    return "1";
-                return "3";
-            }
-            return duplicateRoom;
-        }
-
         public async Task<IEnumerable<HotelOutput>> GetListAllHotel(int userId)
         {
             var lsHotel = await _context.Hotels
                 .Include(p => p.Photos)
-                .Include(ht=>ht.HotelType)
+                .Include(ht => ht.HotelType)
                 .Include(h => h.Rooms)
                 .Include(w => w.WardNavigation)
                 .Include(d => d.DistrictNavigation)
@@ -113,59 +71,41 @@ namespace DIMSApis.Repositories
         public async Task<IEnumerable<HotelPhotosOutput>> GetListHotelPhotos(int userId, int hotelId)
         {
             var hotelPhotos = await _context.Photos
-                .Where(op=>op.HotelId==hotelId && op.Status == true).ToListAsync();
+                .Where(op => op.HotelId == hotelId && op.Status == true).ToListAsync();
             return _mapper.Map<IEnumerable<HotelPhotosOutput>>(hotelPhotos);
         }
 
-        public async Task<string> UpdateHotelMainPhoto(int photoID,int hotelID)
+        public async Task<string> UpdateHotelMainPhoto(int photoID, int hotelID)
         {
             var hotelPhotos = await _context.Photos
                .Where(op => op.HotelId == hotelID && op.Status == true).ToListAsync();
             if (hotelPhotos.Any()) { return "Not found image"; }
-            foreach (var item in hotelPhotos) {
+            foreach (var item in hotelPhotos)
+            {
                 item.IsMain = false;
-                if (item.PhotoId == photoID) {
+                if (item.PhotoId == photoID)
+                {
                     item.IsMain = true;
                 }
             }
-           
+
             if (await _context.SaveChangesAsync() > 0)
                 return "1";
             return "3";
         }
 
-        public Task<string> UpdateCategory(NewRoomInput room, int userId)
-        {
-            throw new NotImplementedException();
-        }
 
-        public async Task<string> UpdateHotel(HotelInput hotel, int hotelId, int userId)
-        {
-            if (hotelId != null)
-            {
-                var newHotel = await _context.Hotels
-                    .Where(h => h.UserId == userId && h.HotelId == hotelId)
-                    .SingleOrDefaultAsync();
-                _mapper.Map(hotel, newHotel);
-                if (await _context.SaveChangesAsync() > 0)
-                    return "1";
-                return "3";
-            }
-            return "0";
-        }
-
-
-        public async Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelAllRoomStatus(int userId, int hotelId, DateTime today, int totalnight)
+        public async Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelAllRoomStatusSearch(int userId, int hotelId, DateTime today, int totalnight)
         {
             DateTime StartDate = today;
             DateTime EndDate = _other.GetEndDate(today, totalnight);
             var allRoomStatus = await _context.Rooms
-                .Include(c=>c.Category)
+                .Include(c => c.Category)
                 .ThenInclude(sp => sp.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date
                         && op.SpecialDate.Value.Date >= StartDate.Date
                         && op.SpecialDate.Value.Date <= EndDate.Date
                         && op.Status.Value))
-                .Where(op=>op.HotelId == hotelId)
+                .Where(op => op.HotelId == hotelId)
                 .ToListAsync();
             if (allRoomStatus == null) { return null; }
             var lsHotelRoomNotBooked = await _context.Rooms
@@ -184,11 +124,10 @@ namespace DIMSApis.Repositories
                                                 ))
                                     .ToListAsync();
             var returnResult = _mapper.Map<IEnumerable<AHotelAllRoomStatusOutput>>(allRoomStatus);
-           
-            foreach(var result in returnResult)
+
+            foreach (var result in returnResult)
             {
-                
-                if (lsHotelRoomNotBooked.Select(s=>s.RoomId).Contains(result.RoomId))
+                if (lsHotelRoomNotBooked.Select(s => s.RoomId).Contains(result.RoomId))
                 {
                     result.BookedStatus = false;
                 }
@@ -202,30 +141,120 @@ namespace DIMSApis.Repositories
                 var check = ls.Any(s => s.SpecialPrice1 == null);
                 if (check)
                 {
-                    result.SpecialDateStatus = true;
+                    result.OutOfServiceStatus = true;
                 }
                 else
                 {
-                    result.SpecialDateStatus = false;
+                    result.OutOfServiceStatus = false;
                 }
             }
             return returnResult;
         }
 
-        public async Task<RoomDetailInfoOutput> GetADetailRoom(int userId, int RoomId, DateTime today, int totalnight)
+        public async Task<RoomDetailInfoOutput> GetADetailRoom(int userId, int RoomId, DateTime today)
         {
-            DateTime StartDate = today;
-            DateTime EndDate = _other.GetEndDate(today, totalnight);
             var RoomDetail = await _context.Rooms.Where(op => op.RoomId == RoomId)
-                .Include(bd => bd.BookingDetails)
-                .ThenInclude(b=>b.Booking)
-                .ThenInclude(ib=>ib.InboundUsers)
-                .Include(c=>c.Category)
-                .SingleOrDefaultAsync();
-                ;
-            if(RoomDetail == null) { return null; }
+                .Include(bd => bd.BookingDetails.Where(op=>op.StartDate.Value.Date<=today.Date && op.EndDate.Value.Date>=today.Date)).ThenInclude(b => b.Booking).ThenInclude(ib => ib.InboundUsers)
+                .Include(bd => bd.BookingDetails.Where(op => op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date)).ThenInclude(b => b.Booking).ThenInclude(u => u.User)
+                .Include(c => c.Category)
+                .SingleOrDefaultAsync()
+            ;
+
+            if (RoomDetail == null) { return null; }
             var returnResult = _mapper.Map<RoomDetailInfoOutput>(RoomDetail);
             return returnResult;
+        }
+
+        public async Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelAllRoomStatusToday(int userId, int hotelId, DateTime today)
+        {
+            var allRoomStatus = await _context.Rooms
+                .Include(c => c.Category)
+                .ThenInclude(sp => sp.SpecialPrices.Where(op => op.SpecialDate.Value.Date == DateTime.Now.Date
+                                                                && op.Status.Value))
+                .Where(op => op.HotelId == hotelId)
+                .ToListAsync();
+
+            if (allRoomStatus == null) { return null; }
+            var lsHotelRoomNotBooked = await _context.Rooms
+                    .Where(op => op.HotelId == hotelId)
+                     .Where(a => a.BookingDetails.All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
+                                                  !(op.StartDate.Value.Date <= today.Date
+                                                  && op.EndDate.Value.Date >= today.Date)
+                                                  )
+                                                ))
+                                    .ToListAsync();
+            var returnResult = _mapper.Map<IEnumerable<AHotelAllRoomStatusOutput>>(allRoomStatus);
+
+            foreach (var result in returnResult)
+            {
+                if (lsHotelRoomNotBooked.Select(s => s.RoomId).Contains(result.RoomId))
+                {
+                    result.BookedStatus = false;
+                }
+                else
+                {
+                    result.BookedStatus = true;
+                }
+                var ls = allRoomStatus.Where(s => s.RoomId == result.RoomId)
+                    .Select(s => s.Category.SpecialPrices)
+                    .ToList()[0];
+                var check = ls.Any(s => s.SpecialPrice1 == null);
+                if (check)
+                {
+                    result.OutOfServiceStatus = true;
+                }
+                else
+                {
+                    result.OutOfServiceStatus = false;
+                }
+            }
+            return returnResult;
+        }
+
+        public async Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelAllRoomStatusCheckOut(int userId, int hotelId, DateTime today)
+        {
+            var allRoomStatus = await _context.Rooms
+                .Include(c => c.Category)
+                .ThenInclude(sp => sp.SpecialPrices.Where(op => op.SpecialDate.Value.Date == DateTime.Now.Date
+                                                                && op.Status.Value))
+                .Where(op => op.HotelId == hotelId)
+                .ToListAsync();
+
+            if (allRoomStatus == null) { return null; }
+            var lsHotelRoomNotBooked = await _context.Rooms
+                    .Where(op => op.HotelId == hotelId)
+                     .Where(a => a.BookingDetails.All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
+                                                  !(op.StartDate.Value.Date <= today.Date
+                                                  && op.EndDate.Value.Date >= today.Date)
+                                                  )
+                                                ))
+                                    .ToListAsync();
+            var returnResult = _mapper.Map<IEnumerable<AHotelAllRoomStatusOutput>>(allRoomStatus);
+
+            foreach (var result in returnResult)
+            {
+                if (lsHotelRoomNotBooked.Select(s => s.RoomId).Contains(result.RoomId))
+                {
+                    result.BookedStatus = false;
+                }
+                else
+                {
+                    result.BookedStatus = true;
+                }
+                var ls = allRoomStatus.Where(s => s.RoomId == result.RoomId)
+                    .Select(s => s.Category.SpecialPrices)
+                    .ToList()[0];
+                var check = ls.Any(s => s.SpecialPrice1 == null);
+                if (check)
+                {
+                    result.OutOfServiceStatus = true;
+                }
+                else
+                {
+                    result.OutOfServiceStatus = false;
+                }
+            }
+            return returnResult.Where(op=>op.BookedStatus==true).ToList();
         }
     }
 }
