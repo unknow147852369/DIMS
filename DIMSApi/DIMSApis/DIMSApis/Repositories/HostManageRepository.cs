@@ -220,10 +220,12 @@ namespace DIMSApis.Repositories
                 if (lsHotelRoomNotBooked.Select(s => s.RoomId).Contains(result.RoomId))
                 {
                     result.AllStatus = 1;
+                    result.BookedStatus = false;
                 }
                 else
                 {
                     result.AllStatus = 2;
+                    result.BookedStatus = true;
                 }
                 if (result.CleanStatus == true)
                 {

@@ -11,6 +11,8 @@
         public int? Floor { get; set; }
         public string? RoomDescription { get; set; }
         public int? AllStatus { get; set; }
+        public bool? CleanStatus { get; set; }
+        public bool? BookedStatus { get; set; }
         public bool? Status { get; set; }
     }
 }
