@@ -201,7 +201,7 @@ namespace DIMSApis.Repositories
                                                   || op.EndDate.Value.Date == EndDate.Date)
                                                   ))
                                                 )))
-                .Where(op => op.Rooms.Count() > 0 );
+                .Where(op => op.Rooms.Count() > 0);
 
             if (Location.ToLower().Trim() == "areas")
             {
@@ -375,7 +375,7 @@ namespace DIMSApis.Repositories
         {
             var a = await _context.Hotels.ToListAsync();
             var b = await _context.Rooms
-                .Include(a=>a.Category)
+                .Include(a => a.Category)
                 .ToListAsync();
 
             foreach (var bb in b)

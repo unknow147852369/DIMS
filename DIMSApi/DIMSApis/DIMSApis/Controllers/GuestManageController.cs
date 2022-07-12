@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DIMSApis.Models.Data;
-using DIMSApis.Models.Input;
+﻿using AutoMapper;
 using DIMSApis.Interfaces;
-using System.Security.Claims;
-using AutoMapper;
-using DIMSApis.Models.Output;
 using DIMSApis.Models.Helper;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DIMSApis.Controllers
 {
@@ -21,6 +11,7 @@ namespace DIMSApis.Controllers
     {
         private readonly IUserManage _usermanage;
         private readonly IMapper _mapper;
+
         public GuestManageController(IUserManage usermanage, IMapper mapper)
         {
             _usermanage = usermanage;
@@ -30,7 +21,7 @@ namespace DIMSApis.Controllers
         [HttpGet("Search-Hotel")]
         public async Task<IActionResult> GetListSearchHotel(string Location, string LocationName, DateTime ArrivalDate, int TotalNight)
         {
-            var Hotel = await _usermanage.GetListSearchHotel(Location,LocationName,ArrivalDate,TotalNight);
+            var Hotel = await _usermanage.GetListSearchHotel(Location, LocationName, ArrivalDate, TotalNight);
             if (Hotel == null) { return BadRequest(new DataRespone { Message = "Some field wrong" }); }
             else if (Hotel.Count() == 0) { return NotFound(new DataRespone { Message = "out of room" }); }
             return Ok(Hotel);

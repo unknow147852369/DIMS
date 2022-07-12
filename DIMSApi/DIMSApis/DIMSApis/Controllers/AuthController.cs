@@ -1,16 +1,10 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DIMSApis.Models.Data;
+
 using DIMSApis.Interfaces;
+using DIMSApis.Models.Helper;
 using DIMSApis.Models.Input;
 using DIMSApis.Models.Output;
-using DIMSApis.Models.Helper;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DIMSApis.Controllers
 {
@@ -21,7 +15,7 @@ namespace DIMSApis.Controllers
         private readonly IAuth _auth;
         private readonly ITokenService _tokenService;
 
-        public AuthController(IAuth auth, ITokenService tokenService )
+        public AuthController(IAuth auth, ITokenService tokenService)
         {
             _auth = auth;
             _tokenService = tokenService;
@@ -34,7 +28,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Email already exists" });
             if (await _auth.Register(user))
             {
-                return Ok(new DataRespone { Message="create success"});
+                return Ok(new DataRespone { Message = "create success" });
             }
             else
             {
@@ -91,7 +85,6 @@ namespace DIMSApis.Controllers
             }
         }
 
-
         [HttpPost("forgot-pass-change")]
         public async Task<IActionResult> ForgoPassChange(ForgotPassInput pass)
         {
@@ -104,6 +97,5 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Nothing change" });
             }
         }
-
-    }   
+    }
 }

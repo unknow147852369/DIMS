@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DIMSApis.Models.Data;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using DIMSApis.Interfaces;
+﻿using DIMSApis.Interfaces;
 using DIMSApis.Models.Input;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace DIMSApis.Controllers
 {
@@ -22,7 +15,7 @@ namespace DIMSApis.Controllers
 
         public AdminManageController(IAdminManage admin)
         {
-             _admin = admin;
+            _admin = admin;
         }
 
         [HttpPut("Admin-Acecpt-Host")]
@@ -76,6 +69,7 @@ namespace DIMSApis.Controllers
             if (Host.Count() == 0) { return NotFound("No Accpect"); }
             return Ok(Host);
         }
+
         [HttpPost("Admin-Create-User")]
         public async Task<IActionResult> AdminCreateUser(AdminRegisterInput userinput)
         {
@@ -94,7 +88,5 @@ namespace DIMSApis.Controllers
                 return BadRequest("Create failed");
             }
         }
-
-
     }
 }

@@ -1,15 +1,13 @@
 ﻿using DIMSApis.Interfaces;
-using DIMSApis.Models.Data;
+using DIMSApis.Models.Helper;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using DIMSApis.Models.Helper;
-
 
 namespace DIMSApis.Services
 {
-    public class MailService:IMail
+    public class MailService : IMail
     {
         private readonly MailSettings _mail;
 
@@ -17,7 +15,6 @@ namespace DIMSApis.Services
         {
             _mail = mail.Value;
         }
-
 
         public async Task SendEmailAsync(string mail, string key)
         {

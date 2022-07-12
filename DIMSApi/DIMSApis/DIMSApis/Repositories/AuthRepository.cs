@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
 using DIMSApis.Interfaces;
 using DIMSApis.Models.Data;
-using DIMSApis.Models.Helper;
 using DIMSApis.Models.Input;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace DIMSApis.Repositories
 {
@@ -17,7 +15,7 @@ namespace DIMSApis.Repositories
         private string purpose1 = "ACTIVE ACCOUNT";
         private string purpose2 = "CHANGE PASS";
 
-        public  AuthRepository(fptdimsContext context, IOtherService otherservice, IMail mail, IMapper mapper)
+        public AuthRepository(fptdimsContext context, IOtherService otherservice, IMail mail, IMapper mapper)
         {
             _context = context;
             _otherservice = otherservice;
@@ -41,7 +39,6 @@ namespace DIMSApis.Repositories
             }
             return false;
         }
-
 
         public async Task<bool> UpdateNewPass(ForgotPassInput pass)
         {
@@ -97,7 +94,7 @@ namespace DIMSApis.Repositories
             ltOtp.Add(new NewOtpInput
             {
                 Purpose = purpose1,
-                CodeOtp =checkcode,
+                CodeOtp = checkcode,
                 CreateDate = DateTime.Now,
                 Status = 1,
             });
@@ -119,18 +116,16 @@ namespace DIMSApis.Repositories
                 Status = true,
             };
 
-            _mapper.Map(ltOtp,user.Otps);
+            _mapper.Map(ltOtp, user.Otps);
             await _mail.SendEmailAsync(user.Email, checkcode);
             await _context.Users.AddAsync(user);
             return await _context.SaveChangesAsync() > 0;
         }
 
-
-
         public async Task<bool> UserExists(string email)
         {
-            if (await _context.Users.AnyAsync(x => x.Email == email))  
-                    return true;
+            if (await _context.Users.AnyAsync(x => x.Email == email))
+                return true;
             return false;
         }
     }

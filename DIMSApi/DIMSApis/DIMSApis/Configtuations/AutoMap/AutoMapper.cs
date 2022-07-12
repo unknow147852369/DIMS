@@ -2,7 +2,6 @@
 using DIMSApis.Models.Data;
 using DIMSApis.Models.Input;
 using DIMSApis.Models.Output;
-using System.Text;
 
 namespace DIMSApis.Configtuations.AutoMap
 {
@@ -15,7 +14,7 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.CategoryName, option => option.MapFrom(tbl => tbl.Category.CategoryName))
                 .ForMember(a => a.UserFullName, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.User.UserName))
                 .ForMember(a => a.Role, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.User.Role))
-                .ForMember(a => a.BookingId, option => option.MapFrom(tbl => tbl.BookingDetails.Count() ==0 ? -1 : tbl.BookingDetails.First().Booking.BookingId))
+                .ForMember(a => a.BookingId, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? -1 : tbl.BookingDetails.First().Booking.BookingId))
                 .ForMember(a => a.BookingDetailId, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? -1 : tbl.BookingDetails.Select(s => s.BookingDetailId).First()))
                 .ForMember(a => a.FullName, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.FullName))
                 .ForMember(a => a.Email, option => option.MapFrom(tbl => tbl.BookingDetails.Count() == 0 ? null : tbl.BookingDetails.First().Booking.Email))
@@ -46,7 +45,6 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.HotelName, option => option.MapFrom(tbl => tbl.Hotel.HotelName))
                 ;
             //
-            
 
             CreateMap<PaymentProcessingInput, Booking>()
                 .ForMember(a => a.BookingDetails, option => option.MapFrom(tbl => tbl.BookingDetails))
@@ -54,7 +52,7 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
                 .ForMember(a => a.StartDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.Add(new TimeSpan(12, 00, 0))))
                 .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.AddDays((double)(tbl.TotalNight - 1)).Add(new TimeSpan(16, 00, 0))));
-                ;
+            ;
             CreateMap<PaymentProcessingDetailInput, BookingDetail>()
                 ;
             //
@@ -69,8 +67,9 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.Quanity, option => option.MapFrom(tbl => tbl.Category.Quanity))
                 ;
             //
-            CreateMap<NewInboundUser, InboundUser>();
-
+            CreateMap<NewInboundUser, InboundUser>()
+                .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
+                ;
 
             //
 
@@ -85,7 +84,7 @@ namespace DIMSApis.Configtuations.AutoMap
             CreateMap<Room, HotelCateRoomOutput>()
 
                 ;
-   
+
             CreateMap<Photo, HotelCatePhotosOutput>()
                 ;
             CreateMap<SpecialPrice, HotelCateSpecialPricesOutput>()
@@ -117,7 +116,7 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.TotalRoom, option => option.MapFrom(tbl => tbl.Rooms.Count))
                 .ForMember(a => a.HotelTypeName, option => option.MapFrom(tbl => tbl.HotelType.HotelTypeName))
                 .ForMember(a => a.WardName, option => option.MapFrom(tbl => tbl.WardNavigation.Name))
-                .ForMember(a => a.SmallPrice, option => option.MapFrom(tbl => tbl.Rooms.Min(m=>m.RoomPrice)))
+                .ForMember(a => a.SmallPrice, option => option.MapFrom(tbl => tbl.Rooms.Min(m => m.RoomPrice)))
                 .ForMember(a => a.ProvinceName, option => option.MapFrom(tbl => tbl.ProvinceNavigation.Name))
                 .ForMember(a => a.DistrictName, option => option.MapFrom(tbl => tbl.DistrictNavigation.Name))
                 ;

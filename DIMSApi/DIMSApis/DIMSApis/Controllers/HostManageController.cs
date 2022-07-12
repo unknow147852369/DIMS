@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DIMSApis.Models.Data;
-using Microsoft.AspNetCore.Authorization;
-using DIMSApis.Interfaces;
-using DIMSApis.Models.Input;
-using System.Security.Claims;
+﻿using DIMSApis.Interfaces;
 using DIMSApis.Models.Helper;
+using DIMSApis.Models.Input;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace DIMSApis.Controllers
 {
@@ -25,6 +18,27 @@ namespace DIMSApis.Controllers
         {
             _host = host;
         }
+
+        [HttpPost("Host-Local-Payment-final")]
+        public async Task<IActionResult> LocalPaymentFinal(LocalPaymentInput ppi)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            string check = await _host.LocalPaymentFinal(ppi, userId);
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "Paid Success" });
+            }
+            else if (check.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = check });
+            }
+        }
+      
+
         [HttpGet("Host-A-Hotel-All-Room-Status-CheckOut")]
         public async Task<IActionResult> GetListAHotelAllRoomStatusCheckOut(int hotelId, DateTime today)
         {
@@ -44,11 +58,11 @@ namespace DIMSApis.Controllers
         }
 
         [HttpGet("Host-A-Hotel-All-Room-Status-Search")]
-        public async Task<IActionResult> GetListAHotelAllRoomStatusSearch(int hotelId,DateTime ArrivalDate, int totalnight)
+        public async Task<IActionResult> GetListAHotelAllRoomStatusSearch(int hotelId, DateTime ArrivalDate, int totalnight)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var Hotel = await _host.GetListAHotelAllRoomStatusSearch(userId, hotelId, ArrivalDate, totalnight);
-            if(Hotel == null) { return BadRequest(new DataRespone { Message = "No Rooms Create!" }); }
+            if (Hotel == null) { return BadRequest(new DataRespone { Message = "No Rooms Create!" }); }
             return Ok(Hotel);
         }
 
@@ -82,12 +96,12 @@ namespace DIMSApis.Controllers
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var HotelRoom = await _host.GetListHotelPhotos(hotelId, userId);
-            if(HotelRoom == null) { return BadRequest("Not Found"); }
+            if (HotelRoom == null) { return BadRequest("Not Found"); }
             return Ok(HotelRoom);
         }
 
         [HttpPut("Update-Hotel-MainPhoto")]
-        public async Task<IActionResult> UpdateHotelMainPhoto(int hotelId,int photoId)
+        public async Task<IActionResult> UpdateHotelMainPhoto(int hotelId, int photoId)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var check = await _host.UpdateHotelMainPhoto(photoId, hotelId);
@@ -104,6 +118,5 @@ namespace DIMSApis.Controllers
                 return BadRequest(check);
             }
         }
-
     }
 }

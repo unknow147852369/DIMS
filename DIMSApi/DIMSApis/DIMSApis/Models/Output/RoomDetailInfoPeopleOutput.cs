@@ -8,6 +8,5 @@
         public string? UserIdCard { get; set; }
         public DateTime? UserBirthday { get; set; }
         public int? Status { get; set; }
-
     }
 }

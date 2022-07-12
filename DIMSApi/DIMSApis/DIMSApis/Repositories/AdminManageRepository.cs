@@ -59,7 +59,7 @@ namespace DIMSApis.Repositories
         {
             var User = await _context.Users
                 .Include(u => u.Hotels)
-                .Where(r =>r.Role.Equals("HOST"))
+                .Where(r => r.Role.Equals("HOST"))
                 .ToListAsync();
             return User.OrderBy(a => a.Status);
         }
@@ -68,12 +68,12 @@ namespace DIMSApis.Repositories
         {
             var hotel = await _context.Hotels
                 .Include(u => u.User)
-                .Include(p=>p.Photos)
-                .Include(w=>w.WardNavigation)
-                .Include(pr=>pr.ProvinceNavigation)
-                .Include(d=>d.DistrictNavigation)
+                .Include(p => p.Photos)
+                .Include(w => w.WardNavigation)
+                .Include(pr => pr.ProvinceNavigation)
+                .Include(d => d.DistrictNavigation)
                 .ToListAsync();
-            return _mapper.Map<IEnumerable<HotelOutput>>(hotel).OrderBy(a=>a.Status);
+            return _mapper.Map<IEnumerable<HotelOutput>>(hotel).OrderBy(a => a.Status);
         }
 
         public async Task<string> AdminCreateUser(AdminRegisterInput userinput)

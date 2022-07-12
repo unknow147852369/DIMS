@@ -1,4 +1,3 @@
-D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\IronBarCode.dll
 C:\Users\Handez\Documents\GitHub\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\appsettings.Development.json
 C:\Users\Handez\Documents\GitHub\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\appsettings.json
 C:\Users\Handez\Documents\GitHub\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\DIMSApis.exe
@@ -322,6 +321,7 @@ D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\DIMSApis.
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\DIMSApis.pdb
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\AutoMapper.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\IronBarCode.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\EntityFramework.SqlServer.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\EntityFramework.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\bin\Debug\net6.0\FirebaseAdmin.dll

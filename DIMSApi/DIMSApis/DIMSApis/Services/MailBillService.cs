@@ -17,6 +17,7 @@ namespace DIMSApis.Services
         {
             _mail = mail.Value;
         }
+
         public async Task SendBillEmailAsync(Booking bok, string qrMainLink)
         {
             var email = new MimeMessage();
@@ -24,7 +25,7 @@ namespace DIMSApis.Services
             email.To.Add(MailboxAddress.Parse(bok.Email));
             email.Subject = "DIMS's Qr";
             var builder = new BodyBuilder();
-            builder.HtmlBody = await GetHtmlBody(bok,qrMainLink);
+            builder.HtmlBody = await GetHtmlBody(bok, qrMainLink);
             email.Body = builder.ToMessageBody();
             using var smtp = new SmtpClient();
             smtp.Connect(_mail.Host, _mail.Port, SecureSocketOptions.StartTls);
@@ -33,7 +34,7 @@ namespace DIMSApis.Services
             smtp.Disconnect(true);
         }
 
-        private async Task<string> GetHtmlBody(Booking bok ,string qrMainLink)
+        private async Task<string> GetHtmlBody(Booking bok, string qrMainLink)
         {
             string body = File.ReadAllText(@"Material/HotelBill.html");
             body = body.Replace("#LOCATION1#", $"{bok.Hotel.HotelName}");
@@ -50,7 +51,8 @@ namespace DIMSApis.Services
             body = body.Replace("#LOCATION11#", $"{bok.TotalNight}");
             body = body.Replace("#LOCATION12#", $"{bok.SubTotal}");
 
-            if (bok.VoucherId  != null) {
+            if (bok.VoucherId != null)
+            {
                 body = body.Replace("#LOCATION9#", $"{bok.Voucher.VoucherName}");
                 body = body.Replace("#LOCATION13#", $"{bok.Voucher.VoucherSale}%");
                 body = body.Replace("#LOCATION14#", $"{bok.VoucherDiscoundPrice}");
@@ -69,10 +71,10 @@ namespace DIMSApis.Services
             foreach (var itemDetail in bok.BookingDetails)
             {
                 var newTxt = lines;
-                newTxt= newTxt.Replace("#DETAIL1#", $"{itemDetail.Room.RoomName}");
+                newTxt = newTxt.Replace("#DETAIL1#", $"{itemDetail.Room.RoomName}");
                 newTxt = newTxt.Replace("#DETAIL2#", $"{itemDetail.Room.Category.CategoryName}");
                 newTxt = newTxt.Replace("#DETAIL3#", $"${itemDetail.AveragePrice}");
-                fullDetal = fullDetal+ newTxt + "\n";
+                fullDetal = fullDetal + newTxt + "\n";
             }
             body = body.Replace("<!--#LOCATIONDETAIL#-->", fullDetal);
             body = body.Replace("#MAIN-IMAGE-QR#", qrMainLink);

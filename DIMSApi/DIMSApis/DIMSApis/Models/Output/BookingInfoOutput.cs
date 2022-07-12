@@ -13,10 +13,9 @@
         public string Description { get; set; }
         public string? Condition { get; set; }
         public double TotalPrice { get; set; }
-        public  int TotalDate{ get; set; }
+        public int TotalDate { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public virtual ICollection<BookingDetailInfoOutput> BookingDetails { get; set; }
-
     }
 }

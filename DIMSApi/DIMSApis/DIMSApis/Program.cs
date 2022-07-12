@@ -1,15 +1,13 @@
 using DIMSApis.Interfaces;
 using DIMSApis.Models.Data;
+using DIMSApis.Models.Helper;
 using DIMSApis.Repositories;
 using DIMSApis.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using DIMSApis.Models.Helper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Stripe;
-using System.Configuration;
-using System.Net;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -75,11 +73,11 @@ builder.Services.AddDbContext<fptdimsContext>(options => options.UseSqlServer(bu
 
 
 builder.Services.AddScoped<IAuth, AuthRepository>();
-builder.Services.AddScoped<IUserManage, UserManageRepository> ();
-builder.Services.AddScoped<IBookingManage, BookingManageRepository> ();
-builder.Services.AddScoped<IQrManage, QrManageRepository> ();
-builder.Services.AddScoped<IAdminManage, AdminManageRepository> ();
-builder.Services.AddScoped<IHostManage, HostManageRepository> ();
+builder.Services.AddScoped<IUserManage, UserManageRepository>();
+builder.Services.AddScoped<IBookingManage, BookingManageRepository>();
+builder.Services.AddScoped<IQrManage, QrManageRepository>();
+builder.Services.AddScoped<IAdminManage, AdminManageRepository>();
+builder.Services.AddScoped<IHostManage, HostManageRepository>();
 
 
 builder.Services.AddScoped<ITokenService, DIMSApis.Services.TokenService>();

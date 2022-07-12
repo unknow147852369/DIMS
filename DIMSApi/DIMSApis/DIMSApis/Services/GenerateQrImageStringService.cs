@@ -14,7 +14,7 @@ namespace DIMSApis.Services
         private readonly SymmetricSecurityKey _key;
         private readonly IOtherService _otherService;
 
-        public GenerateQrImageStringService(IConfiguration config,IOtherService otherService)
+        public GenerateQrImageStringService(IConfiguration config, IOtherService otherService)
         {
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
             _otherService = otherService;
@@ -28,7 +28,7 @@ namespace DIMSApis.Services
             MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.DarkGreen).SaveAsPng($@"{fullPath}");
 
             //byte[] vs = MyQRWithLogo.ToPngBinaryData();
-            
+
             //string base64ImageRepresentation = Convert.ToBase64String(vs);
             //if (base64ImageRepresentation != null)
             //{
@@ -45,7 +45,7 @@ namespace DIMSApis.Services
                 new Claim("BookingId",qri.BookingId.ToString()),
                 new Claim("userId",qri.UserId.ToString()),
                 new Claim("RoomId",qri.RoomId.ToString()),
-                new Claim("RoomName",qri.RoomName.ToString()),   
+                new Claim("RoomName",qri.RoomName.ToString()),
             };
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDes = new SecurityTokenDescriptor
@@ -56,7 +56,7 @@ namespace DIMSApis.Services
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDes);
             var fomattoken = tokenHandler.WriteToken(token);
-            var content = fomattoken ;
+            var content = fomattoken;
             return content;
         }
 
@@ -112,7 +112,8 @@ namespace DIMSApis.Services
 
                 bookingID = tokenS.Claims.First(claim => claim.Type == "BookingId").Value;
                 HotelId = tokenS.Claims.First(claim => claim.Type == "HotelId").Value;
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 bookingID = "";
                 HotelId = "";

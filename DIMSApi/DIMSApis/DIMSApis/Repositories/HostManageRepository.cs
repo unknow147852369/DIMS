@@ -94,7 +94,6 @@ namespace DIMSApis.Repositories
             return "3";
         }
 
-
         public async Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelAllRoomStatusSearch(int userId, int hotelId, DateTime today, int totalnight)
         {
             DateTime StartDate = today;
@@ -129,23 +128,15 @@ namespace DIMSApis.Repositories
             {
                 if (lsHotelRoomNotBooked.Select(s => s.RoomId).Contains(result.RoomId))
                 {
-                    result.BookedStatus = false;
+                    result.AllStatus = 1;
                 }
                 else
                 {
-                    result.BookedStatus = true;
+                    result.AllStatus = 2;
                 }
-                var ls = allRoomStatus.Where(s => s.RoomId == result.RoomId)
-                    .Select(s => s.Category.SpecialPrices)
-                    .ToList()[0];
-                var check = ls.Any(s => s.SpecialPrice1 == null);
-                if (check)
+                if (result.CleanStatus == true)
                 {
-                    result.OutOfServiceStatus = true;
-                }
-                else
-                {
-                    result.OutOfServiceStatus = false;
+                    result.AllStatus = 3;
                 }
             }
             return returnResult;
@@ -154,7 +145,7 @@ namespace DIMSApis.Repositories
         public async Task<RoomDetailInfoOutput> GetADetailRoom(int userId, int RoomId, DateTime today)
         {
             var RoomDetail = await _context.Rooms.Where(op => op.RoomId == RoomId)
-                .Include(bd => bd.BookingDetails.Where(op=>op.StartDate.Value.Date<=today.Date && op.EndDate.Value.Date>=today.Date)).ThenInclude(b => b.Booking).ThenInclude(ib => ib.InboundUsers)
+                .Include(bd => bd.BookingDetails.Where(op => op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date)).ThenInclude(b => b.Booking).ThenInclude(ib => ib.InboundUsers)
                 .Include(bd => bd.BookingDetails.Where(op => op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date)).ThenInclude(b => b.Booking).ThenInclude(u => u.User)
                 .Include(c => c.Category)
                 .SingleOrDefaultAsync()
@@ -189,24 +180,17 @@ namespace DIMSApis.Repositories
             {
                 if (lsHotelRoomNotBooked.Select(s => s.RoomId).Contains(result.RoomId))
                 {
-                    result.BookedStatus = false;
+                    result.AllStatus = 1;
                 }
                 else
                 {
-                    result.BookedStatus = true;
+                    result.AllStatus = 2;
                 }
-                var ls = allRoomStatus.Where(s => s.RoomId == result.RoomId)
-                    .Select(s => s.Category.SpecialPrices)
-                    .ToList()[0];
-                var check = ls.Any(s => s.SpecialPrice1 == null);
-                if (check)
+                if(result.CleanStatus == true)
                 {
-                    result.OutOfServiceStatus = true;
+                    result.AllStatus = 3;
                 }
-                else
-                {
-                    result.OutOfServiceStatus = false;
-                }
+
             }
             return returnResult;
         }
@@ -235,26 +219,24 @@ namespace DIMSApis.Repositories
             {
                 if (lsHotelRoomNotBooked.Select(s => s.RoomId).Contains(result.RoomId))
                 {
-                    result.BookedStatus = false;
+                    result.AllStatus = 1;
                 }
                 else
                 {
-                    result.BookedStatus = true;
+                    result.AllStatus = 2;
                 }
-                var ls = allRoomStatus.Where(s => s.RoomId == result.RoomId)
-                    .Select(s => s.Category.SpecialPrices)
-                    .ToList()[0];
-                var check = ls.Any(s => s.SpecialPrice1 == null);
-                if (check)
+                if (result.CleanStatus == true)
                 {
-                    result.OutOfServiceStatus = true;
-                }
-                else
-                {
-                    result.OutOfServiceStatus = false;
+                    result.AllStatus = 3;
                 }
             }
-            return returnResult.Where(op=>op.BookedStatus==true).ToList();
+            return returnResult.Where(op => op.BookedStatus == true).ToList();
         }
+
+        public Task<string> LocalPaymentFinal(LocalPaymentInput ppi, int userId)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

@@ -4,7 +4,6 @@ using AutoMapper;
 using DIMSApis.Interfaces;
 using DIMSApis.Models.Helper;
 using DIMSApis.Models.Input;
-using DIMSApis.Models.Output;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DIMSApis.Controllers
@@ -24,7 +23,6 @@ namespace DIMSApis.Controllers
             _generateqr = generateqr;
         }
 
-
         //[HttpPost("vertify-Qr")]
         //public async Task<IActionResult> VertifyQrContent(VertifyQrInput qrIn)
         //{
@@ -37,7 +35,7 @@ namespace DIMSApis.Controllers
         public async Task<IActionResult> vertifyMainQrCheckIn(VertifyMainQrInput qrIn)
         {
             var qrcheck = await _qrmanage.vertifyMainQrCheckIn(qrIn);
-            if(qrcheck == null) { return BadRequest(new DataRespone { Message = "Wrong Main QR" }); }
+            if (qrcheck == null) { return BadRequest(new DataRespone { Message = "Wrong Main QR" }); }
             return Ok(qrcheck);
         }
 
@@ -45,7 +43,7 @@ namespace DIMSApis.Controllers
         public async Task<IActionResult> getStringToCheckRoom(int hotelId, String roomName)
         {
             var check = await _qrmanage.getStringToCheckRoom(hotelId, roomName);
-            if(check == "") { return BadRequest( "null" ); }
+            if (check == "") { return BadRequest("null"); }
             return Ok(check);
         }
 
@@ -86,7 +84,5 @@ namespace DIMSApis.Controllers
         //        return BadRequest();
         //    }
         //}
-
-
     }
 }

@@ -6,6 +6,5 @@
         public string LocationName { get; set; }
         public DateTime ArrivalDate { get; set; }
         public int TotalNight { get; set; }
-
     }
 }

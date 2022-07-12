@@ -13,7 +13,7 @@ namespace DIMSApis.Models.Input
         [Required(ErrorMessage = "Can't be empty"), Compare(nameof(Password), ErrorMessage = "Passwords don't match.")]
         public string ConfirmPassword { get; set; }
 
-        [Required(ErrorMessage = "Can't be empty"),RegularExpression("admin|user|host") ]
+        [Required(ErrorMessage = "Can't be empty"), RegularExpression("admin|user|host")]
         public string role { get; set; }
     }
 }

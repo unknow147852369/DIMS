@@ -7,10 +7,13 @@ namespace DIMSApis.Interfaces
     public interface IAdminManage
     {
         Task<int> AcpectHost(int UserId);
-        Task<int> AcpectHotel(int hotelId);
-        Task<IEnumerable<HotelOutput>> ListAllHotel();
-        Task<IEnumerable<User>> ListAllHost();
-        Task<string> AdminCreateUser(AdminRegisterInput userinput);
 
+        Task<int> AcpectHotel(int hotelId);
+
+        Task<IEnumerable<HotelOutput>> ListAllHotel();
+
+        Task<IEnumerable<User>> ListAllHost();
+
+        Task<string> AdminCreateUser(AdminRegisterInput userinput);
     }
 }

@@ -4,7 +4,6 @@ using DIMSApis.Models.Helper;
 using DIMSApis.Models.Input;
 using Firebase.Auth;
 using Firebase.Storage;
-using IronBarCode;
 using Microsoft.Extensions.Options;
 
 namespace DIMSApis.Services
@@ -27,6 +26,7 @@ namespace DIMSApis.Services
                 Directory.CreateDirectory(imageMainPath);
             }
         }
+
         public async Task<string> GetlinkMainImage(Booking bookingFullDetail, string imageMainPath, string imageMainName)
         {
             var fullPath = imageMainPath + imageMainName;
@@ -58,7 +58,8 @@ namespace DIMSApis.Services
 
             return link;
         }
-        public void createFilePath( QrInput qrInput, out string imagePath, out string imageName)
+
+        public void createFilePath(QrInput qrInput, out string imagePath, out string imageName)
         {
             imageName = $"qr{qrInput.HotelId}-{qrInput.UserId}-{qrInput.BookingId}-{qrInput.RoomId}-{qrInput.RoomName}.png";
             imagePath = $"Material/{qrInput.BookingId}/";
@@ -68,7 +69,7 @@ namespace DIMSApis.Services
             }
         }
 
-        public async Task<string> GetlinkImage(QrInput qrInput, string imagePath ,string imageName)
+        public async Task<string> GetlinkImage(QrInput qrInput, string imagePath, string imageName)
         {
             var fullPath = imagePath + imageName;
             FileStream ms = new FileStream($@"{fullPath}", FileMode.Open);
@@ -80,15 +81,13 @@ namespace DIMSApis.Services
             // you can use CancellationTokenSource to cancel the upload midway
             var cancellation = new CancellationTokenSource();
 
-
-
             var task = new FirebaseStorage(
                 _firebase.Bucket,
                 new FirebaseStorageOptions
                 {
                     AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
-                    ThrowOnCancel = true 
-                        })
+                    ThrowOnCancel = true
+                })
                 .Child(qrInput.HotelId.ToString())
                 .Child(qrInput.UserId.ToString())
                 .Child(qrInput.BookingId.ToString())
@@ -99,10 +98,8 @@ namespace DIMSApis.Services
             var link = await task;
             ms.Close();
 
-           return link;
+            return link;
         }
-
-
 
         public bool RemoveDirectories(string imagePath)
         {

@@ -16,7 +16,6 @@ namespace DIMSApis.Repositories
         private readonly IFireBaseService _fireBase;
         private readonly IMailQrService _qrmail;
         private readonly IMailBillService _billmail;
-        
 
         private string condition1 = "ONLINE";
         private string condition2 = "LOCAl";
@@ -67,8 +66,8 @@ namespace DIMSApis.Repositories
                     error += "Wrong date ;";
                 }
                 Booking bok = await PaymentCalculateData(ppi, userId);
-                var paymentstatus = condition4;
-                //var paymentstatus = _stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
+                //var paymentstatus = condition4;
+                var paymentstatus = _stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
                 if (paymentstatus.Contains(condition4))
                 {
                     bok.PaymentMethod = condition1;
@@ -226,7 +225,7 @@ namespace DIMSApis.Repositories
             {
                 bok.VoucherDiscoundPrice = 0;
             }
-            if(error != "") { throw new Exception(error); }
+            if (error != "") { throw new Exception(error); }
             bok.SubTotal = Math.Round((double)(total * bok.TotalNight), 2);
             bok.TotalPrice = Math.Round((double)(bok.SubTotal - bok.VoucherDiscoundPrice), 2);
 

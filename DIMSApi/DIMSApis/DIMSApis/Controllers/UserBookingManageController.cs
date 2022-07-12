@@ -1,19 +1,13 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DIMSApis.Models.Data;
-using System.Security.Claims;
+
+using AutoMapper;
+using DIMSApis.Interfaces;
+using DIMSApis.Models.Helper;
 using DIMSApis.Models.Input;
 using DIMSApis.Models.Output;
-using DIMSApis.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using AutoMapper;
-using DIMSApis.Models.Helper;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace DIMSApis.Controllers
 {
@@ -26,7 +20,7 @@ namespace DIMSApis.Controllers
         private readonly IMapper _mapper;
 
         public UserBookingManageController(IBookingManage book, IMapper mapper)
-        { 
+        {
             _book = book;
             _mapper = mapper;
         }
@@ -35,7 +29,7 @@ namespace DIMSApis.Controllers
         public async Task<IActionResult> UserPaymentProcessing(PaymentProcessingInput ppi)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            string check = await _book.PaymentProcessing(ppi , userId);
+            string check = await _book.PaymentProcessing(ppi, userId);
             if (check.Equals("1"))
             {
                 return Ok(new DataRespone { Message = "Paid Success" });
@@ -49,6 +43,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = check });
             }
         }
+
         [HttpGet("user-Booking-list")]
         public async Task<IActionResult> GetBooking()
         {
@@ -59,11 +54,11 @@ namespace DIMSApis.Controllers
         }
 
         [HttpGet("Vertify-Voucher")]
-        public async Task<IActionResult> VertifyVouvher(int hotelId,string VoucherCode)
+        public async Task<IActionResult> VertifyVouvher(int hotelId, string VoucherCode)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var voucher = await _book.VertifyVouvher(hotelId, VoucherCode);
-            if(voucher == null) { return BadRequest(new DataRespone { Message = "Wrong code" }); }
+            if (voucher == null) { return BadRequest(new DataRespone { Message = "Wrong code" }); }
             return Ok(voucher);
         }
     }
