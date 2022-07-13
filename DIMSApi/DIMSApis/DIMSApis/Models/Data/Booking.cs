@@ -27,7 +27,7 @@ namespace DIMSApis.Models.Data
         public double? TotalPrice { get; set; }
         public DateTime? CreateDate { get; set; }
         public string? PaymentMethod { get; set; }
-        public string? PaymentCondition { get; set; }
+        public bool? PaymentCondition { get; set; }
         public double? Deposit { get; set; }
         public bool? Status { get; set; }
 

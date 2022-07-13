@@ -7,12 +7,10 @@ namespace DIMSApis.Models.Input
         [Required(ErrorMessage = "Can't be empty")]
         public int HotelId { get; set; }
         [Required(ErrorMessage = "Can't be empty")]
-        public string? CreateBy { get; set; }
+        public int userId { get; set; }
 
         [Required(ErrorMessage = "Can't be empty"), EmailAddress(ErrorMessage = "Please enter correct email address")]
         public string Email { get; set; }
-
-        public string? PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Can't be empty")]
         public DateTime ArrivalDate { get; set; }
@@ -20,10 +18,11 @@ namespace DIMSApis.Models.Input
         [Required(ErrorMessage = "Can't be empty"), Range(1, 365, ErrorMessage = "Please enter a value bigger than {1}")]
         public int? TotalNight { get; set; }
 
-        [Required(ErrorMessage = "Can't be empty"), Range(1, 100, ErrorMessage = "Please enter a value bigger than {1}")]
-        public int? PeopleQuanity { get; set; }
-
         [Required(ErrorMessage = "Can't be empty")]
+        public double? TotalPrice { get; set; }
+        public bool? PaymentCondition { get; set; }
+        public double? Deposit { get; set; }
         public virtual ICollection<PaymentProcessingDetailInput> BookingDetails { get; set; }
+        public virtual ICollection<NewInboundUser> InboundUsers { get; set; }
     }
 }

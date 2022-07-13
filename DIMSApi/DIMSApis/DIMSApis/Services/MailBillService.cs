@@ -39,7 +39,7 @@ namespace DIMSApis.Services
             string body = File.ReadAllText(@"Material/HotelBill.html");
             body = body.Replace("#LOCATION1#", $"{bok.Hotel.HotelName}");
             body = body.Replace("#LOCATION2#", $"{bok.BookingId}");
-            body = body.Replace("#LOCATION3#", $"{bok.FullName}");
+            body = body.Replace("#LOCATION3#", bok.FullName == null ? bok.User.UserName : bok.FullName);
             body = body.Replace("#LOCATION4#", $"{bok.Email}");
             body = body.Replace("#LOCATION5#", $"{bok.PhoneNumber}");
             body = body.Replace("#LOCATION6#", $"{bok.PeopleQuanity}");
@@ -65,6 +65,7 @@ namespace DIMSApis.Services
             }
 
             body = body.Replace("#LOCATION15#", $"{bok.TotalPrice}");
+            body = body.Replace("#LOCATION16#", $"{bok.Deposit}");
 
             string lines = File.ReadAllText(@"Material/BokingHotelDetailCodeHTML.txt", Encoding.UTF8);
             var fullDetal = "";
@@ -78,6 +79,7 @@ namespace DIMSApis.Services
             }
             body = body.Replace("<!--#LOCATIONDETAIL#-->", fullDetal);
             body = body.Replace("#MAIN-IMAGE-QR#", qrMainLink);
+
             return body;
         }
     }

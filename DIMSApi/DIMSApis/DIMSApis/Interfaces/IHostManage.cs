@@ -7,6 +7,8 @@ namespace DIMSApis.Interfaces
     {
         Task<string> UpdateHotelMainPhoto(int photoID, int hotelID);
         Task<string> LocalPaymentFinal(LocalPaymentInput ppi, int userId);
+        Task<string> CheckRoomDateBooking(CheckRoomDateInput chek);
+        Task<IEnumerable<HotelListMenuOutput>> GetListMenu(int hotelID);
 
         Task<IEnumerable<HotelPhotosOutput>> GetListHotelPhotos(int userId, int hotelId);
 

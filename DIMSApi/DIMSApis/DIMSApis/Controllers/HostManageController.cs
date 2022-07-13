@@ -18,6 +18,24 @@ namespace DIMSApis.Controllers
         {
             _host = host;
         }
+        [HttpPost("Get-list-Menu")]
+        public async Task<IActionResult> GetListMenu(int hotelID)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            if(hotelID == null) return BadRequest(new DataRespone { Message = "some feild is emptyw" });
+            var check = await _host.GetListMenu(hotelID);
+            if (check == null) { return BadRequest(new DataRespone { Message = "Your hotel do not have any menu" }); }
+            return Ok(check);
+        }
+
+        [HttpPost("Check-Room-Date-Booking")]
+        public async Task<IActionResult> CheckRoomDateBooking(CheckRoomDateInput chek)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _host.CheckRoomDateBooking(chek);
+            if (check == null) { return BadRequest(new DataRespone { Message = check }); }
+            return Ok(check);
+        }
 
         [HttpPost("Host-Local-Payment-final")]
         public async Task<IActionResult> LocalPaymentFinal(LocalPaymentInput ppi)

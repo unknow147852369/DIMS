@@ -18,6 +18,7 @@ namespace DIMSApis.Models.Data
 
         public virtual DbSet<Booking> Bookings { get; set; } = null!;
         public virtual DbSet<BookingDetail> BookingDetails { get; set; } = null!;
+        public virtual DbSet<BookingDetailMenu> BookingDetailMenus { get; set; } = null!;
         public virtual DbSet<BookingDetailPrice> BookingDetailPrices { get; set; } = null!;
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<District> Districts { get; set; } = null!;
@@ -26,6 +27,7 @@ namespace DIMSApis.Models.Data
         public virtual DbSet<Hotel> Hotels { get; set; } = null!;
         public virtual DbSet<HotelType> HotelTypes { get; set; } = null!;
         public virtual DbSet<InboundUser> InboundUsers { get; set; } = null!;
+        public virtual DbSet<Menu> Menus { get; set; } = null!;
         public virtual DbSet<Otp> Otps { get; set; } = null!;
         public virtual DbSet<Photo> Photos { get; set; } = null!;
         public virtual DbSet<Province> Provinces { get; set; } = null!;
@@ -60,8 +62,6 @@ namespace DIMSApis.Models.Data
                 entity.Property(e => e.FullName).HasMaxLength(100);
 
                 entity.Property(e => e.HotelId).HasColumnName("HotelID");
-
-                entity.Property(e => e.PaymentCondition).HasMaxLength(50);
 
                 entity.Property(e => e.PaymentMethod).HasMaxLength(50);
 
@@ -110,6 +110,22 @@ namespace DIMSApis.Models.Data
                     .WithMany(p => p.BookingDetails)
                     .HasForeignKey(d => d.RoomId)
                     .HasConstraintName("FK_BookedRoom_Rooms");
+            });
+
+            modelBuilder.Entity<BookingDetailMenu>(entity =>
+            {
+                entity.ToTable("BookingDetailMenu");
+
+                entity.Property(e => e.BookingDetailMenuId).HasColumnName("BookingDetailMenuID");
+
+                entity.Property(e => e.BookingDetailId).HasColumnName("BookingDetailID");
+
+                entity.Property(e => e.BookingDetailMenuName).HasMaxLength(100);
+
+                entity.HasOne(d => d.BookingDetail)
+                    .WithMany(p => p.BookingDetailMenus)
+                    .HasForeignKey(d => d.BookingDetailId)
+                    .HasConstraintName("FK_BookingDetailMenu_BookingDetails");
             });
 
             modelBuilder.Entity<BookingDetailPrice>(entity =>
@@ -277,6 +293,20 @@ namespace DIMSApis.Models.Data
                     .WithMany(p => p.InboundUsers)
                     .HasForeignKey(d => d.BookingId)
                     .HasConstraintName("FK_InboundUsers_Bookings");
+            });
+
+            modelBuilder.Entity<Menu>(entity =>
+            {
+                entity.Property(e => e.MenuId).HasColumnName("MenuID");
+
+                entity.Property(e => e.HotelId).HasColumnName("HotelID");
+
+                entity.Property(e => e.MenuName).HasMaxLength(100);
+
+                entity.HasOne(d => d.Hotel)
+                    .WithMany(p => p.Menus)
+                    .HasForeignKey(d => d.HotelId)
+                    .HasConstraintName("FK_Menus_Hotels");
             });
 
             modelBuilder.Entity<Otp>(entity =>
