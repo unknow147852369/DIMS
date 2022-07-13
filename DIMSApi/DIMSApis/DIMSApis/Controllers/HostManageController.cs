@@ -24,7 +24,7 @@ namespace DIMSApis.Controllers
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             if (bookingID == null) return BadRequest(new DataRespone { Message = "some feild is empty" });
             var check = await _host.CheckOut(hotelId,bookingID);
-            if (check == null) { return BadRequest(new DataRespone { Message = "Your hotel do not have any menu" }); }
+            if (check == null) { return BadRequest(new DataRespone { Message = "Booking not found" }); }
             return Ok(check);
         }
 

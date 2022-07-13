@@ -283,6 +283,7 @@ namespace DIMSApis.Repositories
                     {
                         BookingId = bok.BookingId,
                         QrUrl = qrMainLink,
+                        CheckIn = DateTime.Now,
                         Status = true,
                         QrContent = _generateqr.createMainQrContent(bok)
                     };
@@ -438,11 +439,16 @@ namespace DIMSApis.Repositories
 
         public async Task<string> CheckOut(int hotelId,int BookingID)
         {
-            var check = await _context.Bookings
+            var check = await  _context.Bookings
                 .Include(q => q.QrCheckUp)
                 .Where(op => op.BookingId == BookingID && op.HotelId==hotelId)
-                .ToListAsync();
-
+                .SingleOrDefaultAsync();
+            if(check == null) { return "0"; }
+            check.QrCheckUp.Status = false;
+            check.QrCheckUp.CheckOut = DateTime.Now;
+            if (await _context.SaveChangesAsync() > 0)
+                return "1";
+            return "3";
         }
     }
 }
