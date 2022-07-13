@@ -289,6 +289,10 @@ namespace DIMSApis.Models.Data
                     .HasMaxLength(20)
                     .IsFixedLength();
 
+                entity.Property(e => e.UserSex)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.HasOne(d => d.Booking)
                     .WithMany(p => p.InboundUsers)
                     .HasForeignKey(d => d.BookingId)

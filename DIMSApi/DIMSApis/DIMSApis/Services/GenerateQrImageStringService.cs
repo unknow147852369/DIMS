@@ -127,7 +127,7 @@ namespace DIMSApis.Services
             try
             {
                 content = createMainQrContent(bookingFullDetail); ;
-                var MyQRWithLogo = QRCodeWriter.CreateQrCodeWithLogo(content, @"Material/images/logo.png", 500);
+                var MyQRWithLogo = QRCodeWriter.CreateQrCode(content, 500);
                 MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.Red);
 
                 byte[] vs = MyQRWithLogo.ToPngBinaryData();
@@ -145,7 +145,7 @@ namespace DIMSApis.Services
             try
             {
                 content = createQrContent(qri); ;
-                var MyQRWithLogo = QRCodeWriter.CreateQrCodeWithLogo(content, @"Material/images/logo.png", 500);
+                var MyQRWithLogo = QRCodeWriter.CreateQrCode(content, 500);
                 MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.LightSeaGreen);
 
                 byte[] vs = MyQRWithLogo.ToPngBinaryData();
