@@ -18,7 +18,17 @@ namespace DIMSApis.Controllers
         {
             _host = host;
         }
-        [HttpPost("Get-list-Menu")]
+        [HttpPut("Checkout")]
+        public async Task<IActionResult> CheckOut(int hotelId,int bookingID)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            if (bookingID == null) return BadRequest(new DataRespone { Message = "some feild is empty" });
+            var check = await _host.CheckOut(hotelId,bookingID);
+            if (check == null) { return BadRequest(new DataRespone { Message = "Your hotel do not have any menu" }); }
+            return Ok(check);
+        }
+
+        [HttpGet("Get-list-Menu")]
         public async Task<IActionResult> GetListMenu(int hotelID)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);

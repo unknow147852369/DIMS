@@ -435,5 +435,14 @@ namespace DIMSApis.Repositories
                 .Where(op=>op.HotelId==hotelID && op.MenuStatus.Value).ToListAsync();
             return _mapper.Map< IEnumerable < HotelListMenuOutput >> (returnList);
         }
+
+        public async Task<string> CheckOut(int hotelId,int BookingID)
+        {
+            var check = await _context.Bookings
+                .Include(q => q.QrCheckUp)
+                .Where(op => op.BookingId == BookingID && op.HotelId==hotelId)
+                .ToListAsync();
+
+        }
     }
 }
