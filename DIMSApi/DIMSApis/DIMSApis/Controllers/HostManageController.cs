@@ -18,6 +18,8 @@ namespace DIMSApis.Controllers
         {
             _host = host;
         }
+
+
         [HttpPut("Checkout")]
         public async Task<IActionResult> CheckOut(int hotelId,int bookingID)
         {
@@ -29,7 +31,7 @@ namespace DIMSApis.Controllers
         }
 
         [HttpGet("Get-list-Menu")]
-        public async Task<IActionResult> GetListMenu(int hotelID)
+        public async Task<IActionResult> GetListMenus(int hotelID)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             if(hotelID == null) return BadRequest(new DataRespone { Message = "some feild is emptyw" });

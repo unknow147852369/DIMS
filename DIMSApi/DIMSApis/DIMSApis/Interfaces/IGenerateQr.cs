@@ -5,6 +5,8 @@ namespace DIMSApis.Interfaces
 {
     public interface IGenerateQr
     {
+        void GetMainQrUrlContent(Booking bookingFullDetail , out string content,out string link);
+        void GetQrDetailUrlContent(QrInput qri, out string content,out string link);
         void GenerateQr(QrInput qri, string imagePath, string imageName);
 
         void GenerateMainQr(Booking bookingFullDetail, string imageMainPath, string imageMainName);

@@ -303,6 +303,8 @@ namespace DIMSApis.Models.Data
 
                 entity.Property(e => e.MenuName).HasMaxLength(100);
 
+                entity.Property(e => e.MenuType).HasMaxLength(100);
+
                 entity.HasOne(d => d.Hotel)
                     .WithMany(p => p.Menus)
                     .HasForeignKey(d => d.HotelId)

@@ -275,38 +275,39 @@ namespace DIMSApis.Repositories
                        .Include(b => b.BookingDetails).ThenInclude(r => r.Room).ThenInclude(c => c.Category)
                        .Where(a => a.BookingId == bok.BookingId).FirstOrDefaultAsync();
 
-                    _fireBase.createFileMainPath(bok, out string imageMainPath, out string imageMainName);
-                    _generateqr.GenerateMainQr(bok, imageMainPath, imageMainName);
-                    var qrMainLink = await _fireBase.GetlinkMainImage(bok, imageMainPath, imageMainName);
+                    string mainQrUrl, mainQrContent;
+                    _generateqr.GetMainQrUrlContent(bookingFullDetail, out mainQrContent, out mainQrUrl);
 
                     QrCheckUp qc = new QrCheckUp
                     {
                         BookingId = bok.BookingId,
-                        QrUrl = qrMainLink,
+                        QrUrl = mainQrUrl,
                         CheckIn = DateTime.Now,
                         Status = true,
-                        QrContent = _generateqr.createMainQrContent(bok)
+                        QrContent = mainQrContent,
                     };
-                    _fireBase.RemoveDirectories(imageMainPath);
 
-                    await _billmail.SendBillEmailAsync(bookingFullDetail, qrMainLink);
+                    await _billmail.SendBillEmailAsync(bookingFullDetail, mainQrUrl);
 
                     await _context.QrCheckUps.AddAsync(qc);
 
                     var ListRoom = _mapper.Map<IEnumerable<QrInput>>(bok.BookingDetails);
+
                     foreach (var room in ListRoom)
                     {
                         //
                         Qr qrdetail = new();
-                        _fireBase.createFilePath(room, out string imagePath, out string imageName);
-                        qrdetail.QrContent = _generateqr.createQrContent(room);
                         //
-                        _generateqr.GenerateQr(room, imagePath, imageName);
-                        //
-                        var link = await _fireBase.GetlinkImage(room, imagePath, imageName);
-                        qrdetail.QrUrl = link;
-                        await _qrmail.SendQrEmailAsync(link, bok, room, bok.Hotel.HotelName);
-                        _fireBase.RemoveDirectories(imagePath);
+                        string DetailQrUrl = "";
+                        string DetailQrContent = "";
+                        _generateqr.GetQrDetailUrlContent(room, out DetailQrContent, out DetailQrUrl);
+
+                        qrdetail.QrContent = DetailQrContent;
+                        
+                        qrdetail.QrUrl = DetailQrUrl;
+
+                        await _qrmail.SendQrEmailAsync(DetailQrUrl, bok, room, bok.Hotel.HotelName);
+
                         //
                         qrdetail.StartDate = bok.StartDate;
                         qrdetail.EndDate = bok.EndDate;
@@ -443,12 +444,14 @@ namespace DIMSApis.Repositories
                 .Include(q => q.QrCheckUp)
                 .Where(op => op.BookingId == BookingID && op.HotelId==hotelId)
                 .SingleOrDefaultAsync();
-            if(check == null) { return "0"; }
+            if(check == null || check.QrCheckUp ==null) { return "0"; }
             check.QrCheckUp.Status = false;
             check.QrCheckUp.CheckOut = DateTime.Now;
             if (await _context.SaveChangesAsync() > 0)
                 return "1";
             return "3";
         }
+
+
     }
 }

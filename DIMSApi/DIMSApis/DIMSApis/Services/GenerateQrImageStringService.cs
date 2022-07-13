@@ -13,11 +13,13 @@ namespace DIMSApis.Services
     {
         private readonly SymmetricSecurityKey _key;
         private readonly IOtherService _otherService;
+        private readonly ICloudinaryService _cloudinary;
 
-        public GenerateQrImageStringService(IConfiguration config, IOtherService otherService)
+        public GenerateQrImageStringService(IConfiguration config, IOtherService otherService, ICloudinaryService cloudinary)
         {
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
             _otherService = otherService;
+            _cloudinary = cloudinary;
         }
 
         public void GenerateQr(QrInput qri, string imagePath, string imageName)
@@ -62,22 +64,22 @@ namespace DIMSApis.Services
 
         public void GetQrDetail(VertifyQrInput qri, out string bookingID, out string RoomID)
         {
-            var token = qri.QrContent;
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(token);
-            var tokenS = jsonToken as JwtSecurityToken;
+            try
+            {
+                var token = qri.QrContent;
+                var handler = new JwtSecurityTokenHandler();
+                var jsonToken = handler.ReadToken(token);
+                var tokenS = jsonToken as JwtSecurityToken;
 
-            bookingID = tokenS.Claims.First(claim => claim.Type == "BookingId").Value;
+                bookingID = tokenS.Claims.First(claim => claim.Type == "BookingId").Value;
 
-            RoomID = tokenS.Claims.First(claim => claim.Type == "RoomId").Value;
-        }
-
-        public void GenerateMainQr(Booking bookingFullDetail, string imageMainPath, string imageMainName)
-        {
-            var fullPath = imageMainPath + imageMainName;
-            var conntent = createMainQrContent(bookingFullDetail);
-            var MyQRWithLogo = QRCodeWriter.CreateQrCodeWithLogo(conntent, @"Material/images/logo.png", 500);
-            MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.Red).SaveAsPng($@"{fullPath}");
+                RoomID = tokenS.Claims.First(claim => claim.Type == "RoomId").Value;
+            }
+            catch (Exception ex)
+            {
+                bookingID = "";
+                RoomID = "";
+            }
         }
 
         public string createMainQrContent(Booking bookingFullDetail)
@@ -118,6 +120,47 @@ namespace DIMSApis.Services
                 bookingID = "";
                 HotelId = "";
             }
+        }
+
+        public void GetMainQrUrlContent(Booking bookingFullDetail, out string content, out string link)
+        {
+            try
+            {
+                content = createMainQrContent(bookingFullDetail); ;
+                var MyQRWithLogo = QRCodeWriter.CreateQrCodeWithLogo(content, @"Material/images/logo.png", 500);
+                MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.Red);
+
+                byte[] vs = MyQRWithLogo.ToPngBinaryData();
+
+                link = _cloudinary.CloudinaryUploadPhotoQr(vs);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public void GetQrDetailUrlContent(QrInput qri, out string content, out string link)
+        {
+            try
+            {
+                content = createQrContent(qri); ;
+                var MyQRWithLogo = QRCodeWriter.CreateQrCodeWithLogo(content, @"Material/images/logo.png", 500);
+                MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.LightSeaGreen);
+
+                byte[] vs = MyQRWithLogo.ToPngBinaryData();
+
+                link = _cloudinary.CloudinaryUploadPhotoQr(vs);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public void GenerateMainQr(Booking bookingFullDetail, string imageMainPath, string imageMainName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

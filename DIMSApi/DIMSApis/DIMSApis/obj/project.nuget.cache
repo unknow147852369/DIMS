@@ -1,12 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "+gKF2vu9Bpyc71MfmpZ66H9QQr+SUCaSeA4qc7vtSh9RtQHVRB33HsgA8gl7qZdG4yXMfzaqc3TBnFVDVj0/og==",
+  "dgSpecHash": "uSe/HHva33863fEdJljp/DOQovnwrg+pUYZR+DFhMGMXTDBeZXXBSr05L/wM/WIDDbr+DhzoE4ylzTs6iHLsUA==",
   "success": true,
   "projectFilePath": "D:\\FPTSEMESTER\\capston\\DIMS\\DIMSApi\\DIMSApis\\DIMSApis\\DIMSApis.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\PC\\.nuget\\packages\\automapper\\11.0.1\\automapper.11.0.1.nupkg.sha512",
     "C:\\Users\\PC\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\11.0.0\\automapper.extensions.microsoft.dependencyinjection.11.0.0.nupkg.sha512",
     "C:\\Users\\PC\\.nuget\\packages\\barcode\\2022.3.0\\barcode.2022.3.0.nupkg.sha512",
+    "C:\\Users\\PC\\.nuget\\packages\\cloudinarydotnet\\1.19.0\\cloudinarydotnet.1.19.0.nupkg.sha512",
     "C:\\Users\\PC\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",
     "C:\\Users\\PC\\.nuget\\packages\\firebaseadmin\\2.3.0\\firebaseadmin.2.3.0.nupkg.sha512",
     "C:\\Users\\PC\\.nuget\\packages\\firebaseauthentication.net\\3.7.2\\firebaseauthentication.net.3.7.2.nupkg.sha512",

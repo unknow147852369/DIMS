@@ -22,6 +22,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.Configure<FireBaseSettings>(builder.Configuration.GetSection("FireBase"));
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
 StripeConfiguration.SetApiKey(builder.Configuration.GetSection("Stripe")["SecretKey"]);
 
 builder.Services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -88,6 +89,7 @@ builder.Services.AddScoped<IStripePayment, StripePaymentService>();
 builder.Services.AddScoped<IMailQrService, MailQrService>();
 builder.Services.AddScoped<IFireBaseService, FireBaseService>();
 builder.Services.AddScoped<IMailBillService, MailBillService>();
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 //>Add more
 
 var app = builder.Build();

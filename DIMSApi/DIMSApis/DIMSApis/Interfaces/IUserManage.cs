@@ -6,6 +6,7 @@ namespace DIMSApis.Interfaces
 {
     public interface IUserManage
     {
+
         Task<int> CreateNoMarkColumCHEAT();
 
         Task<int> GetActiveCodeMailSend(int userId);
