@@ -6,7 +6,7 @@ namespace DIMSApis.Interfaces
     public interface IHostManage
     {
         Task<string> UpdateHotelMainPhoto(int photoID, int hotelID);
-        Task<string> CheckOut(int hotelId,int bookingID);
+        Task<string> CheckOutLocal(int hotelId,int bookingID);
         Task<string> LocalPaymentFinal(LocalPaymentInput ppi, int userId);
         Task<string> CheckRoomDateBooking(CheckRoomDateInput chek);
         Task<IEnumerable<HotelListMenuOutput>> GetListMenu(int hotelID);

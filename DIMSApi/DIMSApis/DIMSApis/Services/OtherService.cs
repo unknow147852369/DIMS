@@ -40,7 +40,7 @@ namespace DIMSApis.Services
 
         public DateTime GetEndDate(DateTime startDate, int night)
         {
-            DateTime answer = startDate.AddDays(night - 1);
+            DateTime answer = startDate.AddDays(night).Add(new TimeSpan(12, 00, 0));
             return answer;
         }
 

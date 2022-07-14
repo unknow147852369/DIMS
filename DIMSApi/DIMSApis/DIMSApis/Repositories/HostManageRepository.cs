@@ -106,7 +106,7 @@ namespace DIMSApis.Repositories
 
         public async Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelAllRoomStatusSearch(int userId, int hotelId, DateTime today, int totalnight)
         {
-            DateTime StartDate = today;
+            DateTime StartDate = today.Add(new TimeSpan(14, 00, 0));
             DateTime EndDate = _other.GetEndDate(today, totalnight);
             var allRoomStatus = await _context.Rooms
                 .Include(c => c.Category)
@@ -276,13 +276,15 @@ namespace DIMSApis.Repositories
                        .Where(a => a.BookingId == bok.BookingId).FirstOrDefaultAsync();
 
                     string mainQrUrl, mainQrContent;
-                    _generateqr.GetMainQrUrlContent(bookingFullDetail, out mainQrContent, out mainQrUrl);
+                    var MainrandomString = _other.RandomString(6);
+                    _generateqr.GetMainQrUrlContent(bookingFullDetail,MainrandomString, out mainQrContent, out mainQrUrl);
 
                     QrCheckUp qc = new QrCheckUp
                     {
                         BookingId = bok.BookingId,
                         QrUrl = mainQrUrl,
                         CheckIn = DateTime.Now,
+                        QrCheckUpRandomString=MainrandomString,
                         Status = true,
                         QrContent = mainQrContent,
                     };
@@ -300,11 +302,14 @@ namespace DIMSApis.Repositories
                         //
                         string DetailQrUrl = "";
                         string DetailQrContent = "";
-                        _generateqr.GetQrDetailUrlContent(room, out DetailQrContent, out DetailQrUrl);
+                        var randomString =  _other.RandomString(6);
+                        _generateqr.GetQrDetailUrlContent(room,randomString, out DetailQrContent, out DetailQrUrl);
 
                         qrdetail.QrContent = DetailQrContent;
                         
                         qrdetail.QrUrl = DetailQrUrl;
+                        qrdetail.QrRandomString = randomString;
+
 
                         await _qrmail.SendQrEmailAsync(DetailQrUrl, bok, room, bok.Hotel.HotelName);
 
@@ -312,6 +317,8 @@ namespace DIMSApis.Repositories
                         qrdetail.StartDate = bok.StartDate;
                         qrdetail.EndDate = bok.EndDate;
                         _mapper.Map(room, qrdetail);
+                        qrdetail.Status= true;
+
                         await _context.Qrs.AddAsync(qrdetail);
                     }
                     if (await _context.SaveChangesAsync() > 0)
@@ -438,15 +445,18 @@ namespace DIMSApis.Repositories
             return _mapper.Map< IEnumerable < HotelListMenuOutput >> (returnList);
         }
 
-        public async Task<string> CheckOut(int hotelId,int BookingID)
+        public async Task<string> CheckOutLocal(int hotelId,int BookingID)
         {
             var check = await  _context.Bookings
                 .Include(q => q.QrCheckUp)
+                .Include(q => q.BookingDetails).ThenInclude(q=>q.Qr)
                 .Where(op => op.BookingId == BookingID && op.HotelId==hotelId)
                 .SingleOrDefaultAsync();
+
             if(check == null || check.QrCheckUp ==null) { return "0"; }
             check.QrCheckUp.Status = false;
             check.QrCheckUp.CheckOut = DateTime.Now;
+            check.BookingDetails.ToList().ForEach(q => q.Qr.Status = false);
             if (await _context.SaveChangesAsync() > 0)
                 return "1";
             return "3";

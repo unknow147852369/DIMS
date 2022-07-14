@@ -20,14 +20,24 @@ namespace DIMSApis.Controllers
         }
 
 
-        [HttpPut("Checkout")]
+        [HttpPut("Checkout-Local")]
         public async Task<IActionResult> CheckOut(int hotelId,int bookingID)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             if (bookingID == null) return BadRequest(new DataRespone { Message = "some feild is empty" });
-            var check = await _host.CheckOut(hotelId,bookingID);
-            if (check == null) { return BadRequest(new DataRespone { Message = "Booking not found" }); }
-            return Ok(check);
+            var check = await _host.CheckOutLocal(hotelId,bookingID);
+            if (check.Equals("1"))
+            {
+                return Ok("CheckIn Success!");
+            }
+            else if (check.Equals("3"))
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest("Not found");
+            }
         }
 
         [HttpGet("Get-list-Menu")]

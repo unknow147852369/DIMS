@@ -384,6 +384,10 @@ namespace DIMSApis.Models.Data
 
                 entity.Property(e => e.QrContent).IsUnicode(false);
 
+                entity.Property(e => e.QrRandomString)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.QrUrl).IsUnicode(false);
 
                 entity.Property(e => e.StartDate).HasColumnType("datetime");
@@ -406,6 +410,10 @@ namespace DIMSApis.Models.Data
                 entity.Property(e => e.CheckIn).HasColumnType("datetime");
 
                 entity.Property(e => e.CheckOut).HasColumnType("datetime");
+
+                entity.Property(e => e.QrCheckUpRandomString)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.QrContent).IsUnicode(false);
 

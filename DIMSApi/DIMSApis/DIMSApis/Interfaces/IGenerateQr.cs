@@ -5,18 +5,11 @@ namespace DIMSApis.Interfaces
 {
     public interface IGenerateQr
     {
-        void GetMainQrUrlContent(Booking bookingFullDetail , out string content,out string link);
-        void GetQrDetailUrlContent(QrInput qri, out string content,out string link);
-        void GenerateQr(QrInput qri, string imagePath, string imageName);
+        void GetMainQrUrlContent(Booking bookingFullDetail, string randomString, out string content,out string link);
+        void GetQrDetailUrlContent(QrInput qri,string randomString, out string content,out string link);
 
-        void GenerateMainQr(Booking bookingFullDetail, string imageMainPath, string imageMainName);
+        void GetQrDetail(VertifyQrInput qri, out string bookingID, out string RoomID, out string RandomString);
 
-        string createQrContent(QrInput qri);
-
-        string createMainQrContent(Booking bookingFullDetail);
-
-        void GetQrDetail(VertifyQrInput qri, out string bookingID, out string RoomID);
-
-        void GetMainQrDetail(VertifyMainQrInput qri, out string bookingID, out string HotelId);
+        void GetMainQrDetail(VertifyMainQrInput qri, out string bookingID, out string HotelId, out string RandomString);
     }
 }

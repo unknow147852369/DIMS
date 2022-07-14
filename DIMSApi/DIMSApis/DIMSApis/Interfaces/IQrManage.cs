@@ -15,6 +15,7 @@ namespace DIMSApis.Interfaces
 
         Task<string> AddInboundUser(checkInInput checkIn);
 
-        Task<string> CheckOut(CheckOutInput checkOut);
+        Task<string> CheckInOnline(int hotelId, int BookingID);
+        Task<string> CheckOutOnline(int hotelId, int BookingID);
     }
 }

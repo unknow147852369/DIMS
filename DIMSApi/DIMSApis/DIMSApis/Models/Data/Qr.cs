@@ -7,6 +7,7 @@ namespace DIMSApis.Models.Data
     {
         public int QrId { get; set; }
         public int? BookingDetailId { get; set; }
+        public string? QrRandomString { get; set; }
         public string? QrUrl { get; set; }
         public string? QrContent { get; set; }
         public DateTime? StartDate { get; set; }

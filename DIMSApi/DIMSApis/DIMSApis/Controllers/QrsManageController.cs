@@ -66,23 +66,42 @@ namespace DIMSApis.Controllers
             }
         }
 
-        //[HttpPost("Check-out")]
-        //public async Task<IActionResult> CheckOut(CheckOutInput ckOut)
-        //{
-        //    var checkOut = await _qrmanage.CheckOut(ckOut);
+        [HttpPut("Checkin-Online")]
+        public async Task<IActionResult> CheckInOnline(int hotelId, int bookingID)
+        {
+            var checkOut = await _qrmanage.CheckInOnline(hotelId,bookingID);
 
-        //    if (checkOut.Equals("1"))
-        //    {
-        //        return Ok();
-        //    }
-        //    else if (checkOut.Equals("3"))
-        //    {
-        //        return NoContent();
-        //    }
-        //    else
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
+            if (checkOut.Equals("1"))
+            {
+                return Ok("CheckIn Success!");
+            }
+            else if (checkOut.Equals("3"))
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest("Not found");
+            }
+        }
+
+        [HttpPut("Checkout-Online")]
+        public async Task<IActionResult> CheckOutOnline(int hotelId, int bookingID)
+        {
+            if (bookingID == null) return BadRequest(new DataRespone { Message = "some feild is empty" });
+            var check = await _qrmanage.CheckOutOnline(hotelId, bookingID);
+            if (check.Equals("1"))
+            {
+                return Ok("CheckIn Success!");
+            }
+            else if (check.Equals("3"))
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest("Not found");
+            }
+        }
     }
 }
