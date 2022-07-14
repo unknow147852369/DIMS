@@ -3,6 +3,7 @@ using DIMSApis.Models.Data;
 using DIMSApis.Models.Input;
 using IronBarCode;
 using Microsoft.IdentityModel.Tokens;
+using QRCoder;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -126,11 +127,17 @@ namespace DIMSApis.Services
         {
             try
             {
-                content = createMainQrContent(bookingFullDetail); ;
-                var MyQRWithLogo = QRCodeWriter.CreateQrCode(content, 500);
-                MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.Red);
+                content = createMainQrContent(bookingFullDetail);
 
-                byte[] vs = MyQRWithLogo.ToPngBinaryData();
+                QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(content, QRCodeGenerator.ECCLevel.Q);
+                PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+                byte[] vs = qrCode.GetGraphic(20);
+
+                //var MyQRWithLogo = QRCodeWriter.CreateQrCode(content, 500);
+                //MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.Red);
+
+                //byte[] vs = MyQRWithLogo.ToPngBinaryData();
 
                 link = _cloudinary.CloudinaryUploadPhotoQr(vs);
             }
@@ -144,11 +151,17 @@ namespace DIMSApis.Services
         {
             try
             {
-                content = createQrContent(qri); ;
-                var MyQRWithLogo = QRCodeWriter.CreateQrCode(content, 500);
-                MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.LightSeaGreen);
+                content = createQrContent(qri);
 
-                byte[] vs = MyQRWithLogo.ToPngBinaryData();
+                QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(content, QRCodeGenerator.ECCLevel.Q);
+                PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+                byte[] vs = qrCode.GetGraphic(20);
+
+                //var MyQRWithLogo = QRCodeWriter.CreateQrCode(content, 500);
+                //MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.LightSeaGreen);
+
+                //byte[] vs = MyQRWithLogo.ToPngBinaryData();
 
                 link = _cloudinary.CloudinaryUploadPhotoQr(vs);
             }

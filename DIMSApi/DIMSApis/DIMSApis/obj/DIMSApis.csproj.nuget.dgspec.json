@@ -128,6 +128,10 @@
               "target": "Package",
               "version": "[3.2.0, )"
             },
+            "QRCoder": {
+              "target": "Package",
+              "version": "[1.4.3, )"
+            },
             "Stripe.net": {
               "target": "Package",
               "version": "[39.110.0, )"
