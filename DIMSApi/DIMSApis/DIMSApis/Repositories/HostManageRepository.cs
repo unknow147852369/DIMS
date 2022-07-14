@@ -442,7 +442,7 @@ namespace DIMSApis.Repositories
         {
             var returnList = await _context.Menus
                 .Where(op=>op.HotelId==hotelID && op.MenuStatus.Value).ToListAsync();
-            return _mapper.Map< IEnumerable < HotelListMenuOutput >> (returnList);
+            return _mapper.Map< IEnumerable < HotelListMenuOutput >> (returnList).OrderBy(o=>o.MenuType);
         }
 
         public async Task<string> CheckOutLocal(int hotelId,int BookingID)
@@ -462,6 +462,42 @@ namespace DIMSApis.Repositories
             return "3";
         }
 
+        public async Task<string> UpdateCleanStatus(int RoomID)
+        {
+            var hotelRoom = await _context.Rooms
+               .Where(op => op.RoomId==RoomID && op.Status == true).SingleOrDefaultAsync();
+            if (hotelRoom == null) { return "Not found Room"; }
 
+            if (hotelRoom.CleanStatus.Value)
+            {
+                hotelRoom.CleanStatus = false;
+            }
+            else
+            {
+                hotelRoom.CleanStatus = true;
+            }
+
+            if (await _context.SaveChangesAsync() > 0)
+                return "1";
+            return "3";
+        }
+
+        public async Task<string> AddInboundUser(checkInInput checkIn)
+        {
+            var detail = await _context.Bookings
+               .Include(b => b.InboundUsers)
+               .Where(a => a.BookingId == checkIn.BookingId && a.HotelId == checkIn.HotelId && a.Status == true)
+           .FirstOrDefaultAsync();
+
+            _context.InboundUsers.RemoveRange(detail.InboundUsers);
+            if (detail != null)
+            {
+                _mapper.Map(checkIn.InboundUsers, detail.InboundUsers);
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }
+            return "0";
+        }
     }
 }

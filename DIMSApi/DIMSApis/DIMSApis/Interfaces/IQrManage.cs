@@ -13,7 +13,7 @@ namespace DIMSApis.Interfaces
 
         Task<string> getStringToCheckRoom(int hotel, string roomName);
 
-        Task<string> AddInboundUser(checkInInput checkIn);
+
 
         Task<string> CheckInOnline(int hotelId, int BookingID);
         Task<string> CheckOutOnline(int hotelId, int BookingID);

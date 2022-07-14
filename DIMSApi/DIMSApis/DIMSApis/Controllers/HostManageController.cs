@@ -18,7 +18,24 @@ namespace DIMSApis.Controllers
         {
             _host = host;
         }
+        [HttpPut("Add-inbound-user-id")]
+        public async Task<IActionResult> AddInboundUser(checkInInput ckIn)
+        {
+            var checkIn = await _host.AddInboundUser(ckIn);
 
+            if (checkIn.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "Update success" });
+            }
+            else if (checkIn.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "nothing change" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "Wrong inform" });
+            }
+        }
 
         [HttpPut("Checkout-Local")]
         public async Task<IActionResult> CheckOut(int hotelId,int bookingID)
@@ -29,6 +46,24 @@ namespace DIMSApis.Controllers
             if (check.Equals("1"))
             {
                 return Ok("CheckIn Success!");
+            }
+            else if (check.Equals("3"))
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest("Not found");
+            }
+        }
+        [HttpPut("Update-Clean-Status")]
+        public async Task<IActionResult> CheckOut(int roomID)
+        {
+            if (roomID == null) return BadRequest(new DataRespone { Message = "some feild is empty" });
+            var check = await _host.UpdateCleanStatus(roomID);
+            if (check.Equals("1"))
+            {
+                return Ok("Update Success!");
             }
             else if (check.Equals("3"))
             {

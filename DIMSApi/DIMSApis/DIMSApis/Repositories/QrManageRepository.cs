@@ -20,22 +20,7 @@ namespace DIMSApis.Repositories
             _generateqr = generateqr;
         }
 
-        public async Task<string> AddInboundUser(checkInInput checkIn)
-        {
-            var detail = await _context.Bookings
-               .Include(b => b.InboundUsers)
-               .Where(a => a.BookingId == checkIn.BookingId && a.HotelId == checkIn.HotelId && a.Status == true)
-           .FirstOrDefaultAsync();
-            if (detail != null)
-            {
-                var people = new List<InboundUser>();
-                _mapper.Map(checkIn.InboundUsers, detail.InboundUsers);
-                if (await _context.SaveChangesAsync() > 0)
-                    return "1";
-                return "3";
-            }
-            return "0";
-        }
+
 
         public async Task<string> CheckInOnline(int hotelId, int BookingID)
         {

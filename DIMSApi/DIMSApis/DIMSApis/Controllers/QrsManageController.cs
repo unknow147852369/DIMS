@@ -47,24 +47,7 @@ namespace DIMSApis.Controllers
             return Ok(check);
         }
 
-        [HttpPost("Add-inbound-user-id")]
-        public async Task<IActionResult> AddInboundUser(checkInInput ckIn)
-        {
-            var checkIn = await _qrmanage.AddInboundUser(ckIn);
-
-            if (checkIn.Equals("1"))
-            {
-                return Ok(new DataRespone { Message = "Add success" });
-            }
-            else if (checkIn.Equals("3"))
-            {
-                return Ok(new DataRespone { Message = "nothing change" });
-            }
-            else
-            {
-                return BadRequest(new DataRespone { Message = "Wrong inform" });
-            }
-        }
+ 
 
         [HttpPut("Checkin-Online")]
         public async Task<IActionResult> CheckInOnline(int hotelId, int bookingID)
