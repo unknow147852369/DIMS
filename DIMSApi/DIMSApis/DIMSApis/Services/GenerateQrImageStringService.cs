@@ -158,11 +158,6 @@ namespace DIMSApis.Services
                 PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
                 byte[] vs = qrCode.GetGraphic(20);
 
-                //var MyQRWithLogo = QRCodeWriter.CreateQrCode(content, 500);
-                //MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.LightSeaGreen);
-
-                //byte[] vs = MyQRWithLogo.ToPngBinaryData();
-
                 link = _cloudinary.CloudinaryUploadPhotoQr(vs);
             }
             catch (Exception ex)

@@ -36,7 +36,8 @@ namespace DIMSApis.Services
 
         private async Task<string> GetHtmlBody(Booking bok, string qrMainLink)
         {
-            string body = File.ReadAllText(@"Material/HotelBill.html");
+            //string body = File.ReadAllText(@"Material/HotelBill.html");
+            string body = Material.MaterialMail.HotelBillHtmlCode();
             body = body.Replace("#LOCATION1#", $"{bok.Hotel.HotelName}");
             body = body.Replace("#LOCATION2#", $"{bok.BookingId}");
             body = body.Replace("#LOCATION3#", bok.FullName == null ? bok.User.UserName : bok.FullName);
@@ -67,7 +68,8 @@ namespace DIMSApis.Services
             body = body.Replace("#LOCATION15#", $"{bok.TotalPrice}");
             body = body.Replace("#LOCATION16#", $"{bok.Deposit}");
 
-            string lines = File.ReadAllText(@"Material/BokingHotelDetailCodeHTML.txt", Encoding.UTF8);
+            //string lines = File.ReadAllText(@"Material/BokingHotelDetailCodeHTML.txt", Encoding.UTF8);
+            string lines = Material.MaterialMail.BookingDetailHtmlCode();
             var fullDetal = "";
             foreach (var itemDetail in bok.BookingDetails)
             {
