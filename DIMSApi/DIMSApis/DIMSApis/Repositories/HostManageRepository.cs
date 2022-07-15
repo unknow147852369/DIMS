@@ -178,7 +178,7 @@ namespace DIMSApis.Repositories
             if (allRoomStatus == null) { return null; }
             var lsHotelRoomNotBooked = await _context.Rooms
                     .Where(op => op.HotelId == hotelId)
-                     .Where(a => a.BookingDetails.All(op => (op.EndDate.Value.Date > DateTime.Today.Date && op.Status.Value &&
+                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (op.EndDate.Value.Date > DateTime.Today.Date  &&
                                                   !(op.StartDate.Value.Date <= today.Date
                                                   && op.EndDate.Value.Date >= today.Date)
                                                   )
@@ -218,9 +218,10 @@ namespace DIMSApis.Repositories
             if (allRoomStatus == null) { return null; }
             var lsHotelRoomNotBooked = await _context.Rooms
                     .Where(op => op.HotelId == hotelId)
-                     .Where(a => a.BookingDetails.All(op => (op.EndDate.Value.Date > DateTime.Today.Date && op.Status.Value &&
+                     .Where(a => a.BookingDetails.Where(op=>op.Status.Value).All(op => (op.EndDate.Value.Date > DateTime.Today.Date  &&
                                                   !(op.StartDate.Value.Date <= today.Date
-                                                  && op.EndDate.Value.Date >= today.Date)
+                                                  && op.EndDate.Value.Date >= today.Date
+                                                  )
                                                   )
                                                 ))
                                     .ToListAsync();
@@ -341,6 +342,7 @@ namespace DIMSApis.Repositories
             _mapper.Map(ppi, bok);
 
 
+            
             IQueryable<Room> roomprice = _context.Rooms
                 .Include(c => c.Category)
                 .ThenInclude(sp => sp.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date
