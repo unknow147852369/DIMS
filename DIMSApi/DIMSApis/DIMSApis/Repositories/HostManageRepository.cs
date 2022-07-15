@@ -408,7 +408,7 @@ namespace DIMSApis.Repositories
         {
             IQueryable<Room> lsHotelRoomNotBooked = _context.Rooms
                     .Where(op => op.Status == true && op.HotelId == bok.HotelId)
-                    .Where(a => a.BookingDetails.All(op => (
+                    .Where(a => a.BookingDetails.Where(op=>op.Status.Value).All(op => (
                                                   !(((op.StartDate.Value.Date >= bok.StartDate.Value.Date && op.StartDate.Value.Date <= bok.EndDate.Value.Date)
                                                   && (op.EndDate.Value.Date >= bok.StartDate.Value.Date && op.EndDate.Value.Date <= bok.EndDate.Value.Date))
                                                   || (op.StartDate.Value.Date <= bok.StartDate.Value.Date && op.EndDate.Value.Date >= bok.EndDate.Value.Date)
@@ -430,7 +430,7 @@ namespace DIMSApis.Repositories
 
             IQueryable<Room> lsHotelRoomNotBooked = _context.Rooms
                     .Where(op => op.Status == true && op.HotelId == chek.HotelId )
-                    .Where(a => a.BookingDetails.All(op => (op.Status.Value &&
+                    .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (op.Status.Value &&
                                                   !(((op.StartDate.Value.Date >= StartDate.Date && op.StartDate.Value.Date <= EndDate.Date)
                                                   && (op.EndDate.Value.Date >= StartDate.Date && op.EndDate.Value.Date <= EndDate.Date))
                                                   || (op.StartDate.Value.Date <= StartDate.Date && op.EndDate.Value.Date >= EndDate.Date)
@@ -450,7 +450,7 @@ namespace DIMSApis.Repositories
                 }
             }
             ;
-            if (error.Equals(error)) { return "All Roome are avaiable!"; }
+            if (error.Equals("Room ")) { return "All Roome are avaiable!"; }
             return error +" have been booked!";
         }
 
