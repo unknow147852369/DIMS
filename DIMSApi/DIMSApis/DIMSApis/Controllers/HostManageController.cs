@@ -45,7 +45,7 @@ namespace DIMSApis.Controllers
             var check = await _host.CheckOutLocal(hotelId,bookingID);
             if (check.Equals("1"))
             {
-                return Ok("CheckIn Success!");
+                return Ok("CheckOut Success!");
             }
             else if (check.Equals("3"))
             {
