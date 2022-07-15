@@ -23,6 +23,6 @@ namespace DIMSApis.Models.Input
         public bool? PaymentCondition { get; set; }
         public double? Deposit { get; set; }
         public virtual ICollection<PaymentProcessingDetailInput> BookingDetails { get; set; }
-        public virtual ICollection<NewInboundUser> InboundUsers { get; set; }
+        public virtual ICollection<string> InboundUsersUnknow { get; set; }
     }
 }

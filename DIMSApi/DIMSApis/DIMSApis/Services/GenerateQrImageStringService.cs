@@ -35,7 +35,7 @@ namespace DIMSApis.Services
         }
 
 
-        public string createQrContent(QrInput qri, string randomString)
+        private string createQrContent(QrInput qri, string randomString)
         {
             var contentQr = qri.HotelId + "+" + qri.BookingId + "+" + qri.UserId + "+" + qri.RoomId + "+" + qri.RoomName + "+" + randomString;
             var returnItem = Base64Encode(contentQr);
@@ -62,7 +62,7 @@ namespace DIMSApis.Services
             }
         }
 
-        public string createMainQrContent(Booking bookingFullDetail,string randomString)
+        private string createMainQrContent(Booking bookingFullDetail,string randomString)
         {
             var contentQr = bookingFullDetail.HotelId + "+" + bookingFullDetail.BookingId + "+" + bookingFullDetail.UserId + "+" + randomString ;
             var returnItem = Base64Encode(contentQr);

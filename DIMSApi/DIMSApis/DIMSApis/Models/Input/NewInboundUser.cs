@@ -7,8 +7,7 @@
         public string? UserIdCard { get; set; }
         public string? UserName { get; set; }
         public string? UserSex { get; set; }
-        
-  
+       
         
     }
 }

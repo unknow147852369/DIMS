@@ -13,15 +13,12 @@ namespace DIMSApis.Configtuations.AutoMap
             //
             CreateMap<LocalPaymentInput, Booking>()
                 .ForMember(a => a.BookingDetails, option => option.MapFrom(tbl => tbl.BookingDetails))
-                .ForMember(a => a.InboundUsers, option => option.MapFrom(tbl => tbl.InboundUsers))
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
                 .ForMember(a => a.StartDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.Add(new TimeSpan(14, 00, 0))))
                 .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.AddDays((double)(tbl.TotalNight)).Add(new TimeSpan(12, 00, 0))));
                 ;
             CreateMap<PaymentProcessingDetailInput, BookingDetail>()
-                ;
-            CreateMap<NewInboundUser, InboundUser>()
                 ;
             //
             CreateMap<Room, RoomDetailInfoOutput>()

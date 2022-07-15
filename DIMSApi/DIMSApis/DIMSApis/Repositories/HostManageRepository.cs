@@ -340,9 +340,21 @@ namespace DIMSApis.Repositories
         {
             Booking bok = new();
             _mapper.Map(ppi, bok);
+            foreach (var user in ppi.InboundUsersUnknow)
+            {
+                var lsInfo = user.Split('|').ToList();
 
+                bok.InboundUsers.Add(new InboundUser
+                {
+                    UserAddress = lsInfo[0],
+                    UserBirthday = new DateTime(int.Parse(lsInfo[1].Substring(4, 4)), int.Parse(lsInfo[1].Substring(2, 2)), int.Parse(lsInfo[1].Substring(0, 2))),
+                    UserIdCard = lsInfo[2],
+                    UserName = lsInfo[3],
+                    UserSex = lsInfo[4],
+                    Status = true,
+                });
+            }
 
-            
             IQueryable<Room> roomprice = _context.Rooms
                 .Include(c => c.Category)
                 .ThenInclude(sp => sp.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date
@@ -499,10 +511,26 @@ namespace DIMSApis.Repositories
                .Where(a => a.BookingId == checkIn.BookingId && a.HotelId == checkIn.HotelId && a.Status == true)
            .FirstOrDefaultAsync();
 
-            _context.InboundUsers.RemoveRange(detail.InboundUsers);
             if (detail != null)
             {
-                _mapper.Map(checkIn.InboundUsers, detail.InboundUsers);
+                if (detail.InboundUsers != null)
+                {
+                    _context.InboundUsers.RemoveRange(detail.InboundUsers);
+                }
+                foreach (var user in checkIn.InboundUsers)
+                {
+                    var lsInfo = user.Split('|').ToList();
+
+                    detail.InboundUsers.Add(new InboundUser
+                    {
+                        UserAddress = lsInfo[0],
+                        UserBirthday =  new DateTime(int.Parse(lsInfo[1].Substring(4, 4)),int.Parse(lsInfo[1].Substring(2, 2)), int.Parse(lsInfo[1].Substring(0, 2))),
+                        UserIdCard = lsInfo[2],
+                        UserName = lsInfo[3],
+                        UserSex = lsInfo[4],
+                        Status = true,
+                    });
+                }
                 if (await _context.SaveChangesAsync() > 0)
                     return "1";
                 return "3";
