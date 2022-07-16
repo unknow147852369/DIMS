@@ -120,8 +120,6 @@ namespace DIMSApis.Models.Data
 
                 entity.Property(e => e.BookingDetailId).HasColumnName("BookingDetailID");
 
-                entity.Property(e => e.BookingDetailMenuName).HasMaxLength(100);
-
                 entity.Property(e => e.MenuId).HasColumnName("MenuID");
 
                 entity.HasOne(d => d.BookingDetail)

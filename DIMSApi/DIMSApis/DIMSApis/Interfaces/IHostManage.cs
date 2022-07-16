@@ -8,6 +8,7 @@ namespace DIMSApis.Interfaces
     {
         Task<string> UpdateHotelMainPhoto(int photoID, int hotelID);
         Task<string> AddItemForExtraFee(ICollection<ExtraFeeMenuDetailInput> ex);
+        Task<string> AddProblemForExtraFee(ICollection<ProblemExtraFeeInput> prEx);
         Task<string> UpdateCleanStatus(int RoomID);
         Task<string> AddInboundUser(checkInInput checkIn);
         Task<string> CheckOutLocal(int hotelId,int bookingID);

@@ -88,6 +88,13 @@ namespace DIMSApis.Controllers
             if (check != "1" && check != "3") { return BadRequest(new DataRespone { Message = "Add fail" }); }
             return Ok(new DataRespone { Message = "Add Suceess" });
         }
+        [HttpPost("Add-Problem-Extra-Fee")]
+        public async Task<IActionResult> AddProblemForExtraFee(ICollection<ProblemExtraFeeInput> prEX)
+        {
+            var check = await _host.AddProblemForExtraFee(prEX);
+            if (check != "1" && check != "3") { return BadRequest(new DataRespone { Message = "Add fail" }); }
+            return Ok(new DataRespone { Message = "Add Suceess" });
+        }
         [HttpGet("Get-list-Menu")]
         public async Task<IActionResult> GetListMenus(int hotelID)
         {
@@ -120,7 +127,7 @@ namespace DIMSApis.Controllers
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var check = await _host.AddItemForExtraFee(chek);
-            if (check != "1") { return BadRequest(new DataRespone { Message = check }); }
+            if (check != "1" && check != "3") { return BadRequest(new DataRespone { Message = "Add fail" }); }
             return Ok(check);
         }
 
