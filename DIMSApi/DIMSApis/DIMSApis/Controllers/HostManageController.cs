@@ -74,7 +74,20 @@ namespace DIMSApis.Controllers
                 return BadRequest("Not found");
             }
         }
-
+        [HttpPut("Update-Item-Menu")]
+        public async Task<IActionResult> UpdateItemMenu(int MenuID, ItemMenuInput item)
+        {
+            var check = await _host.UpdateItemMenu(MenuID,item);
+            if (check != "1" && check != "3") { return BadRequest(new DataRespone { Message = "Update fail" }); }
+            return Ok(new DataRespone { Message = "update Suceess" });
+        }
+        [HttpPost("Add-Item-Menu")]
+        public async Task<IActionResult> AddItemMenu(ICollection<ItemMenuInput> item)
+        {
+            var check = await _host.AddItemMenu(item);
+            if (check != "1" && check != "3") { return BadRequest(new DataRespone { Message = "Add fail" }); }
+            return Ok(new DataRespone { Message = "Add Suceess" });
+        }
         [HttpGet("Get-list-Menu")]
         public async Task<IActionResult> GetListMenus(int hotelID)
         {
@@ -85,12 +98,29 @@ namespace DIMSApis.Controllers
             return Ok(check);
         }
 
+        [HttpGet("Get-User-Menu")]
+        public async Task<IActionResult> GetUserMenu(int BookingDetailID)
+        {
+            if (BookingDetailID == null) return BadRequest(new DataRespone { Message = "some feild is emptyw" });
+            var check = await _host.GetUserMenu(BookingDetailID);
+            if (check == null) { return BadRequest(new DataRespone { Message = "Your user do not use any thing" }); }
+            return Ok(check);
+        }
+
         [HttpPost("Check-Room-Date-Booking")]
         public async Task<IActionResult> CheckRoomDateBooking(CheckRoomDateInput chek)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var check = await _host.CheckRoomDateBooking(chek);
             if (check == null) { return BadRequest(new DataRespone { Message = check }); }
+            return Ok(check);
+        }
+        [HttpPost("Add-Item-For-Extrafee")]
+        public async Task<IActionResult> AddItemForExtraFee(ICollection<ExtraFeeMenuDetailInput> chek)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _host.AddItemForExtraFee(chek);
+            if (check != "1") { return BadRequest(new DataRespone { Message = check }); }
             return Ok(check);
         }
 

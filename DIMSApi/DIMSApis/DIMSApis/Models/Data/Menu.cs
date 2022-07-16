@@ -5,6 +5,11 @@ namespace DIMSApis.Models.Data
 {
     public partial class Menu
     {
+        public Menu()
+        {
+            BookingDetailMenus = new HashSet<BookingDetailMenu>();
+        }
+
         public int MenuId { get; set; }
         public int? HotelId { get; set; }
         public string? MenuName { get; set; }
@@ -14,5 +19,6 @@ namespace DIMSApis.Models.Data
         public bool? MenuStatus { get; set; }
 
         public virtual Hotel? Hotel { get; set; }
+        public virtual ICollection<BookingDetailMenu> BookingDetailMenus { get; set; }
     }
 }

@@ -122,10 +122,17 @@ namespace DIMSApis.Models.Data
 
                 entity.Property(e => e.BookingDetailMenuName).HasMaxLength(100);
 
+                entity.Property(e => e.MenuId).HasColumnName("MenuID");
+
                 entity.HasOne(d => d.BookingDetail)
                     .WithMany(p => p.BookingDetailMenus)
                     .HasForeignKey(d => d.BookingDetailId)
                     .HasConstraintName("FK_BookingDetailMenu_BookingDetails");
+
+                entity.HasOne(d => d.Menu)
+                    .WithMany(p => p.BookingDetailMenus)
+                    .HasForeignKey(d => d.MenuId)
+                    .HasConstraintName("FK_BookingDetailMenu_Menus");
             });
 
             modelBuilder.Entity<BookingDetailPrice>(entity =>

@@ -537,5 +537,82 @@ namespace DIMSApis.Repositories
             }
             return "0";
         }
+
+        public async Task<string> AddItemForExtraFee(ICollection<ExtraFeeMenuDetailInput> ex)
+        {
+            try
+            {
+                var roomBooking = await _context.BookingDetails
+                    .Include(m => m.BookingDetailMenus).ThenInclude(m=>m.Menu)
+                    .Where(op => op.BookingDetailId == ex.First().BookingDetailId)
+                    .SingleOrDefaultAsync();
+                ;
+                if (roomBooking == null) { return "0"; }
+                foreach (var item in ex)
+                {
+                    if (!roomBooking.BookingDetailMenus.Select(s => s.MenuId).ToList().Contains(item.MenuId))
+                    {
+                        var me =await _context.Menus.Where(op => op.MenuId == item.MenuId).FirstAsync();
+                        roomBooking.BookingDetailMenus.Add(new BookingDetailMenu { 
+                        BookingDetailMenuName = me.MenuName.ToString(),
+                        BookingDetailMenuPrice = double.Parse( me.MenuPrice.ToString()),
+                        BookingDetailMenuStatus = true,
+                        BookingDetailMenuQuanity = item.BookingDetailMenuQuanity,
+                        MenuId = item.MenuId,
+                        });
+                    }
+                    else
+                    {
+                        var me = await _context.Menus.Where(op => op.MenuId == item.MenuId).FirstAsync();
+                        var detail = roomBooking.BookingDetailMenus.Where(op => op.MenuId == item.MenuId && op.BookingDetailMenuPrice == me.MenuPrice && op.BookingDetailMenuName == me.MenuName).First();
+                        if (detail != null)
+                        {
+                            detail.BookingDetailMenuQuanity += item.BookingDetailMenuQuanity;
+                        }
+                        else
+                        {
+                            roomBooking.BookingDetailMenus.Add(new BookingDetailMenu
+                            {
+                                BookingDetailMenuName = me.MenuName.ToString(),
+                                BookingDetailMenuPrice = double.Parse(me.MenuPrice.ToString()),
+                                BookingDetailMenuStatus = true,
+                                BookingDetailMenuQuanity = item.BookingDetailMenuQuanity,
+                                MenuId = item.MenuId,
+                            });
+                        }
+                    }
+                    await _context.SaveChangesAsync();
+                }
+                return "Add Success";
+            }catch (Exception er)
+            {
+                return er.Message;
+            }
+        }
+
+        public async Task<IEnumerable<BookingDetailMenu>> GetUserMenu(int BookingDetailID)
+        {
+            var DetailLsMenu = await _context.BookingDetailMenus
+                .Where(op=>op.BookingDetailId ==BookingDetailID).ToListAsync();
+            return DetailLsMenu;
+        }
+
+        public async Task<string> AddItemMenu(ICollection<ItemMenuInput> item )
+        {
+            var lsItem =  _mapper.Map<ICollection<Menu>>(item);
+            await _context.Menus.AddRangeAsync(lsItem);
+            if (await _context.SaveChangesAsync() > 0)
+                return "1";
+            return "3";
+        }
+
+        public async Task<string> UpdateItemMenu(int MenuID, ItemMenuInput item)
+        {
+            var menu = await _context.Menus.Where(op=>op.MenuId == MenuID).FirstAsync();
+            _mapper.Map(item, menu);
+            if (await _context.SaveChangesAsync() > 0)
+                return "1";
+            return "3";
+        }
     }
 }

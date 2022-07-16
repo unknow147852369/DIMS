@@ -1,4 +1,5 @@
-﻿using DIMSApis.Models.Input;
+﻿using DIMSApis.Models.Data;
+using DIMSApis.Models.Input;
 using DIMSApis.Models.Output;
 
 namespace DIMSApis.Interfaces
@@ -6,11 +7,15 @@ namespace DIMSApis.Interfaces
     public interface IHostManage
     {
         Task<string> UpdateHotelMainPhoto(int photoID, int hotelID);
+        Task<string> AddItemForExtraFee(ICollection<ExtraFeeMenuDetailInput> ex);
         Task<string> UpdateCleanStatus(int RoomID);
         Task<string> AddInboundUser(checkInInput checkIn);
         Task<string> CheckOutLocal(int hotelId,int bookingID);
         Task<string> LocalPaymentFinal(LocalPaymentInput ppi, int userId);
         Task<string> CheckRoomDateBooking(CheckRoomDateInput chek);
+        Task<string> AddItemMenu(ICollection<ItemMenuInput> item);
+        Task<string> UpdateItemMenu(int MenuID, ItemMenuInput item);
+        Task<IEnumerable<BookingDetailMenu>> GetUserMenu(int BookingDetailID);
         Task<IEnumerable<HotelListMenuOutput>> GetListMenu(int hotelID);
 
         Task<IEnumerable<HotelPhotosOutput>> GetListHotelPhotos(int userId, int hotelId);
