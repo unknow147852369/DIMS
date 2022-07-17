@@ -160,6 +160,7 @@ namespace DIMSApis.Controllers
         }
       
 
+
         [HttpGet("Host-A-Hotel-All-Room-Status-CheckOut")]
         public async Task<IActionResult> GetListAHotelAllRoomStatusCheckOut(int hotelId, DateTime today)
         {
