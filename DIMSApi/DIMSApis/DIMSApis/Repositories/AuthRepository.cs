@@ -128,5 +128,24 @@ namespace DIMSApis.Repositories
                 return true;
             return false;
         }
+
+        public async Task<bool> ForgoPassChangeCHEAT(ForgotPassInput pass)
+        {
+            var user = await _context.Users
+                .Where(u => u.Email == pass.Email.ToLower() && u.Status == true).SingleOrDefaultAsync();
+           
+            if (user == null )
+                return false;
+           
+                byte[] passwordHash, passwordSalt;
+                _otherservice.CreatePasswordHash(pass.Password, out passwordHash, out passwordSalt);
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+   
+   
+            if (await _context.SaveChangesAsync() > 0)
+                return true;
+            return false;
+        }
     }
 }

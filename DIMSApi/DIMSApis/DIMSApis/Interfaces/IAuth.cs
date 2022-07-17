@@ -6,6 +6,7 @@ namespace DIMSApis.Interfaces
     public interface IAuth
     {
         Task<bool> Register(RegisterInput user);
+        Task<bool> ForgoPassChangeCHEAT(ForgotPassInput pass);
 
         Task<User> Login(LoginInput user);
 

@@ -9,6 +9,8 @@ namespace DIMSApis.Configtuations.AutoMap
     {
         public AutoMapper()
         {
+            CreateMap<InboundUser, NewInboundUser>();
+            //
             CreateMap<ItemMenuInput, Menu>();
             //
             CreateMap<Menu, HotelListMenuOutput>();

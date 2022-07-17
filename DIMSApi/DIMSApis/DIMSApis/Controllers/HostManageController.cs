@@ -114,6 +114,14 @@ namespace DIMSApis.Controllers
             return Ok(check);
         }
 
+        [HttpGet("Get-All-Inbound-User-Booking-info")]
+        public async Task<IActionResult> GetAllInboundUserBookingInfo(int hotelID)
+        {
+            var check = await _host.GetAllInboundUserBookingInfo(hotelID);
+            if (check == null) { return BadRequest(new DataRespone { Message = "Your user do not use any thing" }); }
+            return Ok(check);
+        }
+
         [HttpPost("Check-Room-Date-Booking")]
         public async Task<IActionResult> CheckRoomDateBooking(CheckRoomDateInput chek)
         {
@@ -170,6 +178,7 @@ namespace DIMSApis.Controllers
             return Ok(Hotel);
         }
 
+
         [HttpGet("Host-A-Hotel-All-Room-Status-Today")]
         public async Task<IActionResult> GetListAHotelAllRoomStatusToday(int hotelId, DateTime today)
         {
@@ -184,6 +193,15 @@ namespace DIMSApis.Controllers
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var Hotel = await _host.GetListAHotelAllRoomStatusSearch(userId, hotelId, ArrivalDate, totalnight);
+            if (Hotel == null) { return BadRequest(new DataRespone { Message = "No Rooms Create!" }); }
+            return Ok(Hotel);
+        }
+
+        [HttpGet("Host-A-Hotel-Only-Room-Status-13-Search")]
+        public async Task<IActionResult> GetListAHotelOnlyRoomStatus13Search(int hotelId, DateTime ArrivalDate, int totalnight)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var Hotel = await _host.GetListAHotelOnlyRoomStatus13Search(userId, hotelId, ArrivalDate, totalnight);
             if (Hotel == null) { return BadRequest(new DataRespone { Message = "No Rooms Create!" }); }
             return Ok(Hotel);
         }

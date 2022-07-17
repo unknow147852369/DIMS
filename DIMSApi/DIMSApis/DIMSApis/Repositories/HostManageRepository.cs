@@ -139,10 +139,12 @@ namespace DIMSApis.Repositories
                 if (lsHotelRoomNotBooked.Select(s => s.RoomId).Contains(result.RoomId))
                 {
                     result.AllStatus = 1;
+                    result.BookedStatus = false;
                 }
                 else
                 {
                     result.AllStatus = 2;
+                    result.BookedStatus = true;
                 }
                 if (result.CleanStatus == true)
                 {
@@ -668,6 +670,73 @@ namespace DIMSApis.Repositories
                 return "3";
             }
             return "0";
+        }
+
+        public async Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelOnlyRoomStatus13Search(int userId, int hotelId, DateTime today, int totalnight)
+        {
+            DateTime StartDate = today.Add(new TimeSpan(14, 00, 0));
+            DateTime EndDate = _other.GetEndDate(today, totalnight);
+            var allRoomStatus = await _context.Rooms
+                .Include(c => c.Category)
+                .ThenInclude(sp => sp.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date
+                        && op.SpecialDate.Value.Date >= StartDate.Date
+                        && op.SpecialDate.Value.Date <= EndDate.Date
+                        && op.Status.Value))
+                .Where(op => op.HotelId == hotelId)
+                .ToListAsync();
+            if (allRoomStatus == null) { return null; }
+            var lsHotelRoomNotBooked = await _context.Rooms
+                    .Where(op => op.HotelId == hotelId)
+                     .Where(a => a.BookingDetails.All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
+                                                  !(((op.StartDate.Value.Date > StartDate.Date && op.StartDate.Value.Date < EndDate.Date)
+                                                  && (op.EndDate.Value.Date > StartDate.Date && op.EndDate.Value.Date < EndDate.Date))
+                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > EndDate.Date)
+                                                  || (op.StartDate.Value.Date < EndDate.Date && op.EndDate.Value.Date > EndDate.Date)
+                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > StartDate.Date)
+                                                  || (op.StartDate.Value.Date == StartDate.Date
+                                                  || op.StartDate.Value.Date == EndDate.Date
+                                                  || op.EndDate.Value.Date == StartDate.Date
+                                                  || op.EndDate.Value.Date == EndDate.Date)
+                                                  ))
+                                                ))
+                                    .ToListAsync();
+            var returnResult = _mapper.Map<IEnumerable<AHotelAllRoomStatusOutput>>(allRoomStatus);
+
+            foreach (var result in returnResult)
+            {
+                if (lsHotelRoomNotBooked.Select(s => s.RoomId).Contains(result.RoomId))
+                {
+                    result.AllStatus = 1;
+                    result.BookedStatus = false;
+                }
+                else
+                {
+                    result.AllStatus = 2;
+                    result.BookedStatus = true;
+                }
+                if (result.CleanStatus == true)
+                {
+                    result.AllStatus = 3;
+                }
+            }
+            return returnResult.Where(op =>  op.BookedStatus ==false);
+        }
+
+        public async Task<IEnumerable<NewInboundUser>> GetAllInboundUserBookingInfo(int hotelId)
+        {
+
+            var CustomerInfo = await _context.InboundUsers
+                    .Where(op => op.Booking.HotelId==hotelId && op.Booking.Status.Value)
+                     .Where(a => a.Booking.BookingDetails.Where(op => op.Status.Value).All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
+                                                    (op.StartDate.Value.Date <= DateTime.Now.Date
+                                                    && op.EndDate.Value.Date >= DateTime.Now.Date
+                                                    )
+                                                    )
+                                                ))
+                                    .ToListAsync();
+
+            var returnResult = _mapper.Map<IEnumerable<NewInboundUser>>(CustomerInfo);
+            return returnResult;
         }
     }
 }

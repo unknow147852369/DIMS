@@ -97,5 +97,18 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Nothing change" });
             }
         }
+
+        [HttpPost("forgot-pass-change-CHEAT")]
+        public async Task<IActionResult> ForgoPassChangeCHEAT(ForgotPassInput pass)
+        {
+            if (await _auth.ForgoPassChangeCHEAT(pass))
+            {
+                return Ok(new DataRespone { Message = "change success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "Nothing change" });
+            }
+        }
     }
 }
