@@ -541,7 +541,7 @@ namespace DIMSApis.Repositories
             try
             {
                 var roomBooking = await _context.BookingDetails
-                    .Include(m => m.BookingDetailMenus).ThenInclude(m => m.Menu)
+                    .Include(m => m.BookingDetailMenus.Where(op=>op.BookingDetailMenuStatus.Value)).ThenInclude(m => m.Menu)
                     .Where(op => op.BookingDetailId == ex.First().BookingDetailId)
                     .SingleOrDefaultAsync();
                 ;
@@ -593,10 +593,10 @@ namespace DIMSApis.Repositories
             }
         }
 
-        public async Task<IEnumerable<BookingDetailMenu>> GetUserMenu(int BookingDetailID)
+        public async Task<BookingDetail> GetUserMenu(int BookingDetailID)
         {
-            var DetailLsMenu = await _context.BookingDetailMenus
-                .Where(op => op.BookingDetailId == BookingDetailID).ToListAsync();
+            var DetailLsMenu = await _context.BookingDetails.Include(m=>m.BookingDetailMenus)
+                .Where(op => op.BookingDetailId == BookingDetailID).SingleOrDefaultAsync();
             return DetailLsMenu;
         }
 
@@ -623,7 +623,7 @@ namespace DIMSApis.Repositories
             try
             {
                 var roomBooking = await _context.BookingDetails
-                    .Include(m => m.BookingDetailMenus).ThenInclude(m => m.Menu)
+                    .Include(m => m.BookingDetailMenus.Where(op => op.BookingDetailMenuStatus.Value)).ThenInclude(m => m.Menu)
                     .Where(op => op.BookingDetailId == prEx.First().BookingDetailId)
                     .SingleOrDefaultAsync();
                 ;
@@ -649,6 +649,25 @@ namespace DIMSApis.Repositories
             {
                 return er.Message;
             }
+        }
+
+        public async Task<string> DeleteItemForExtraFee(int BookingDetailId, int BookingDetailMenuId)
+        {
+            var item = await _context.BookingDetailMenus
+                .Where(op=>op.BookingDetailMenuId == BookingDetailMenuId).SingleOrDefaultAsync();
+            if (item == null) { return "0"; }
+            _context.BookingDetailMenus.Remove(item);
+            var roomBooking = await _context.BookingDetails
+                .Include(m => m.BookingDetailMenus.Where(op => op.BookingDetailMenuStatus.Value))
+                .Where(op => op.BookingDetailId == BookingDetailId).SingleOrDefaultAsync();
+            if (await _context.SaveChangesAsync() > 0)
+            {
+                roomBooking.ExtraFee = roomBooking.BookingDetailMenus.Sum(s => s.BookingDetailMenuQuanity * s.BookingDetailMenuPrice);
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }
+            return "0";
         }
     }
 }

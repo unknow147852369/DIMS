@@ -128,7 +128,16 @@ namespace DIMSApis.Controllers
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var check = await _host.AddItemForExtraFee(chek);
             if (check != "1" && check != "3") { return BadRequest(new DataRespone { Message = "Add fail" }); }
-            return Ok(check);
+            return Ok(new DataRespone { Message = "Add Suceess" });
+        }
+
+        [HttpDelete("Delete-Item-For-Extrafee")]
+        public async Task<IActionResult> DeleteItemForExtraFee(int BookingDetailId,int BookingDetailMenuId)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _host.DeleteItemForExtraFee(BookingDetailId, BookingDetailMenuId);
+            if (check != "1" && check != "3") { return BadRequest(new DataRespone { Message = "remove fail" }); }
+            return Ok(new DataRespone { Message = "remove Suceess" });
         }
 
         [HttpPost("Host-Local-Payment-final")]
