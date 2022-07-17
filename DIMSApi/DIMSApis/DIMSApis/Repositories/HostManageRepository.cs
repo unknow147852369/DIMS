@@ -563,10 +563,10 @@ namespace DIMSApis.Repositories
                     else
                     {
                         var me = await _context.Menus.Where(op => op.MenuId == item.MenuId).FirstAsync();
-                        var detail = roomBooking.BookingDetailMenus.Where(op => op.MenuId == item.MenuId && op.BookingDetailMenuPrice == me.MenuPrice && op.BookingDetailMenuName == me.MenuName).First();
-                        if (detail != null)
+                        var detail = roomBooking.BookingDetailMenus.Where(op => op.MenuId == item.MenuId && op.BookingDetailMenuPrice == me.MenuPrice && op.BookingDetailMenuName == me.MenuName);
+                        if (detail.Any())
                         {
-                            detail.BookingDetailMenuQuanity += item.BookingDetailMenuQuanity;
+                            detail.ToList()[0].BookingDetailMenuQuanity = item.BookingDetailMenuQuanity;
                         }
                         else
                         {
