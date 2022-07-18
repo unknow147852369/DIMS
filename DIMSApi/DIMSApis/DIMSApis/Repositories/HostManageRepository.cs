@@ -151,7 +151,7 @@ namespace DIMSApis.Repositories
                     result.AllStatus = 3;
                 }
             }
-            return returnResult;
+            return returnResult.Where(op => op.BookedStatus == false);
         }
 
         public async Task<RoomDetailInfoOutput> GetADetailRoom(int userId, int RoomId, DateTime today)
@@ -719,7 +719,7 @@ namespace DIMSApis.Repositories
                     result.AllStatus = 3;
                 }
             }
-            return returnResult.Where(op =>  op.BookedStatus ==false);
+            return returnResult.Where(op =>  op.BookedStatus == false);
         }
 
         public async Task<IEnumerable<NewInboundUser>> GetAllInboundUserBookingInfo(int hotelId)
