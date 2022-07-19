@@ -27,6 +27,7 @@ namespace DIMSApis.Models.Input
         public int? PeopleQuanity { get; set; }
         public string? Description { get; set; }
         public int? VoucherId { get; set; }
+        public double? CurrencyRate { get; set; }
 
         [Required(ErrorMessage = "Can't be empty")]
         public virtual ICollection<PaymentProcessingDetailInput> BookingDetails { get; set; }

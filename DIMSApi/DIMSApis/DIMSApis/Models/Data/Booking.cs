@@ -25,6 +25,7 @@ namespace DIMSApis.Models.Data
         public double? SubTotal { get; set; }
         public double? VoucherDiscoundPrice { get; set; }
         public double? TotalPrice { get; set; }
+        public double? CurrencyRate { get; set; }
         public DateTime? CreateDate { get; set; }
         public string? PaymentMethod { get; set; }
         public bool? PaymentCondition { get; set; }

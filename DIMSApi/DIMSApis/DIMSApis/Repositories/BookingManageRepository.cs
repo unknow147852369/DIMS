@@ -101,7 +101,6 @@ namespace DIMSApis.Repositories
                         {
                             BookingId = bok.BookingId,
                             QrUrl = mainQrUrl,
-                            CheckIn = DateTime.Now,
                             QrCheckUpRandomString = MainrandomString,
                             Status = false,
                             QrContent = mainQrContent,
@@ -195,7 +194,7 @@ namespace DIMSApis.Repositories
                 r.AveragePrice = AveragePrice;
                 r.StartDate = bok.StartDate;
                 r.EndDate = bok.EndDate;
-                r.Status = false;
+                r.Status = true;
                 total = (float)(total + AveragePrice);
                 r.BookingDetailPrices.Add(new BookingDetailPrice
                 {
@@ -237,7 +236,7 @@ namespace DIMSApis.Repositories
             }
             if (error != "") { throw new Exception(error); }
             bok.SubTotal = Math.Round((double)(total * bok.TotalNight), 2);
-            bok.TotalPrice = Math.Round((double)(bok.SubTotal - bok.VoucherDiscoundPrice), 2);
+            bok.TotalPrice = Math.Round((double)((bok.SubTotal - bok.VoucherDiscoundPrice)*bok.CurrencyRate), 2);
 
             return bok;
         }
