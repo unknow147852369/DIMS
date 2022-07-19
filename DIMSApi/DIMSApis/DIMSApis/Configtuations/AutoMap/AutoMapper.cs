@@ -9,6 +9,12 @@ namespace DIMSApis.Configtuations.AutoMap
     {
         public AutoMapper()
         {
+            CreateMap<NewHotelPhotosInput, Photo>()
+                .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
+                .ForMember(a => a.IsMain, option => option.MapFrom(tbl => 0))
+                .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
+                ;
+            //
             CreateMap<InboundUser, NewInboundUser>();
             //
             CreateMap<ItemMenuInput, Menu>();
