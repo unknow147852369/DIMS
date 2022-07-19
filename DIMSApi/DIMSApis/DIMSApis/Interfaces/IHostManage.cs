@@ -6,7 +6,6 @@ namespace DIMSApis.Interfaces
 {
     public interface IHostManage
     {
-        Task<string> UpdateHotelMainPhoto(int photoID, int hotelID);
         Task<string> AddItemForExtraFee(ICollection<ExtraFeeMenuDetailInput> ex);
         Task<string> DeleteItemForExtraFee(int BookingDetailId,int BookingDetailMenuId);
         Task<string> AddProblemForExtraFee(ICollection<ProblemExtraFeeInput> prEx);
@@ -21,7 +20,7 @@ namespace DIMSApis.Interfaces
         Task<BookingDetail> GetUserMenu(int BookingDetailID);
         Task<IEnumerable<HotelListMenuOutput>> GetListMenu(int hotelID);
 
-        Task<IEnumerable<HotelPhotosOutput>> GetListHotelPhotos(int userId, int hotelId);
+
 
         Task<IEnumerable<HotelOutput>> GetListAllHotel(int userId);
 
