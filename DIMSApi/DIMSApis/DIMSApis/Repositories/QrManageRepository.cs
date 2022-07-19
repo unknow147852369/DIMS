@@ -31,8 +31,10 @@ namespace DIMSApis.Repositories
                             .SingleOrDefaultAsync();
 
             if (check == null || check.QrCheckUp == null) { return "0"; }
+            check.Status = true;
             check.QrCheckUp.Status = true;
             check.QrCheckUp.CheckIn = DateTime.Now;
+            check.BookingDetails.ToList().ForEach(q => q.Status = true);
             check.BookingDetails.ToList().ForEach(q => q.Qr.Status = true);
             if (await _context.SaveChangesAsync() > 0)
                 return "1";
@@ -48,8 +50,10 @@ namespace DIMSApis.Repositories
                             .SingleOrDefaultAsync();
 
             if (check == null || check.QrCheckUp == null) { return "0"; }
+            check.Status = false;
             check.QrCheckUp.Status = false;
             check.QrCheckUp.CheckOut = DateTime.Now;
+            check.BookingDetails.ToList().ForEach(q => q.Status = false);
             check.BookingDetails.ToList().ForEach(q => q.Qr.Status = false);
             if (await _context.SaveChangesAsync() > 0)
                 return "1";

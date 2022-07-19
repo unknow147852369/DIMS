@@ -16,13 +16,14 @@ namespace DIMSApis.Repositories
         private readonly IFireBaseService _fireBase;
         private readonly IMailQrService _qrmail;
         private readonly IMailBillService _billmail;
+        private readonly IOtherService _other;
 
         private string condition1 = "ONLINE";
         private string condition2 = "LOCAl";
         private string condition4 = "succeeded";
         private string error = "";
 
-        public BookingManageRepository(IMailBillService billmail, IMailQrService qrmail, IFireBaseService fireBase, fptdimsContext context, IMapper mapper, IStripePayment stripe, IGenerateQr generateqr)
+        public BookingManageRepository(IMailBillService billmail, IMailQrService qrmail, IFireBaseService fireBase, fptdimsContext context, IMapper mapper, IStripePayment stripe, IGenerateQr generateqr, IOtherService other)
         {
             _context = context;
             _mapper = mapper;
@@ -31,6 +32,7 @@ namespace DIMSApis.Repositories
             _fireBase = fireBase;
             _qrmail = qrmail;
             _billmail = billmail;
+            _other = other;
         }
 
         public async Task<IEnumerable<Booking>> GetListBookingInfo(int UserId)
@@ -61,77 +63,85 @@ namespace DIMSApis.Repositories
         {
             try
             {
-                //if (ppi.ArrivalDate.Date < DateTime.Now.Date)
-                //{
-                //    error += "Wrong date ;";
-                //}
-                //Booking bok = await PaymentCalculateData(ppi, userId);
-                ////var paymentstatus = condition4;
+                if (ppi.ArrivalDate.Date < DateTime.Now.Date)
+                {
+                    error += "Wrong date ;";
+                }
+                Booking bok = await PaymentCalculateData(ppi, userId);
+                var paymentstatus = condition4;
                 //var paymentstatus = _stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
-                //if (paymentstatus.Contains(condition4))
-                //{
-                //    bok.PaymentMethod = condition1;
-                //    //
-                //    bool checkExist = await PaymentCheckRoomExist(bok);
-                //    //
-                //    if (checkExist)
-                //    {
-                //        error += "some rooms had been booked!;";
-                //    }
-                //    if (error != "")
-                //    {
-                //        return error;
-                //    }
-                //    await _context.Bookings.AddAsync(bok);
-                //    if (await _context.SaveChangesAsync() > 0)
-                //    {
-                //        var bookingFullDetail = await _context.Bookings
-                //           .Include(v => v.Voucher)
-                //           .Include(h => h.Hotel)
-                //           .Include(b => b.BookingDetails).ThenInclude(r => r.Room).ThenInclude(c => c.Category)
-                //           .Where(a => a.BookingId == bok.BookingId).FirstOrDefaultAsync();
+                if (paymentstatus.Contains(condition4))
+                {
+                    bok.PaymentMethod = condition1;
+                    //
+                    bool checkExist = await PaymentCheckRoomExist(bok);
+                    //
+                    if (checkExist)
+                    {
+                        error += "some rooms had been booked!;";
+                    }
+                    if (error != "")
+                    {
+                        return error;
+                    }
+                    await _context.Bookings.AddAsync(bok);
+                    if (await _context.SaveChangesAsync() > 0)
+                    {
+                        var bookingFullDetail = await _context.Bookings
+                           .Include(v => v.Voucher)
+                           .Include(h => h.Hotel)
+                           .Include(b => b.BookingDetails).ThenInclude(r => r.Room).ThenInclude(c => c.Category)
+                           .Where(a => a.BookingId == bok.BookingId).FirstOrDefaultAsync();
 
-                //        _fireBase.createFileMainPath(bok, out string imageMainPath, out string imageMainName);
-                //        _generateqr.GenerateMainQr(bok, imageMainPath, imageMainName);
-                //        var qrMainLink = await _fireBase.GetlinkMainImage(bok, imageMainPath, imageMainName);
+                        string mainQrUrl, mainQrContent;
+                        var MainrandomString = _other.RandomString(6);
+                        _generateqr.GetMainQrUrlContent(bookingFullDetail, MainrandomString, out mainQrContent, out mainQrUrl);
 
-                //        QrCheckUp qc = new QrCheckUp
-                //        {
-                //            BookingId = bok.BookingId,
-                //            QrUrl = qrMainLink,
-                //            Status = false,
-                //            QrContent = _generateqr.createMainQrContent(bok)
-                //        };
-                //        _fireBase.RemoveDirectories(imageMainPath);
-                //        await _billmail.SendBillEmailAsync(bookingFullDetail, qrMainLink);
+                        QrCheckUp qc = new QrCheckUp
+                        {
+                            BookingId = bok.BookingId,
+                            QrUrl = mainQrUrl,
+                            CheckIn = DateTime.Now,
+                            QrCheckUpRandomString = MainrandomString,
+                            Status = false,
+                            QrContent = mainQrContent,
+                        };
 
-                //        await _context.QrCheckUps.AddAsync(qc);
+                        await _billmail.SendBillEmailAsync(bookingFullDetail, mainQrUrl);
 
-                //        var ListRoom = _mapper.Map<IEnumerable<QrInput>>(bok.BookingDetails);
-                //        foreach (var room in ListRoom)
-                //        {
-                //            //
-                //            Qr qrdetail = new();
-                //            _fireBase.createFilePath(room, out string imagePath, out string imageName);
-                //            qrdetail.QrContent = _generateqr.createQrContent(room);
-                //            //
-                //            _generateqr.GenerateQr(room, imagePath, imageName);
-                //            //
-                //            var link = await _fireBase.GetlinkImage(room, imagePath, imageName);
-                //            qrdetail.QrUrl = link;
-                //            await _qrmail.SendQrEmailAsync(link, bok, room, bok.Hotel.HotelName);
-                //            _fireBase.RemoveDirectories(imagePath);
-                //            //
-                //            qrdetail.StartDate = bok.StartDate;
-                //            qrdetail.EndDate = bok.EndDate;
-                //            _mapper.Map(room, qrdetail);
-                //            await _context.Qrs.AddAsync(qrdetail);
-                //        }
-                //        if (await _context.SaveChangesAsync() > 0)
-                //            return "1";
-                //        return "3";
-                //    }
-                //}
+                        await _context.QrCheckUps.AddAsync(qc);
+
+                        var ListRoom = _mapper.Map<IEnumerable<QrInput>>(bok.BookingDetails);
+                        foreach (var room in ListRoom)
+                        {
+                            //
+                            Qr qrdetail = new();
+                            //
+                            string DetailQrUrl = "";
+                            string DetailQrContent = "";
+                            var randomString = _other.RandomString(6);
+                            _generateqr.GetQrDetailUrlContent(room, randomString, out DetailQrContent, out DetailQrUrl);
+
+                            qrdetail.QrContent = DetailQrContent;
+
+                            qrdetail.QrUrl = DetailQrUrl;
+                            qrdetail.QrRandomString = randomString;
+
+                            await _qrmail.SendQrEmailAsync(DetailQrUrl, bok, room, bok.Hotel.HotelName);
+
+                            //
+                            qrdetail.StartDate = bok.StartDate;
+                            qrdetail.EndDate = bok.EndDate;
+                            _mapper.Map(room, qrdetail);
+                            qrdetail.Status = false;
+
+                            await _context.Qrs.AddAsync(qrdetail);
+                        }
+                        if (await _context.SaveChangesAsync() > 0)
+                            return "1";
+                        return "3";
+                    }
+                }
                 return "0";
             }
             catch (Exception ex)
@@ -185,7 +195,7 @@ namespace DIMSApis.Repositories
                 r.AveragePrice = AveragePrice;
                 r.StartDate = bok.StartDate;
                 r.EndDate = bok.EndDate;
-                r.Status = true;
+                r.Status = false;
                 total = (float)(total + AveragePrice);
                 r.BookingDetailPrices.Add(new BookingDetailPrice
                 {
