@@ -9,6 +9,30 @@ namespace DIMSApis.Configtuations.AutoMap
     {
         public AutoMapper()
         {
+            CreateMap<NewUpdateRoomInput, Room>()
+                .ForMember(a => a.CleanStatus, option => option.MapFrom(tbl => 0))
+                .ForMember(a => a.HideStatus, option => option.MapFrom(tbl => 0))
+            ;
+            //
+            CreateMap<NewRoomSecondInput, Room>()
+                .ForMember(a => a.CleanStatus, option => option.MapFrom(tbl => 0))
+                .ForMember(a => a.HideStatus, option => option.MapFrom(tbl => 0))
+                .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
+               ;
+            //
+            CreateMap<NewUrlPhotoOnlyInput, Photo>()
+                .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
+                .ForMember(a => a.IsMain, option => option.MapFrom(tbl => 0))
+                .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
+               ;
+            //
+            CreateMap<NewUpdateHotelCateInput, Category>()
+               ;
+            //
+            CreateMap<NewHotelCateInpput, Category>()
+                .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
+                ;
+            //
             CreateMap<NewHotelPhotosInput, Photo>()
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 .ForMember(a => a.IsMain, option => option.MapFrom(tbl => 0))

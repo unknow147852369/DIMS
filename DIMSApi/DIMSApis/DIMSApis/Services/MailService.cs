@@ -34,7 +34,8 @@ namespace DIMSApis.Services
 
         private string GetHtmlBody(string key)
         {
-            string body = File.ReadAllText("index.html");
+            //string body = File.ReadAllText("index.html");
+            string body = Material.MaterialMail.MailActiveHtmlCode();
             body = body.Replace("#CODE#", key);
             return body;
         }
