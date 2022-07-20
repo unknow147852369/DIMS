@@ -6,6 +6,12 @@ namespace DIMSApis.Interfaces
 {
     public interface IHotelManage
     {
+        //Task<string> RemoveARoom(int roomId);
+        //Task<string> AddRooms(NewRoomFirstInput newRoom);
+        //Task<string> UpdateARoom(NewUpdateRoomInput newRoom);
+        //Task<IEnumerable<Room>> GetListRoom(int hotelId);
+
+
         Task<string> RemoveAHotelPhotos(int photo);
         Task<string> AddAHotelPhotos(ICollection<NewHotelPhotosInput> newPhotos);
         Task<string> UpdateHotelMainPhoto(int photoID, int hotelID);
