@@ -96,7 +96,7 @@ namespace DIMSApis.Repositories
             if (allRoomStatus == null) { return null; }
             var lsHotelRoomNotBooked = await _context.Rooms
                     .Where(op => op.HotelId == hotelId)
-                     .Where(a => a.BookingDetails.All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
+                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
                                                   !(((op.StartDate.Value.Date > StartDate.Date && op.StartDate.Value.Date < EndDate.Date)
                                                   && (op.EndDate.Value.Date > StartDate.Date && op.EndDate.Value.Date < EndDate.Date))
                                                   || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > EndDate.Date)
@@ -157,7 +157,7 @@ namespace DIMSApis.Repositories
             if (allRoomStatus == null) { return null; }
             var lsHotelRoomNotBooked = await _context.Rooms
                     .Where(op => op.HotelId == hotelId)
-                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
+                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
                                                   !(op.StartDate.Value.Date <= today.Date
                                                   && op.EndDate.Value.Date >= today.Date)
                                                   )
@@ -197,7 +197,7 @@ namespace DIMSApis.Repositories
             if (allRoomStatus == null) { return null; }
             var lsHotelRoomNotBooked = await _context.Rooms
                     .Where(op => op.HotelId == hotelId)
-                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
+                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
                                                     !(op.StartDate.Value.Date <= today.Date
                                                     && op.EndDate.Value.Date >= today.Date
                                                     )
@@ -664,7 +664,7 @@ namespace DIMSApis.Repositories
             if (allRoomStatus == null) { return null; }
             var lsHotelRoomNotBooked = await _context.Rooms
                     .Where(op => op.HotelId == hotelId)
-                     .Where(a => a.BookingDetails.All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
+                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
                                                   !(((op.StartDate.Value.Date > StartDate.Date && op.StartDate.Value.Date < EndDate.Date)
                                                   && (op.EndDate.Value.Date > StartDate.Date && op.EndDate.Value.Date < EndDate.Date))
                                                   || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > EndDate.Date)
