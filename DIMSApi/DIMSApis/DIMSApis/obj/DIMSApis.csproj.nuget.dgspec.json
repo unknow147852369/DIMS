@@ -52,6 +52,10 @@
               "target": "Package",
               "version": "[2022.3.0, )"
             },
+            "CloudinaryDotNet": {
+              "target": "Package",
+              "version": "[1.19.0, )"
+            },
             "EntityFramework": {
               "target": "Package",
               "version": "[6.4.4, )"
@@ -119,6 +123,10 @@
             "MimeKit": {
               "target": "Package",
               "version": "[3.2.0, )"
+            },
+            "QRCoder": {
+              "target": "Package",
+              "version": "[1.4.3, )"
             },
             "Stripe.net": {
               "target": "Package",

@@ -1,15 +1,10 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DIMSApis.Models.Data;
+
 using DIMSApis.Interfaces;
+using DIMSApis.Models.Helper;
 using DIMSApis.Models.Input;
 using DIMSApis.Models.Output;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DIMSApis.Controllers
 {
@@ -19,33 +14,25 @@ namespace DIMSApis.Controllers
     {
         private readonly IAuth _auth;
         private readonly ITokenService _tokenService;
-        private readonly DIMSContext _context;
 
-        public AuthController(IAuth auth, ITokenService tokenService , DIMSContext context)
+        public AuthController(IAuth auth, ITokenService tokenService)
         {
             _auth = auth;
             _tokenService = tokenService;
-            _context   = context;
-        }
-        // GET: api/Users
-        [HttpGet("GetAllUsers_cheat")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {
-            return await _context.Users.ToListAsync();
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterInput user)
         {
             if (await _auth.UserExists(user.Email))
-                return BadRequest("Email already exists");
+                return BadRequest(new DataRespone { Message = "Email already exists" });
             if (await _auth.Register(user))
             {
-                return Ok("create sucess");
+                return Ok(new DataRespone { Message = "create success" });
             }
             else
             {
-                return BadRequest("some thing went wrong");
+                return BadRequest(new DataRespone { Message = "some thing went wrong" });
             }
         }
 
@@ -55,7 +42,7 @@ namespace DIMSApis.Controllers
             var user = await _auth.Login(userIn);
 
             if (user == null)
-                return Unauthorized("wrong email or password");
+                return Unauthorized(new DataRespone { Message = "wrong email or password" });
 
             LoginOutput login = new()
             {
@@ -73,7 +60,7 @@ namespace DIMSApis.Controllers
             var user = await _auth.LoginAdmin(userIn);
 
             if (user == null)
-                return Unauthorized("wrong email or password");
+                return Unauthorized(new DataRespone { Message = "wrong email or password" });
 
             LoginOutput login = new()
             {
@@ -90,27 +77,38 @@ namespace DIMSApis.Controllers
         {
             if (await _auth.GetForgotCodeMailSend(mail))
             {
-                return Ok("send mail success");
+                return Ok(new DataRespone { Message = "send mail success" });
             }
             else
             {
-                return BadRequest("send mail fail");
+                return BadRequest(new DataRespone { Message = "send mail fail" });
             }
         }
-
 
         [HttpPost("forgot-pass-change")]
         public async Task<IActionResult> ForgoPassChange(ForgotPassInput pass)
         {
             if (await _auth.UpdateNewPass(pass))
             {
-                return Ok("change success");
+                return Ok(new DataRespone { Message = "change success" });
             }
             else
             {
-                return BadRequest();
+                return BadRequest(new DataRespone { Message = "Nothing change" });
             }
         }
 
-    }   
+        [HttpPost("forgot-pass-change-CHEAT")]
+        public async Task<IActionResult> ForgoPassChangeCHEAT(ForgotPassInput pass)
+        {
+            if (await _auth.ForgoPassChangeCHEAT(pass))
+            {
+                return Ok(new DataRespone { Message = "change success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "Nothing change" });
+            }
+        }
+    }
 }

@@ -1,7 +1,9 @@
 ﻿using DIMSApis.Interfaces;
+using DIMSApis.Models.Data;
 using DIMSApis.Models.Input;
 using IronBarCode;
 using Microsoft.IdentityModel.Tokens;
+using QRCoder;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -12,63 +14,116 @@ namespace DIMSApis.Services
     {
         private readonly SymmetricSecurityKey _key;
         private readonly IOtherService _otherService;
+        private readonly ICloudinaryService _cloudinary;
 
-        public GenerateQrImageStringService(IConfiguration config,IOtherService otherService)
+        public GenerateQrImageStringService(IConfiguration config, IOtherService otherService, ICloudinaryService cloudinary)
         {
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
             _otherService = otherService;
+            _cloudinary = cloudinary;
+        }
+        public  string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
         }
 
-        public string GenerateQrString(QrInput qri, string imagePath, string imageName)
+        public  string Base64Decode(string base64EncodedData)
         {
-            var fullPath = imagePath + imageName;
-            var conntent = createQrContent(qri);
-            var MyQRWithLogo = QRCodeWriter.CreateQrCodeWithLogo(conntent, @"Material/images/logo.png", 500);
-            MyQRWithLogo.ChangeBarCodeColor(System.Drawing.Color.DarkGreen).SaveAsPng($@"{fullPath}");
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+        }
 
-            byte[] vs = MyQRWithLogo.ToPngBinaryData();
-            //
-            string base64ImageRepresentation = Convert.ToBase64String(vs);
-            if (base64ImageRepresentation != null)
+
+        private string createQrContent(QrInput qri, string randomString)
+        {
+            var contentQr = qri.HotelId + "+" + qri.BookingId + "+" + qri.UserId + "+" + qri.RoomId + "+" + qri.RoomName + "+" + randomString;
+            var returnItem = Base64Encode(contentQr);
+            return returnItem;
+
+        }
+
+        public void GetQrDetail(VertifyQrInput qri, out string bookingID, out string RoomID, out string RandomString)
+        {
+            try
             {
-                return base64ImageRepresentation;
+                var token = qri.QrContent;
+                var item = Base64Decode(token);
+                var ls = item.Split('+').ToList();
+                bookingID = ls[1];
+                RoomID = ls[3];
+                RandomString = ls[5];
             }
-            return null;
-        }
-
-        public string createQrContent(QrInput qri)
-        {
-            var claims = new List<Claim>
+            catch (Exception ex)
             {
-                new Claim("HotelId",qri.HotelId.ToString()),
-                new Claim("BookingId",qri.BookingId.ToString()),
-                new Claim("userId",qri.UserId.ToString()),
-                new Claim("RoomId",qri.RoomId.ToString()),
-                new Claim("RoomName",qri.RoomName.ToString()),   
-            };
-            var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
-            var tokenDes = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                SigningCredentials = creds
-            };
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDes);
-            var fomattoken = tokenHandler.WriteToken(token);
-            var content = fomattoken ;
-            return content;
+                bookingID = "";
+                RoomID = "";
+                RandomString = "";
+            }
         }
 
-        public void GetQrDetail(VertifyQrInput qri, out string bookingID, out string RoomID)
+        private string createMainQrContent(Booking bookingFullDetail,string randomString)
         {
-            var token = qri.QrContent;
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(token);
-            var tokenS = jsonToken as JwtSecurityToken;
-
-            bookingID = tokenS.Claims.First(claim => claim.Type == "BookingId").Value;
-
-            RoomID = tokenS.Claims.First(claim => claim.Type == "RoomId").Value;
+            var contentQr = bookingFullDetail.HotelId + "+" + bookingFullDetail.BookingId + "+" + bookingFullDetail.UserId + "+" + randomString ;
+            var returnItem = Base64Encode(contentQr);
+            return returnItem;
         }
+
+        public void GetMainQrDetail(VertifyMainQrInput qri, out string bookingID, out string HotelId,out string RandomString)
+        {
+            try
+            {
+                var token = qri.QrContent;
+                var item = Base64Decode(token);
+                var ls = item.Split('+').ToList();
+                bookingID = ls[1];
+                HotelId = ls[0];
+                RandomString = ls[3];
+            }
+            catch (Exception ex)
+            {
+                bookingID = "";
+                HotelId = "";
+                RandomString = "";
+            }
+        }
+
+        public void GetMainQrUrlContent(Booking bookingFullDetail, string randomString, out string content, out string link)
+        {
+            try
+            {
+                content = createMainQrContent(bookingFullDetail,randomString);
+
+                QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(content, QRCodeGenerator.ECCLevel.Q);
+                PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+                byte[] vs = qrCode.GetGraphic(20);
+                link = _cloudinary.CloudinaryUploadPhotoQr(vs);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public void GetQrDetailUrlContent(QrInput qri, string randomString, out string content, out string link)
+        {
+            try
+            {
+                content = createQrContent(qri,randomString);
+
+                QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(content, QRCodeGenerator.ECCLevel.Q);
+                PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+                byte[] vs = qrCode.GetGraphic(20);
+
+                link = _cloudinary.CloudinaryUploadPhotoQr(vs);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
     }
 }

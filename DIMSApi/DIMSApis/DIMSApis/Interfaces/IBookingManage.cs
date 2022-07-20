@@ -7,7 +7,9 @@ namespace DIMSApis.Interfaces
     public interface IBookingManage
     {
         Task<IEnumerable<Booking>> GetListBookingInfo(int UserId);
-        Task<VoucherInfoOutput> VertifyVouvher(int hotelId,string code);
-        Task<string>PaymentProcessing(PaymentProcessingInput ppi ,int userId);
+
+        Task<VoucherInfoOutput> VertifyVouvher(int hotelId, string code);
+
+        Task<string> PaymentProcessing(PaymentProcessingInput ppi, int userId);
     }
 }

@@ -1,18 +1,13 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DIMSApis.Models.Data;
-using Microsoft.AspNetCore.Authorization;
-using DIMSApis.Models.Input;
-using DIMSApis.Interfaces;
-using System.Security.Claims;
+
 using AutoMapper;
+using DIMSApis.Interfaces;
+using DIMSApis.Models.Helper;
+using DIMSApis.Models.Input;
 using DIMSApis.Models.Output;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace DIMSApis.Controllers
 {
@@ -23,6 +18,7 @@ namespace DIMSApis.Controllers
     {
         private readonly IUserManage _usermanage;
         private readonly IMapper _mapper;
+
         public UserManageController(IUserManage usermanage, IMapper mapper)
         {
             _usermanage = usermanage;
@@ -37,15 +33,15 @@ namespace DIMSApis.Controllers
             int check = await _usermanage.UpdateUserInfo(userId, user);
             if (check == 1)
             {
-                return Ok("Update Success");
+                return Ok(new DataRespone { Message = "Update Success" });
             }
             else if (check == 3)
             {
-                return NoContent();
+                return Ok(new DataRespone { Message = "nothing change" });
             }
             else
             {
-                return BadRequest("Update Fail");
+                return BadRequest(new DataRespone { Message = "Update Fail" });
             }
         }
 
@@ -55,7 +51,7 @@ namespace DIMSApis.Controllers
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var user = await _usermanage.GetUserDetail(userId);
             if (user == null)
-                return NotFound();
+                return NotFound(new DataRespone { Message = "Something Wrong" });
             var returnUser = _mapper.Map<UserInfoOutput>(user);
             return Ok(returnUser);
         }
@@ -68,11 +64,15 @@ namespace DIMSApis.Controllers
             string check = await _usermanage.ActiveAccount(AcitveCode, userId);
             if (check.Equals("1"))
             {
-                return Ok("Active success");
+                return Ok(new DataRespone { Message = "Active success" });
+            }
+            else if (check.Equals("2"))
+            {
+                return BadRequest(new DataRespone { Message = "Wrong code" });
             }
             else
             {
-                return BadRequest("Wrong code");
+                return BadRequest(new DataRespone { Message = check });
             }
         }
 
@@ -83,54 +83,50 @@ namespace DIMSApis.Controllers
             int check = await _usermanage.GetActiveCodeMailSend(userId);
             if (check == 1)
             {
-                return Ok("send Success");
-            }
-            else if (check == 0)
-            {
-                return NotFound("Empty fill");
+                return Ok(new DataRespone { Message = "send Success" });
             }
             else
             {
-                return BadRequest("send Fail");
+                return BadRequest(new DataRespone { Message = "send Fail" });
             }
         }
 
-        [HttpPost("user-feedback")]
-        public async Task<IActionResult> userFeedback(int BookingId ,FeedBackInput fb)
-        {
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            int check = await _usermanage.userFeedback(userId,BookingId,fb);
-            if (check == 1)
-            {
-                return Ok("send Success");
-            }
-            else if (check == 0)
-            {
-                return NotFound("booking not end yet");
-            }
-            else
-            {
-                return BadRequest("some feild wrong!");
-            }
-        }
+        //    [HttpPost("user-feedback")]
+        //    public async Task<IActionResult> userFeedback(int BookingId ,FeedBackInput fb)
+        //    {
+        //        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        //        int check = await _usermanage.userFeedback(userId,BookingId,fb);
+        //        if (check == 1)
+        //        {
+        //            return Ok("send Success");
+        //        }
+        //        else if (check == 0)
+        //        {
+        //            return NotFound("booking not end yet");
+        //        }
+        //        else
+        //        {
+        //            return BadRequest("some feild wrong!");
+        //        }
+        //    }
 
-        [HttpPut("user-feedback")]
-        public async Task<IActionResult> userUpdateFeedback(int feedbackId,FeedBackInput fb)
-        {
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            int check = await _usermanage.userUpdateFeedback(userId,feedbackId, fb);
-            if (check == 1)
-            {
-                return Ok("update Success");
-            }
-            else if (check == 0)
-            {
-                return NotFound("booking not end yet");
-            }
-            else
-            {
-                return BadRequest("some feild wrong!");
-            }
-        }
+        //    [HttpPut("user-feedback")]
+        //    public async Task<IActionResult> userUpdateFeedback(int feedbackId,FeedBackInput fb)
+        //    {
+        //        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        //        int check = await _usermanage.userUpdateFeedback(userId,feedbackId, fb);
+        //        if (check == 1)
+        //        {
+        //            return Ok("update Success");
+        //        }
+        //        else if (check == 0)
+        //        {
+        //            return NotFound("booking not end yet");
+        //        }
+        //        else
+        //        {
+        //            return BadRequest("some feild wrong!");
+        //        }
+        //    }
     }
 }

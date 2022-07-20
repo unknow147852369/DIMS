@@ -1,12 +1,15 @@
-﻿using DIMSApis.Models.Input;
+﻿using DIMSApis.Models.Data;
+using DIMSApis.Models.Input;
 
 namespace DIMSApis.Interfaces
 {
     public interface IGenerateQr
     {
-        string GenerateQrString(QrInput qri, string imagePath, string imageName);
-        string createQrContent(QrInput qri);
+        void GetMainQrUrlContent(Booking bookingFullDetail, string randomString, out string content,out string link);
+        void GetQrDetailUrlContent(QrInput qri,string randomString, out string content,out string link);
 
-        void GetQrDetail(VertifyQrInput qri , out string bookingID, out string RoomID);
+        void GetQrDetail(VertifyQrInput qri, out string bookingID, out string RoomID, out string RandomString);
+
+        void GetMainQrDetail(VertifyMainQrInput qri, out string bookingID, out string HotelId, out string RandomString);
     }
 }

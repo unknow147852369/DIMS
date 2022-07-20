@@ -7,11 +7,12 @@ namespace DIMSApis.Models.Data
     {
         public int QrId { get; set; }
         public int? BookingDetailId { get; set; }
-        public byte[]? QrString { get; set; }
+        public string? QrRandomString { get; set; }
+        public string? QrUrl { get; set; }
         public string? QrContent { get; set; }
-        public DateTime? CheckIn { get; set; }
-        public DateTime? CheckOut { get; set; }
-        public int? Status { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public bool? Status { get; set; }
 
         public virtual BookingDetail? BookingDetail { get; set; }
     }

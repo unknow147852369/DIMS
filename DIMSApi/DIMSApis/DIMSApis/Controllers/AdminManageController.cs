@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DIMSApis.Models.Data;
+﻿using DIMSApis.Interfaces;
+using DIMSApis.Models.Input;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using DIMSApis.Interfaces;
 
 namespace DIMSApis.Controllers
 {
@@ -21,16 +15,16 @@ namespace DIMSApis.Controllers
 
         public AdminManageController(IAdminManage admin)
         {
-             _admin = admin;
+            _admin = admin;
         }
 
-        [HttpPost("Admin_Acecpt_Host")]
+        [HttpPut("Admin-Acecpt-Host")]
         public async Task<IActionResult> AcecptHost(int userId)
         {
             int check = await _admin.AcpectHost(userId);
             if (check == 1)
             {
-                return Ok();
+                return Ok("Accpect complete!");
             }
             else if (check == 3)
             {
@@ -38,18 +32,17 @@ namespace DIMSApis.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest("User not exist!");
             }
         }
 
-        [HttpPost("Admin_Acecpt_Hotel")]
+        [HttpPut("Admin-Acecpt-Hotel")]
         public async Task<IActionResult> AcecptHotel(int HotelId)
         {
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             int check = await _admin.AcpectHotel(HotelId);
             if (check == 1)
             {
-                return Ok();
+                return Ok("Accpect Success!");
             }
             else if (check == 3)
             {
@@ -57,9 +50,10 @@ namespace DIMSApis.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Hotel not exist!");
             }
         }
+
         [HttpGet("List-All-Hotel")]
         public async Task<IActionResult> ListAllHotel()
         {
@@ -67,6 +61,7 @@ namespace DIMSApis.Controllers
             if (Hotel.Count() == 0) { return NotFound("No request"); }
             return Ok(Hotel);
         }
+
         [HttpGet("List-All-User")]
         public async Task<IActionResult> ListAllHost()
         {
@@ -75,5 +70,23 @@ namespace DIMSApis.Controllers
             return Ok(Host);
         }
 
+        [HttpPost("Admin-Create-User")]
+        public async Task<IActionResult> AdminCreateUser(AdminRegisterInput userinput)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _admin.AdminCreateUser(userinput);
+            if (check == "1")
+            {
+                return Ok("Create Success");
+            }
+            else if (check == "3")
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest("Create failed");
+            }
+        }
     }
 }

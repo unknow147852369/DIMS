@@ -1,13 +1,15 @@
 ﻿using DIMSApis.Interfaces;
 using DIMSApis.Models.Data;
+using DIMSApis.Models.Helper;
 using DIMSApis.Models.Input;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
+
 namespace DIMSApis.Services
 {
-    public class MailQrService:IMailQrService
+    public class MailQrService : IMailQrService
     {
         private readonly MailSettings _mail;
 
@@ -16,7 +18,6 @@ namespace DIMSApis.Services
             _mail = mail.Value;
         }
 
-
         public async Task SendQrEmailAsync(string link, Booking bok, QrInput qri, string hotelName)
         {
             var email = new MimeMessage();
@@ -24,7 +25,7 @@ namespace DIMSApis.Services
             email.To.Add(MailboxAddress.Parse(bok.Email));
             email.Subject = "DIMS's Qr";
             var builder = new BodyBuilder();
-            builder.HtmlBody = GetHtmlBody(link,bok, qri,hotelName);
+            builder.HtmlBody = GetHtmlBody(link, bok, qri, hotelName);
             email.Body = builder.ToMessageBody();
             using var smtp = new SmtpClient();
             smtp.Connect(_mail.Host, _mail.Port, SecureSocketOptions.StartTls);
@@ -35,7 +36,7 @@ namespace DIMSApis.Services
 
         private string GetHtmlBody(string link, Booking bok, QrInput qri, string hotelName)
         {
-            string body = File.ReadAllText(@"Material/MailQR.html");
+            string body = Material.MaterialMail.MailQrHtmlCode();
             body = body.Replace("#IMAGE-QR#", link);
             body = body.Replace("#Location 1#", $"Hotel:{hotelName}");
             body = body.Replace("#Location 2#", $"BooingID:{bok.BookingId}");

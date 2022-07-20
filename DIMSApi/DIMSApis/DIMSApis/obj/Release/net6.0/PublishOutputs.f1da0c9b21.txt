@@ -7,6 +7,7 @@ D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\AutoMapper.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\IronBarCode.dll
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\CloudinaryDotNet.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\EntityFramework.SqlServer.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\EntityFramework.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\FirebaseAdmin.dll
@@ -90,6 +91,7 @@ D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\NuGet.Protocol.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\NuGet.Versioning.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\BouncyCastle.Crypto.dll
+D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\QRCoder.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\Stripe.net.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\Swashbuckle.AspNetCore.Swagger.dll
 D:\FPTSEMESTER\capston\DIMS\DIMSApi\DIMSApis\DIMSApis\obj\Release\net6.0\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerGen.dll

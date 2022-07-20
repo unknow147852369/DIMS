@@ -2,8 +2,8 @@
 
 using AutoMapper;
 using DIMSApis.Interfaces;
+using DIMSApis.Models.Helper;
 using DIMSApis.Models.Input;
-using DIMSApis.Models.Output;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DIMSApis.Controllers
@@ -23,64 +23,40 @@ namespace DIMSApis.Controllers
             _generateqr = generateqr;
         }
 
-        [HttpGet("get_Qr_Booking_list_CHEAT")]
-        public async Task<IActionResult> GetQrListImage(int bookingID)
+        //[HttpPost("vertify-Qr")]
+        //public async Task<IActionResult> VertifyQrContent(VertifyQrInput qrIn)
+        //{
+        //    var qrcheck = await _qrmanage.vertifyQrContent(qrIn);
+
+        //    return Ok(qrcheck);
+        //}
+
+        [HttpPost("Check-in-Main-Qr")]
+        public async Task<IActionResult> vertifyMainQrCheckIn(VertifyMainQrInput qrIn)
         {
-            var qrList = await _qrmanage.getListQrString(bookingID);
-            if (qrList == null)
-            {
-                return BadRequest();
-            }
-            else
-            {
-                var returnQrList = _mapper.Map<IEnumerable<QrOutput>>(qrList);
-                return Ok(returnQrList);
-            }
-        }
-
-
-        [HttpPost("vertify-Qr")]
-        public async Task<IActionResult> VertifyQrContent(VertifyQrInput qrIn)
-        {
-            var qrcheck = await _qrmanage.vertifyQrContent(qrIn);
-
+            var qrcheck = await _qrmanage.vertifyMainQrCheckIn(qrIn);
+            if (qrcheck == null) { return BadRequest(new DataRespone { Message = "Wrong Main QR" }); }
             return Ok(qrcheck);
         }
 
         [HttpGet("check-Room-lock")]
-        public async Task<IActionResult> checkRoomlock(int hotelId, String roomName)
+        public async Task<IActionResult> getStringToCheckRoom(int hotelId, String roomName)
         {
             var check = await _qrmanage.getStringToCheckRoom(hotelId, roomName);
+            if (check == "") { return BadRequest("null"); }
             return Ok(check);
         }
 
-        [HttpPost("Check-in")]
-        public async Task<IActionResult> CheckIn(checkInInput ckIn)
-        {
-            var checkIn = await _qrmanage.checkIn(ckIn);
+ 
 
-            if (checkIn.Equals("1"))
-            {
-                return Ok();
-            }
-            else if (checkIn.Equals("3"))
-            {
-                return NoContent();
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-
-        [HttpPost("Check-out")]
-        public async Task<IActionResult> CheckOut(CheckOutInput ckOut)
+        [HttpPut("Checkin-Online")]
+        public async Task<IActionResult> CheckInOnline(int hotelId, int bookingID)
         {
-            var checkOut = await _qrmanage.CheckOut(ckOut);
+            var checkOut = await _qrmanage.CheckInOnline(hotelId,bookingID);
 
             if (checkOut.Equals("1"))
             {
-                return Ok();
+                return Ok("CheckIn Success!");
             }
             else if (checkOut.Equals("3"))
             {
@@ -88,10 +64,27 @@ namespace DIMSApis.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Not found");
             }
         }
 
-
+        [HttpPut("Checkout-Online")]
+        public async Task<IActionResult> CheckOutOnline(int hotelId, int bookingID)
+        {
+            if (bookingID == null) return BadRequest(new DataRespone { Message = "some feild is empty" });
+            var check = await _qrmanage.CheckOutOnline(hotelId, bookingID);
+            if (check.Equals("1"))
+            {
+                return Ok("CheckIn Success!");
+            }
+            else if (check.Equals("3"))
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest("Not found");
+            }
+        }
     }
 }

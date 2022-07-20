@@ -5,6 +5,6 @@ namespace DIMSApis.Interfaces
 {
     public interface IMailQrService
     {
-        Task SendQrEmailAsync(string link, Booking bok, QrInput qri,string hotelName);
+        Task SendQrEmailAsync(string link, Booking bok, QrInput qri, string hotelName);
     }
 }

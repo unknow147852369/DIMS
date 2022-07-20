@@ -6,18 +6,33 @@ namespace DIMSApis.Interfaces
 {
     public interface IHostManage
     {
-        Task<int> CreateHotel(HotelInput hotel,int userId);
-        Task<string> UpdateHotel(HotelInput hotel,int hotelId, int userId);
+        Task<string> AddItemForExtraFee(ICollection<ExtraFeeMenuDetailInput> ex);
+        Task<string> DeleteItemForExtraFee(int BookingDetailId,int BookingDetailMenuId);
+        Task<string> AddProblemForExtraFee(ICollection<ProblemExtraFeeInput> prEx);
+        Task<string> UpdateCleanStatus(int RoomID);
+        Task<string> AddInboundUser(checkInInput checkIn);
+        Task<string> CheckOutLocal(int hotelId,int bookingID);
+        Task<IEnumerable<NewInboundUser>> GetAllInboundUserBookingInfo(int hotelId);
+        Task<string> LocalPaymentFinal(LocalPaymentInput ppi, int userId);
+        Task<string> CheckRoomDateBooking(CheckRoomDateInput chek);
+        Task<string> AddItemMenu(ICollection<ItemMenuInput> item);
+        Task<string> UpdateItemMenu(int MenuID, ItemMenuInput item);
+        Task<BookingDetail> GetUserMenu(int BookingDetailID);
+        Task<IEnumerable<HotelListMenuOutput>> GetListMenu(int hotelID);
 
-        Task<string> CreateRoom(NewRoomInput room, int userId);
-        Task<string> UpdateRoom(NewRoomInput room, int userId);
-
-        Task<string> CreateCategory(NewRoomInput room, int userId);
-        Task<string> UpdateCategory(NewRoomInput room, int userId);
 
 
-        Task<IEnumerable<HotelOutput>> GetListAllHotel( int userId);
-        Task<IEnumerable<HotelRoomOutput>> GetListAllHotelRoom( int hotelId,int userId);
-        Task<AHotelOutput> GetAHotelAllRoom( int hotelId,int userId);
+        Task<IEnumerable<HotelOutput>> GetListAllHotel(int userId);
+
+        Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelAllRoomStatusSearch(int userId, int hotelId, DateTime ArrivalDate, int totalnight);
+
+        Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelAllRoomStatusToday(int userId, int hotelId, DateTime today);
+
+        Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelAllRoomStatusCheckOut(int userId, int hotelId, DateTime today);
+        Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelOnlyRoomStatus13Search(int userId, int hotelId, DateTime today, int totalnight);
+
+        Task<HotelCateInfoOutput> GetAHotelAllInfo(int hotelId, int userId);
+
+        Task<RoomDetailInfoOutput> GetADetailRoom(int userId, int RoomId, DateTime today);
     }
 }

@@ -6,6 +6,7 @@ namespace DIMSApis.Models.Input
     {
         [Range(0, 10)]
         public double? Rating { get; set; }
+
         public string? Comment { get; set; }
     }
 }

@@ -32,15 +32,15 @@ namespace DIMSApis.Services
 
         public string RandomString(int length)
         {
-                Random random = new();
-                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-                return new string(Enumerable.Repeat(chars, length)
-                  .Select(s => s[random.Next(s.Length)]).ToArray());
+            Random random = new();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public DateTime GetEndDate(DateTime startDate,int night)
+        public DateTime GetEndDate(DateTime startDate, int night)
         {
-            DateTime answer = startDate.AddDays(night-1);
+            DateTime answer = startDate.AddDays(night).Add(new TimeSpan(12, 00, 0));
             return answer;
         }
 
@@ -70,6 +70,5 @@ namespace DIMSApis.Services
             }
             catch (Exception ex) { throw ex; }
         }
-
     }
 }

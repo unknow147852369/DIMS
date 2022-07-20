@@ -7,20 +7,23 @@ namespace DIMSApis.Models.Data
     {
         public BookingDetail()
         {
-            InboundUsers = new HashSet<InboundUser>();
+            BookingDetailMenus = new HashSet<BookingDetailMenu>();
+            BookingDetailPrices = new HashSet<BookingDetailPrice>();
         }
 
         public int BookingDetailId { get; set; }
         public int? BookingId { get; set; }
         public int? RoomId { get; set; }
-        public double? Price { get; set; }
+        public double? AveragePrice { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public int? Status { get; set; }
+        public double? ExtraFee { get; set; }
+        public bool? Status { get; set; }
 
         public virtual Booking? Booking { get; set; }
         public virtual Room? Room { get; set; }
         public virtual Qr? Qr { get; set; }
-        public virtual ICollection<InboundUser> InboundUsers { get; set; }
+        public virtual ICollection<BookingDetailMenu> BookingDetailMenus { get; set; }
+        public virtual ICollection<BookingDetailPrice> BookingDetailPrices { get; set; }
     }
 }

@@ -1,6 +1,4 @@
-﻿using DIMSApis.Models.Data;
-
-namespace DIMSApis.Models.Output
+﻿namespace DIMSApis.Models.Output
 {
     public class BookingDetailInfoOutput
     {

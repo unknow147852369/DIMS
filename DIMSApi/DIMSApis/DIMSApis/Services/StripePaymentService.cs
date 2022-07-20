@@ -1,7 +1,5 @@
 ﻿using DIMSApis.Interfaces;
 using DIMSApis.Models.Data;
-using DIMSApis.Models.Input;
-using Microsoft.AspNetCore.Mvc;
 using Stripe;
 
 namespace DIMSApis.Services
@@ -23,7 +21,7 @@ namespace DIMSApis.Services
             var chage = charges.Create(new ChargeCreateOptions
             {
                 Amount = (long?)bok.TotalPrice,
-                Description = bok.FullName + "-"+bok.Email+"-"+bok.PhoneNumber,
+                Description = bok.FullName + "-" + bok.Email + "-" + bok.PhoneNumber,
                 Currency = "usd",
                 Customer = customer.Id,
                 ReceiptEmail = stripeMail,
@@ -32,7 +30,6 @@ namespace DIMSApis.Services
                     {"BookingId" , bok.BookingId.ToString() },
                     {"RealTotal",  bok.TotalPrice.ToString() },
                 },
-
             });
 
             if (chage.Status == "succeeded")

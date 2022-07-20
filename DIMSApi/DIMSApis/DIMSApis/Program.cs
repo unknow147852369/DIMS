@@ -1,5 +1,6 @@
 using DIMSApis.Interfaces;
 using DIMSApis.Models.Data;
+using DIMSApis.Models.Helper;
 using DIMSApis.Repositories;
 using DIMSApis.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -7,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Stripe;
-using System.Configuration;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +22,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.Configure<FireBaseSettings>(builder.Configuration.GetSection("FireBase"));
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
 StripeConfiguration.SetApiKey(builder.Configuration.GetSection("Stripe")["SecretKey"]);
 
 builder.Services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -69,15 +70,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddDbContext<DIMSContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("concac")));
+builder.Services.AddDbContext<fptdimsContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("concac")));
 
 
 builder.Services.AddScoped<IAuth, AuthRepository>();
-builder.Services.AddScoped<IUserManage, UserManageRepository> ();
-builder.Services.AddScoped<IBookingManage, BookingManageRepository> ();
-builder.Services.AddScoped<IQrManage, QrManageRepository> ();
-builder.Services.AddScoped<IAdminManage, AdminManageRepository> ();
-builder.Services.AddScoped<IHostManage, HostManageRepository> ();
+builder.Services.AddScoped<IUserManage, UserManageRepository>();
+builder.Services.AddScoped<IBookingManage, BookingManageRepository>();
+builder.Services.AddScoped<IQrManage, QrManageRepository>();
+builder.Services.AddScoped<IAdminManage, AdminManageRepository>();
+builder.Services.AddScoped<IHostManage, HostManageRepository>();
+builder.Services.AddScoped<IHotelManage, HotelMangeRepository>();
 
 
 builder.Services.AddScoped<ITokenService, DIMSApis.Services.TokenService>();
@@ -88,6 +90,7 @@ builder.Services.AddScoped<IStripePayment, StripePaymentService>();
 builder.Services.AddScoped<IMailQrService, MailQrService>();
 builder.Services.AddScoped<IFireBaseService, FireBaseService>();
 builder.Services.AddScoped<IMailBillService, MailBillService>();
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 //>Add more
 
 var app = builder.Build();
@@ -97,6 +100,7 @@ var app = builder.Build();
 //{
 
 //}
+
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();

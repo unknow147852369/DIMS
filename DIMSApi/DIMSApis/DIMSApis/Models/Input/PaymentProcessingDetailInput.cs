@@ -3,6 +3,5 @@
     public class PaymentProcessingDetailInput
     {
         public int RoomId { get; set; }
-
     }
 }

@@ -4,19 +4,18 @@ using DIMSApis.Models.Data;
 using DIMSApis.Models.Input;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace DIMSApis.Repositories
 {
     public class AuthRepository : IAuth
     {
-        private readonly DIMSContext _context;
+        private readonly fptdimsContext _context;
         private readonly IOtherService _otherservice;
         private readonly IMail _mail;
         private readonly IMapper _mapper;
         private string purpose1 = "ACTIVE ACCOUNT";
         private string purpose2 = "CHANGE PASS";
 
-        public  AuthRepository(DIMSContext context, IOtherService otherservice, IMail mail, IMapper mapper)
+        public AuthRepository(fptdimsContext context, IOtherService otherservice, IMail mail, IMapper mapper)
         {
             _context = context;
             _otherservice = otherservice;
@@ -40,7 +39,6 @@ namespace DIMSApis.Repositories
             }
             return false;
         }
-
 
         public async Task<bool> UpdateNewPass(ForgotPassInput pass)
         {
@@ -96,7 +94,7 @@ namespace DIMSApis.Repositories
             ltOtp.Add(new NewOtpInput
             {
                 Purpose = purpose1,
-                CodeOtp =checkcode,
+                CodeOtp = checkcode,
                 CreateDate = DateTime.Now,
                 Status = 1,
             });
@@ -118,20 +116,36 @@ namespace DIMSApis.Repositories
                 Status = true,
             };
 
-            _mapper.Map(ltOtp,user.Otps);
+            _mapper.Map(ltOtp, user.Otps);
             await _mail.SendEmailAsync(user.Email, checkcode);
             await _context.Users.AddAsync(user);
             return await _context.SaveChangesAsync() > 0;
         }
 
-
-
         public async Task<bool> UserExists(string email)
         {
-            if (await _context.Users.AnyAsync(x => x.Email == email))  
-                    return true;
+            if (await _context.Users.AnyAsync(x => x.Email == email))
+                return true;
             return false;
         }
 
+        public async Task<bool> ForgoPassChangeCHEAT(ForgotPassInput pass)
+        {
+            var user = await _context.Users
+                .Where(u => u.Email == pass.Email.ToLower() && u.Status == true).SingleOrDefaultAsync();
+           
+            if (user == null )
+                return false;
+           
+                byte[] passwordHash, passwordSalt;
+                _otherservice.CreatePasswordHash(pass.Password, out passwordHash, out passwordSalt);
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+   
+   
+            if (await _context.SaveChangesAsync() > 0)
+                return true;
+            return false;
+        }
     }
 }
