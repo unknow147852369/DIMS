@@ -22,10 +22,10 @@ namespace DIMSApis.Services
             });
 
 
-            var a = (long?)bok.TotalPrice;
+            var amount = (long?)((bok.TotalPrice * (1 / bok.CurrencyRate) * 1000)*100);
             var chage = charges.Create(new ChargeCreateOptions
             {
-                Amount = (long?)bok.TotalPrice,
+                Amount = amount,
                 Description = bok.FullName + "-" + bok.Email + "-" + bok.PhoneNumber,
                 Currency = "usd",
                 Customer = customer.Id,

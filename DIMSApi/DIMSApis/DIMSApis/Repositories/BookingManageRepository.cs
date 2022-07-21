@@ -236,7 +236,7 @@ namespace DIMSApis.Repositories
             }
             if (error != "") { throw new Exception(error); }
             bok.SubTotal = Math.Round((double)(total * bok.TotalNight), 2);
-            bok.TotalPrice = Math.Round((double)((bok.SubTotal - bok.VoucherDiscoundPrice)*(1/bok.CurrencyRate)*1000), 2);
+            bok.TotalPrice = Math.Round((double)((bok.SubTotal - bok.VoucherDiscoundPrice)), 2);
 
             return bok;
         }
