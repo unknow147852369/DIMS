@@ -78,9 +78,6 @@ namespace DIMSApis.Repositories
             return HotelDetail;
         }
 
-
-
-
         public async Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelAllRoomStatusSearch(int userId, int hotelId, DateTime today, int totalnight)
         {
             DateTime StartDate = today.Add(new TimeSpan(14, 00, 0));
@@ -95,6 +92,7 @@ namespace DIMSApis.Repositories
                 .ToListAsync();
             if (allRoomStatus == null) { return null; }
             var lsHotelRoomNotBooked = await _context.Rooms
+                     .Include(c => c.BookingDetails).ThenInclude(b => b.Booking).ThenInclude(q => q.QrCheckUp)
                     .Where(op => op.HotelId == hotelId)
                      .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
                                                   !(((op.StartDate.Value.Date > StartDate.Date && op.StartDate.Value.Date < EndDate.Date)
@@ -120,7 +118,21 @@ namespace DIMSApis.Repositories
                 }
                 else
                 {
-                    result.AllStatus = 2;
+                    var checkCheckIn = await _context.Bookings
+                        .Include(q => q.QrCheckUp)
+                        .Where(op => op.BookingDetails.Select(s => s.RoomId).First() == result.RoomId
+                                && op.BookingDetails.Select(s => s.EndDate).First() >= DateTime.Now.Date
+                                && op.BookingDetails.Select(s => s.Status).First() == true)
+                        .SingleOrDefaultAsync();
+                    ;
+                    if (checkCheckIn.QrCheckUp.Status == true)
+                    {
+                        result.AllStatus = 2;
+                    }
+                    else
+                    {
+                        result.AllStatus = 4;
+                    }
                     result.BookedStatus = true;
                 }
                 if (result.CleanStatus == true)
@@ -156,7 +168,7 @@ namespace DIMSApis.Repositories
 
             if (allRoomStatus == null) { return null; }
             var lsHotelRoomNotBooked = await _context.Rooms
-                .Include(c=>c.BookingDetails).ThenInclude(b=>b.Booking).ThenInclude(q=>q.QrCheckUp)
+
                     .Where(op => op.HotelId == hotelId)
                      .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
                                                   !(op.StartDate.Value.Date <= today.Date
@@ -175,7 +187,21 @@ namespace DIMSApis.Repositories
                 }
                 else
                 {
-                    result.AllStatus = 2;
+                    var checkCheckIn = await _context.Bookings
+                        .Include(q => q.QrCheckUp)
+                        .Where(op => op.BookingDetails.Select(s => s.RoomId).First() == result.RoomId
+                                     && op.BookingDetails.Select(s => s.EndDate).First() >= DateTime.Now.Date
+                                     && op.BookingDetails.Select(s => s.Status).First() == true)
+                        .SingleOrDefaultAsync();
+                    ;
+                    if (checkCheckIn.QrCheckUp.Status == true)
+                    {
+                        result.AllStatus = 2;
+                    }
+                    else
+                    {
+                        result.AllStatus = 4;
+                    }
                     result.BookedStatus = true;
                 }
                 if (result.CleanStatus == true)
@@ -521,7 +547,7 @@ namespace DIMSApis.Repositories
             try
             {
                 var roomBooking = await _context.BookingDetails
-                    .Include(m => m.BookingDetailMenus.Where(op=>op.BookingDetailMenuStatus.Value)).ThenInclude(m => m.Menu)
+                    .Include(m => m.BookingDetailMenus.Where(op => op.BookingDetailMenuStatus.Value)).ThenInclude(m => m.Menu)
                     .Where(op => op.BookingDetailId == ex.First().BookingDetailId)
                     .SingleOrDefaultAsync();
                 ;
@@ -575,7 +601,7 @@ namespace DIMSApis.Repositories
 
         public async Task<BookingDetail> GetUserMenu(int BookingDetailID)
         {
-            var DetailLsMenu = await _context.BookingDetails.Include(m=>m.BookingDetailMenus)
+            var DetailLsMenu = await _context.BookingDetails.Include(m => m.BookingDetailMenus)
                 .Where(op => op.BookingDetailId == BookingDetailID).SingleOrDefaultAsync();
             return DetailLsMenu;
         }
@@ -634,7 +660,7 @@ namespace DIMSApis.Repositories
         public async Task<string> DeleteItemForExtraFee(int BookingDetailId, int BookingDetailMenuId)
         {
             var item = await _context.BookingDetailMenus
-                .Where(op=>op.BookingDetailMenuId == BookingDetailMenuId).SingleOrDefaultAsync();
+                .Where(op => op.BookingDetailMenuId == BookingDetailMenuId).SingleOrDefaultAsync();
             if (item == null) { return "0"; }
             _context.BookingDetailMenus.Remove(item);
             var roomBooking = await _context.BookingDetails
@@ -689,7 +715,21 @@ namespace DIMSApis.Repositories
                 }
                 else
                 {
-                    result.AllStatus = 2;
+                    var checkCheckIn = await _context.Bookings
+                        .Include(q => q.QrCheckUp)
+                        .Where(op => op.BookingDetails.Select(s => s.RoomId).First() == result.RoomId
+                                     && op.BookingDetails.Select(s => s.EndDate).First() >= DateTime.Now.Date
+                                     && op.BookingDetails.Select(s => s.Status).First() == true)
+                        .SingleOrDefaultAsync();
+                    ;
+                    if (checkCheckIn.QrCheckUp.Status == true)
+                    {
+                        result.AllStatus = 2;
+                    }
+                    else
+                    {
+                        result.AllStatus = 4;
+                    }
                     result.BookedStatus = true;
                 }
                 if (result.CleanStatus == true)
@@ -697,14 +737,13 @@ namespace DIMSApis.Repositories
                     result.AllStatus = 3;
                 }
             }
-            return returnResult.Where(op =>  op.BookedStatus == false);
+            return returnResult.Where(op => op.BookedStatus == false);
         }
 
         public async Task<IEnumerable<NewInboundUser>> GetAllInboundUserBookingInfo(int hotelId)
         {
-
             var CustomerInfo = await _context.InboundUsers
-                    .Where(op => op.Booking.HotelId==hotelId && op.Booking.Status.Value)
+                    .Where(op => op.Booking.HotelId == hotelId && op.Booking.Status.Value)
                      .Where(a => a.Booking.BookingDetails.Where(op => op.Status.Value).All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
                                                     (op.StartDate.Value.Date <= DateTime.Now.Date
                                                     && op.EndDate.Value.Date >= DateTime.Now.Date
@@ -716,6 +755,5 @@ namespace DIMSApis.Repositories
             var returnResult = _mapper.Map<IEnumerable<NewInboundUser>>(CustomerInfo);
             return returnResult;
         }
-
     }
 }
