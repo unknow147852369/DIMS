@@ -1,5 +1,7 @@
 ﻿using DIMSApis.Interfaces;
 using DIMSApis.Models.Data;
+using DIMSApis.Models.Input;
+using Microsoft.AspNetCore.Mvc;
 using Stripe;
 
 namespace DIMSApis.Services
@@ -14,6 +16,7 @@ namespace DIMSApis.Services
 
             var customer = customers.Create(new CustomerCreateOptions
             {
+
                 Email = stripeMail,
                 Source = stripeToken,
             });
@@ -30,6 +33,7 @@ namespace DIMSApis.Services
                     {"BookingId" , bok.BookingId.ToString() },
                     {"RealTotal",  bok.TotalPrice.ToString() },
                 },
+
             });
 
             if (chage.Status == "succeeded")
