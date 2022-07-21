@@ -13843,24 +13843,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\PC\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Handez\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\FPTSEMESTER\\capston\\DIMS\\DIMSApi\\DIMSApis\\DIMSApis\\DIMSApis.csproj",
+      "projectUniqueName": "C:\\Users\\Handez\\Documents\\React-Native\\test\\DIMS\\DIMSApi\\DIMSApis\\DIMSApis\\DIMSApis.csproj",
       "projectName": "DIMSApis",
-      "projectPath": "D:\\FPTSEMESTER\\capston\\DIMS\\DIMSApi\\DIMSApis\\DIMSApis\\DIMSApis.csproj",
-      "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
-      "outputPath": "D:\\FPTSEMESTER\\capston\\DIMS\\DIMSApi\\DIMSApis\\DIMSApis\\obj\\",
+      "projectPath": "C:\\Users\\Handez\\Documents\\React-Native\\test\\DIMS\\DIMSApi\\DIMSApis\\DIMSApis\\DIMSApis.csproj",
+      "packagesPath": "C:\\Users\\Handez\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Handez\\Documents\\React-Native\\test\\DIMS\\DIMSApi\\DIMSApis\\DIMSApis\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\Handez\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -14009,7 +14004,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.300\\RuntimeIdentifierGraph.json"
       }
     }
   },
