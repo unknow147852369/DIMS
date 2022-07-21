@@ -156,6 +156,7 @@ namespace DIMSApis.Repositories
 
             if (allRoomStatus == null) { return null; }
             var lsHotelRoomNotBooked = await _context.Rooms
+                .Include(c=>c.BookingDetails).ThenInclude(b=>b.Booking).ThenInclude(q=>q.QrCheckUp)
                     .Where(op => op.HotelId == hotelId)
                      .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
                                                   !(op.StartDate.Value.Date <= today.Date

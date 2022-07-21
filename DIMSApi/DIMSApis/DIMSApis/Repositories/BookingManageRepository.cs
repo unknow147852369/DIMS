@@ -68,8 +68,8 @@ namespace DIMSApis.Repositories
                     error += "Wrong date ;";
                 }
                 Booking bok = await PaymentCalculateData(ppi, userId);
-                //var paymentstatus = condition4;
-                var paymentstatus = _stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
+                var paymentstatus = condition4;
+                //var paymentstatus = _stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
                 if (paymentstatus.Contains(condition4))
                 {
                     bok.PaymentMethod = condition1;
