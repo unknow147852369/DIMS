@@ -68,8 +68,8 @@ namespace DIMSApis.Repositories
                     error += "Wrong date ;";
                 }
                 Booking bok = await PaymentCalculateData(ppi, userId);
-                var paymentstatus = condition4;
-                //var paymentstatus = _stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
+                //var paymentstatus = condition4;
+                var paymentstatus = _stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
                 if (paymentstatus.Contains(condition4))
                 {
                     bok.PaymentMethod = condition1;
@@ -236,7 +236,7 @@ namespace DIMSApis.Repositories
             }
             if (error != "") { throw new Exception(error); }
             bok.SubTotal = Math.Round((double)(total * bok.TotalNight), 2);
-            bok.TotalPrice = Math.Round((double)((bok.SubTotal - bok.VoucherDiscoundPrice)*(1/bok.CurrencyRate)), 2);
+            bok.TotalPrice = Math.Round((double)((bok.SubTotal - bok.VoucherDiscoundPrice)*(1/bok.CurrencyRate)*1000), 2);
 
             return bok;
         }

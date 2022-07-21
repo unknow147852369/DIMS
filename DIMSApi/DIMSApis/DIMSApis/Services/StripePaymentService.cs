@@ -21,6 +21,8 @@ namespace DIMSApis.Services
                 Source = stripeToken,
             });
 
+
+            var a = (long?)bok.TotalPrice;
             var chage = charges.Create(new ChargeCreateOptions
             {
                 Amount = (long?)bok.TotalPrice,
