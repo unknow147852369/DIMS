@@ -38,7 +38,7 @@ namespace DIMSApis.Repositories
         public async Task<IEnumerable<Booking>> GetListBookingInfo(int UserId)
         {
             var bill = await _context.Bookings
-               .Include(h => h.Hotel)
+               .Include(h => h.Hotel).ThenInclude(p=>p.Photos.Where(op=>op.CategoryId ==null))
                .Include(b => b.BookingDetails)
                .ThenInclude(r => r.Room).ThenInclude(c => c.Category)
                .Where(op => op.UserId == UserId)

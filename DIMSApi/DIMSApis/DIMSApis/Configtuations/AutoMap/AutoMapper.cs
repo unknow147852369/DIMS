@@ -223,9 +223,10 @@ namespace DIMSApis.Configtuations.AutoMap
             CreateMap<Booking, BookingInfoOutput>()
                 .ForMember(a => a.HotelAddress, option => option.MapFrom(tbl => tbl.Hotel.HotelAddress))
                 .ForMember(a => a.HotelName, option => option.MapFrom(tbl => tbl.Hotel.HotelName))
+                .ForMember(a => a.HotelPhotos, option => option.MapFrom(tbl => tbl.Hotel.Photos))
                 .ForMember(a => a.TotalDate, option => option.MapFrom(tbl => (tbl.EndDate - tbl.StartDate).Value.TotalDays))
                 ;
-
+            CreateMap<Photo, HotelPhotosOutput>();
             CreateMap<BookingDetail, BookingDetailInfoOutput>()
                 .ForMember(a => a.CategoryName, option => option.MapFrom(tbl => tbl.Room.Category.CategoryName))
                 .ForMember(a => a.RoomName, option => option.MapFrom(tbl => tbl.Room.RoomName))

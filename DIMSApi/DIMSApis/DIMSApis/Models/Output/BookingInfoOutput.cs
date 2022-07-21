@@ -16,6 +16,7 @@
         public int TotalDate { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public virtual ICollection<HotelPhotosOutput> HotelPhotos { get; set; }
         public virtual ICollection<BookingDetailInfoOutput> BookingDetails { get; set; }
     }
 }
