@@ -6,8 +6,8 @@ namespace DIMSApis.Interfaces
 {
     public interface IAdminManage
     {
-        Task<string> AcpectHotelUpdateRequest(int HotelRequestID);
-        Task<string> AcpectHotelAddRequest(int HotelRequestID);
+        Task<string> AcpectHotelUpdateRequest(int HotelRequestID,int pendingStatus);
+        Task<string> AcpectHotelAddRequest(int HotelRequestID, int pendingStatus);
         Task<IEnumerable<HotelRequest>> GetListHotelUpdateRequests();
         Task<IEnumerable<HotelRequest>> GetLitHotelAddRequests();
 
