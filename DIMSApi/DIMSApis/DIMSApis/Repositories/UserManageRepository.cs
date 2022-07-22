@@ -189,7 +189,7 @@ namespace DIMSApis.Repositories
                 .Include(w => w.WardNavigation)
                 .Include(d => d.DistrictNavigation)
                 .Include(pr => pr.ProvinceNavigation)
-                .Include(r => r.Rooms.Where(bd => bd.BookingDetails.All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
+                .Include(r => r.Rooms.Where(bd => bd.BookingDetails.All(op => (
                                                   !(((op.StartDate.Value.Date > StartDate.Date && op.StartDate.Value.Date < EndDate.Date)
                                                   && (op.EndDate.Value.Date > StartDate.Date && op.EndDate.Value.Date < EndDate.Date))
                                                   || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > EndDate.Date)

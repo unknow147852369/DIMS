@@ -34,6 +34,7 @@ namespace DIMSApis.Models.Data
         public virtual Province? ProvinceNavigation { get; set; }
         public virtual User? User { get; set; }
         public virtual Ward? WardNavigation { get; set; }
+        public virtual HotelRequest? HotelRequest { get; set; }
         public virtual ICollection<Booking> Bookings { get; set; }
         public virtual ICollection<Category> Categories { get; set; }
         public virtual ICollection<Menu> Menus { get; set; }

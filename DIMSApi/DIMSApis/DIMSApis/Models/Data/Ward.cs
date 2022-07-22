@@ -7,6 +7,7 @@ namespace DIMSApis.Models.Data
     {
         public Ward()
         {
+            HotelRequests = new HashSet<HotelRequest>();
             Hotels = new HashSet<Hotel>();
         }
 
@@ -17,6 +18,7 @@ namespace DIMSApis.Models.Data
         public string? WardNoMark { get; set; }
 
         public virtual District? District { get; set; }
+        public virtual ICollection<HotelRequest> HotelRequests { get; set; }
         public virtual ICollection<Hotel> Hotels { get; set; }
     }
 }

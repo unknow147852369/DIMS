@@ -7,6 +7,7 @@ namespace DIMSApis.Models.Data
     {
         public HotelType()
         {
+            HotelRequests = new HashSet<HotelRequest>();
             Hotels = new HashSet<Hotel>();
         }
 
@@ -14,6 +15,7 @@ namespace DIMSApis.Models.Data
         public string? HotelTypeName { get; set; }
         public bool? Status { get; set; }
 
+        public virtual ICollection<HotelRequest> HotelRequests { get; set; }
         public virtual ICollection<Hotel> Hotels { get; set; }
     }
 }

@@ -9,6 +9,18 @@ namespace DIMSApis.Configtuations.AutoMap
     {
         public AutoMapper()
         {
+            CreateMap<HotelRequestUpdateInput, HotelRequest>()
+                .ForMember(a => a.PendingStatus, option => option.MapFrom(tbl => "PENDING"))
+                .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
+                .ForMember(a => a.HotelRequestStatus, option => option.MapFrom(tbl => 1))
+                ;
+            //
+            CreateMap<HotelRequestAddInput,HotelRequest>()
+                 .ForMember(a => a.PendingStatus, option => option.MapFrom(tbl => "PENDING"))
+                 .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
+                 .ForMember(a => a.HotelRequestStatus, option => option.MapFrom(tbl =>1))
+                ;
+            //
             CreateMap<NewUpdateRoomInput, Room>()
                 .ForMember(a => a.CleanStatus, option => option.MapFrom(tbl => 0))
                 .ForMember(a => a.HideStatus, option => option.MapFrom(tbl => 0))
@@ -168,18 +180,6 @@ namespace DIMSApis.Configtuations.AutoMap
                 ;
             CreateMap<Photo, HotelPhotosOutput>();
 
-            //
-            CreateMap<HotelInput, Hotel>()
-                .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
-                .ForMember(a => a.Status, option => option.MapFrom(tbl => 0))
-                ;
-            CreateMap<Hotel, Photo>()
-                 .ForMember(a => a.HotelId, option => option.MapFrom(tbl => tbl.HotelId))
-                ;
-            CreateMap<PhotosInput, Photo>()
-                .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
-                .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
-                ;
             //
             CreateMap<NewRoomInput, Room>()
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))

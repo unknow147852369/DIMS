@@ -258,5 +258,91 @@ namespace DIMSApis.Repositories
             if (hotelRooms.Count == 0) { return null; }
             return hotelRooms;
         }
+
+        public async Task<IEnumerable<Hotel>> GetListHotels(int userID)
+        {
+            var hotels = await _context.Hotels
+                .Include(p=>p.Photos)
+                .Where(op => op.UserId == userID).ToListAsync();
+            if (hotels.Count == 0) { return null; }
+            return hotels;
+        }
+
+        public async Task<string> SendAHotelAddRequest(int userId,HotelRequestAddInput newHotel)
+        {
+            try
+            {
+                var check = _mapper.Map<HotelRequest>(newHotel);
+                check.UserId = userId;
+                await _context.AddAsync(check);
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public async Task<string> SendAHotelUpdateRequest(int userId, HotelRequestUpdateInput newHotel)
+        {
+            try
+            {
+
+                var hotel = await _context.Hotels
+                    .Include(h=>h.HotelRequest)
+                    .Where(op=>op.HotelId == newHotel.HotelId).SingleOrDefaultAsync();
+                if(hotel == null) { return "NO hotel found"; }
+                if (hotel.HotelRequest == null)
+                {
+                    hotel.HotelRequest = _mapper.Map<HotelRequest>(newHotel);
+                }
+                else
+                {
+                    hotel.HotelRequest.HotelAddress = newHotel.HotelAddress;
+                    hotel.HotelRequest.HotelName  = newHotel.HotelName;
+                    hotel.HotelTypeId = newHotel.HotelTypeId;
+                    hotel.Province = newHotel.Province;
+                    hotel.District = newHotel.District;
+                    hotel.Star = newHotel.Star;
+                    hotel.Status = newHotel.Status;
+                }
+                hotel.HotelRequest.UserId = userId;
+
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public async Task<IEnumerable<HotelRequest>> GetListHotelRequests(int userID)
+        {
+            var hotelRequests = await _context.HotelRequests
+                .Where(op => op.UserId == userID).ToListAsync();
+            if (hotelRequests.Count == 0) { return null; }
+            return hotelRequests;
+        }
+
+        public async Task<string> RemoveARequest(int HotelRequestId)
+        {
+            try
+            {
+                var item = await _context.HotelRequests
+                        .Where(op => op.HotelRequestId == HotelRequestId).SingleOrDefaultAsync();
+                _context.HotelRequests.Remove(item);
+
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
     }
 }

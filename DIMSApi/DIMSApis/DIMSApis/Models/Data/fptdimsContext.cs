@@ -25,6 +25,7 @@ namespace DIMSApis.Models.Data
         public virtual DbSet<Facility> Facilities { get; set; } = null!;
         public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
         public virtual DbSet<Hotel> Hotels { get; set; } = null!;
+        public virtual DbSet<HotelRequest> HotelRequests { get; set; } = null!;
         public virtual DbSet<HotelType> HotelTypes { get; set; } = null!;
         public virtual DbSet<InboundUser> InboundUsers { get; set; } = null!;
         public virtual DbSet<Menu> Menus { get; set; } = null!;
@@ -271,6 +272,74 @@ namespace DIMSApis.Models.Data
                     .WithMany(p => p.Hotels)
                     .HasForeignKey(d => d.Ward)
                     .HasConstraintName("FK_Hotels_Wards1");
+            });
+
+            modelBuilder.Entity<HotelRequest>(entity =>
+            {
+                entity.ToTable("HotelRequest");
+
+                entity.HasIndex(e => e.HotelId, "IX_HotelRequest")
+                    .IsUnique();
+
+                entity.Property(e => e.HotelRequestId).HasColumnName("HotelRequestID");
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.District)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Evidence)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.HotelId).HasColumnName("HotelID");
+
+                entity.Property(e => e.HotelTypeId).HasColumnName("HotelTypeID");
+
+                entity.Property(e => e.PendingStatus)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Province)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.Property(e => e.Ward)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.DistrictNavigation)
+                    .WithMany(p => p.HotelRequests)
+                    .HasForeignKey(d => d.District)
+                    .HasConstraintName("FK_HotelRequest_Districts");
+
+                entity.HasOne(d => d.Hotel)
+                    .WithOne(p => p.HotelRequest)
+                    .HasForeignKey<HotelRequest>(d => d.HotelId)
+                    .HasConstraintName("FK_HotelRequest_Hotels");
+
+                entity.HasOne(d => d.HotelType)
+                    .WithMany(p => p.HotelRequests)
+                    .HasForeignKey(d => d.HotelTypeId)
+                    .HasConstraintName("FK_HotelRequest_HotelTypes");
+
+                entity.HasOne(d => d.ProvinceNavigation)
+                    .WithMany(p => p.HotelRequests)
+                    .HasForeignKey(d => d.Province)
+                    .HasConstraintName("FK_HotelRequest_Provinces");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.HotelRequests)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_HotelRequest_Users");
+
+                entity.HasOne(d => d.WardNavigation)
+                    .WithMany(p => p.HotelRequests)
+                    .HasForeignKey(d => d.Ward)
+                    .HasConstraintName("FK_HotelRequest_Wards");
             });
 
             modelBuilder.Entity<HotelType>(entity =>

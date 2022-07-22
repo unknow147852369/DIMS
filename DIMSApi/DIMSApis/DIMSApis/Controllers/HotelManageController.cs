@@ -20,7 +20,79 @@ namespace DIMSApis.Controllers
         {
             _hotel = hotel;
         }
+        [HttpGet("List-Hotels")]
+        public async Task<IActionResult> GetListHotels()
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _hotel.GetListHotels(userId);
+            if (check == null) { return BadRequest(new DataRespone { Message = "Empty" }); }
+            return Ok(check);
+        }
+        [HttpGet("List-Hotel-Requests")]
+        public async Task<IActionResult> GetListHotelRequests()
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _hotel.GetListHotelRequests(userId);
+            if (check == null) { return BadRequest(new DataRespone { Message = "Empty" }); }
+            return Ok(check);
+        }
+        [HttpPost("Send-A-Hotel-Add-Request")]
+        public async Task<IActionResult> SendAHotelAddRequest(HotelRequestAddInput newHotel)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _hotel.SendAHotelAddRequest(userId,newHotel);
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "Send request success" });
+            }
+            else if (check.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "Send request success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "Send request fail " +check});
+            }
+        }
+        [HttpPut("Send-A-Hotel-Update-Request")]
+        public async Task<IActionResult> SendAHotelUpdateRequest(HotelRequestUpdateInput newHotel)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _hotel.SendAHotelUpdateRequest(userId, newHotel);
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "Send request success" });
+            }
+            else if (check.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "Send request success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "Send request fail " + check });
+            }
+        }
+        [HttpDelete("Remove-A-Hotel-Request")]
+        public async Task<IActionResult> RemoveARequest(int hotelRequestId)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _hotel.RemoveARequest(hotelRequestId);
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "Remove request success" });
+            }
+            else if (check.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "Remove request success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "Remove request fail " + check });
+            }
+        }
 
+
+        //
         [HttpGet("List-A-Hotel-Photos")]
         public async Task<IActionResult> GetListHotelPhotos(int hotelId)
         {
