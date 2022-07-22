@@ -1,4 +1,5 @@
 ﻿using DIMSApis.Interfaces;
+using DIMSApis.Models.Helper;
 using DIMSApis.Models.Input;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,61 @@ namespace DIMSApis.Controllers
         {
             _admin = admin;
         }
+
+        [HttpPut("Acpect-A-Hotel-Add-Request")]
+        public async Task<IActionResult> AcpectHotelAddRequest(int hotelRequestId, int pendingStatus)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _admin.AcpectHotelAddRequest(hotelRequestId, pendingStatus);
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "Send request success" });
+            }
+            else if (check.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "Send request success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "Send request fail " + check });
+            }
+        }
+        [HttpPut("Acpect-A-Hotel-Update-Request")]
+        public async Task<IActionResult> AcpectHotelUpdateRequest(int hotelRequestId, int pendingStatus)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _admin.AcpectHotelUpdateRequest(hotelRequestId, pendingStatus);
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "Send request success" });
+            }
+            else if (check.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "Send request success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "Send request fail " + check });
+            }
+        }
+
+        [HttpGet("List-Hotel-Add-Requests")]
+        public async Task<IActionResult> GetListHotelAddRequests()
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _admin.GetLitHotelAddRequests();
+            if (check == null) { return BadRequest(new DataRespone { Message = "Empty" }); }
+            return Ok(check);
+        }
+        [HttpGet("List-Hotel-Update-Requests")]
+        public async Task<IActionResult> GetListHotelUpdateRequests()
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _admin.GetListHotelUpdateRequests();
+            if (check == null) { return BadRequest(new DataRespone { Message = "Empty" }); }
+            return Ok(check);
+        }
+
 
         [HttpPut("Admin-Acecpt-Host")]
         public async Task<IActionResult> AcecptHost(int userId)

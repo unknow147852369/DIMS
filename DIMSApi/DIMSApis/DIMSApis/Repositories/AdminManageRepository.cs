@@ -13,6 +13,9 @@ namespace DIMSApis.Repositories
         private readonly IMapper _mapper;
         private readonly IOtherService _otherservice;
         private readonly IMail _mail;
+
+        private string PendingStatus1 = "ACTIVE";
+        private string PendingStatus2 = "DENY";
         private string purpose1 = "ACTIVE ACCOUNT";
         private string purpose2 = "CHANGE PASS";
         private string role1 = "HOST";
@@ -111,6 +114,106 @@ namespace DIMSApis.Repositories
             if (await _context.SaveChangesAsync() > 0)
                 return "1";
             return "3";
+        }
+
+        public async Task<string> AcpectHotelUpdateRequest(int HotelRequestID, int pendingStatus)
+        {
+            try
+            {
+                var hotelRequest = await _context.HotelRequests
+                   .Where(op => op.Status == true && op.HotelId != null && op.HotelRequestId == HotelRequestID)
+                   .SingleOrDefaultAsync();
+                if (hotelRequest == null) { return "Not found request"; }
+                if (pendingStatus == 2)
+                {
+                    hotelRequest.PendingStatus = PendingStatus1;
+                    hotelRequest.Status = false;
+                }
+                else if (pendingStatus == 2)
+                {
+                    hotelRequest.PendingStatus = PendingStatus1;
+                    hotelRequest.Status = false;
+                    var hotel = await _context.Hotels
+                        .Where(op => op.HotelId == hotelRequest.HotelId)
+                        .SingleOrDefaultAsync();
+                    if (hotelRequest == null) { return "Not found request"; }
+
+                    hotel.HotelName = hotelRequest.HotelName;
+                    hotel.HotelAddress = hotelRequest.HotelAddress;
+                    hotel.HotelTypeId = hotelRequest.HotelTypeId;
+                    hotel.Province = hotelRequest.Province;
+                    hotel.District = hotelRequest.District;
+                    hotel.Status = hotelRequest.Status;
+                    hotel.Star = hotelRequest.Star;
+                    hotel.HotelNameNoMark = _otherservice.RemoveMark(hotelRequest.HotelName);
+                }
+                else { return "wrong status only 1,2 (1: acpect ; 2:Deny)"; }
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public async Task<string> AcpectHotelAddRequest(int HotelRequestID, int pendingStatus)
+        {
+            try
+            {
+                var hotelRequest = await _context.HotelRequests
+                    .Where(op => op.Status == true && op.HotelId == null && op.HotelRequestId == HotelRequestID)
+                    .SingleOrDefaultAsync();
+
+                if (hotelRequest == null) { return "Not found request"; }
+                if (pendingStatus == 2)
+                {
+                    hotelRequest.PendingStatus = PendingStatus1;
+                    hotelRequest.Status = false;
+                }
+                else if (pendingStatus == 2)
+                {
+                    hotelRequest.PendingStatus = PendingStatus1;
+                    hotelRequest.Status = false;
+
+                    var newHotel = new Hotel();
+                    newHotel.HotelName = hotelRequest.HotelName;
+                    newHotel.HotelAddress = hotelRequest.HotelAddress;
+                    newHotel.HotelTypeId = hotelRequest.HotelTypeId;
+                    newHotel.Province = hotelRequest.Province;
+                    newHotel.District = hotelRequest.District;
+                    newHotel.Status = hotelRequest.Status;
+                    newHotel.Star = hotelRequest.Star;
+                    newHotel.HotelNameNoMark = _otherservice.RemoveMark(hotelRequest.HotelName);
+
+                    await _context.AddAsync(newHotel);
+                }
+                else { return "wrong status only 1,2 (1: acpect ; 2:Deny)"; }
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public async Task<IEnumerable<HotelRequest>> GetLitHotelAddRequests()
+        {
+            var returnlist = await _context.HotelRequests
+                .Where(op => op.Status == true && op.HotelId == null)
+                .ToListAsync();
+            return returnlist;
+        }
+
+        public async Task<IEnumerable<HotelRequest>> GetListHotelUpdateRequests()
+        {
+            var returnlist = await _context.HotelRequests
+                .Where(op => op.Status == true && op.HotelId != null)
+                .ToListAsync();
+            return returnlist;
         }
     }
 }
