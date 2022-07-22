@@ -229,7 +229,7 @@ namespace DIMSApis.Repositories
             IQueryable<Room> lsRoom = _context.Rooms
                                         .Include(c => c.Category).ThenInclude(b => b.Photos)
                                         .Where(op => op.HotelId == hotelId && op.Category.Quanity >= peopleQuanity && op.Status == true)
-                                        .Where(a => a.BookingDetails.All(op => !(
+                                        .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => !(
                                                                       ((op.StartDate > StartDate && op.StartDate < EndDate) && (op.EndDate > StartDate && op.EndDate < EndDate))
                                                                       || (op.StartDate < EndDate && op.EndDate > EndDate)
                                                                       || (op.StartDate < StartDate && op.EndDate > StartDate))
