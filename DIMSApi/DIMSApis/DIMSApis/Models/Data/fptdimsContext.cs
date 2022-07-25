@@ -110,6 +110,7 @@ namespace DIMSApis.Models.Data
                 entity.HasOne(d => d.Room)
                     .WithMany(p => p.BookingDetails)
                     .HasForeignKey(d => d.RoomId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_BookedRoom_Rooms");
             });
 

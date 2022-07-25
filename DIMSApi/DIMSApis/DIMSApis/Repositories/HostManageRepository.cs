@@ -120,9 +120,10 @@ namespace DIMSApis.Repositories
                 {
                     var checkCheckIn = await _context.Bookings
                         .Include(q => q.QrCheckUp)
-                        .Where(op => op.BookingDetails.Select(s => s.RoomId).First() == result.RoomId
-                                && op.BookingDetails.Select(s => s.EndDate).First() >= DateTime.Now.Date
-                                && op.BookingDetails.Select(s => s.Status).First() == true)
+                        .Where(op => op.BookingDetails.Where(op => op.RoomId == result.RoomId
+                                                             && op.EndDate >= DateTime.Now.Date
+                                                               && op.Status == true
+                                                               ).Count() == 1)
                         .SingleOrDefaultAsync();
                     ;
                     if (checkCheckIn.QrCheckUp.Status == true)
@@ -189,9 +190,10 @@ namespace DIMSApis.Repositories
                 {
                     var checkCheckIn = await _context.Bookings
                         .Include(q => q.QrCheckUp)
-                        .Where(op => op.BookingDetails.Select(s => s.RoomId).First() == result.RoomId
-                                     && op.BookingDetails.Select(s => s.EndDate).First() >= DateTime.Now.Date
-                                     && op.BookingDetails.Select(s => s.Status).First() == true)
+                        .Where(op => op.BookingDetails.Where(op=>op.RoomId == result.RoomId
+                                                             && op.EndDate >= DateTime.Now.Date
+                                                               && op.Status == true
+                                                               ).Count()==1)
                         .SingleOrDefaultAsync();
                     ;
                     if (checkCheckIn.QrCheckUp.Status == true)
@@ -423,7 +425,7 @@ namespace DIMSApis.Repositories
                                                 ));
 
             var checkExist = bok.BookingDetails.Select(b => b.RoomId).ToList()
-                .Any(op => !lsHotelRoomNotBooked.Select(a => a.RoomId).ToList().Contains(op.Value));
+                .Any(op => !lsHotelRoomNotBooked.Select(a => a.RoomId).ToList().Contains(op));
 
             return checkExist;
         }
@@ -717,9 +719,10 @@ namespace DIMSApis.Repositories
                 {
                     var checkCheckIn = await _context.Bookings
                         .Include(q => q.QrCheckUp)
-                        .Where(op => op.BookingDetails.Select(s => s.RoomId).First() == result.RoomId
-                                     && op.BookingDetails.Select(s => s.EndDate).First() >= DateTime.Now.Date
-                                     && op.BookingDetails.Select(s => s.Status).First() == true)
+                        .Where(op => op.BookingDetails.Where(op => op.RoomId == result.RoomId
+                                                             && op.EndDate >= DateTime.Now.Date
+                                                               && op.Status == true
+                                                               ).Count() == 1)
                         .SingleOrDefaultAsync();
                     ;
                     if (checkCheckIn.QrCheckUp.Status == true)

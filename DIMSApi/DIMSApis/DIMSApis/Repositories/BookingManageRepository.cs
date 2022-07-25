@@ -255,7 +255,7 @@ namespace DIMSApis.Repositories
                                                 ));
 
             var checkExist = bok.BookingDetails.Select(b => b.RoomId).ToList()
-                .Any(op => !lsHotelRoomNotBooked.Select(a => a.RoomId).ToList().Contains(op.Value));
+                .Any(op => !lsHotelRoomNotBooked.Select(a => a.RoomId).ToList().Contains(op));
 
             return checkExist;
         }
