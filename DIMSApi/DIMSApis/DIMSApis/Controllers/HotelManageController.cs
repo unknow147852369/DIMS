@@ -20,6 +20,15 @@ namespace DIMSApis.Controllers
         {
             _hotel = hotel;
         }
+        [HttpGet("A-Full-Hotel-Detail")]
+        public async Task<IActionResult> GetFullHotelDetail(int hotelId)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _hotel.GetFullHotelDetail(hotelId);
+            if (check == null) { return BadRequest(new DataRespone { Message = "Empty" }); }
+            return Ok(check);
+        }
+
         [HttpGet("List-Hotels")]
         public async Task<IActionResult> GetListHotels()
         {

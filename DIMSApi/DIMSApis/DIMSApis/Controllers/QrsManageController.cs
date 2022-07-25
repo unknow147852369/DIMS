@@ -23,13 +23,13 @@ namespace DIMSApis.Controllers
             _generateqr = generateqr;
         }
 
-        //[HttpPost("vertify-Qr")]
-        //public async Task<IActionResult> VertifyQrContent(VertifyQrInput qrIn)
-        //{
-        //    var qrcheck = await _qrmanage.vertifyQrContent(qrIn);
+        [HttpPost("vertify-Qr")]
+        public async Task<IActionResult> VertifyQrContent(VertifyQrInput qrIn)
+        {
+            var qrcheck = await _qrmanage.vertifyQrContent(qrIn);
 
-        //    return Ok(qrcheck);
-        //}
+            return Ok(qrcheck);
+        }
 
         [HttpPost("Check-in-Main-Qr")]
         public async Task<IActionResult> vertifyMainQrCheckIn(VertifyMainQrInput qrIn)

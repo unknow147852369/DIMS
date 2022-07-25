@@ -344,5 +344,22 @@ namespace DIMSApis.Repositories
                 return ex.Message;
             }
         }
+
+        public async Task<Hotel> GetFullHotelDetail(int hotelId)
+        {
+            var hotels = await _context.Hotels
+                .Include(p => p.Photos)
+                .Include(p => p.Vouchers)
+                .Include(h => h.HotelType)
+                .Include(c => c.Categories).ThenInclude(r => r.Rooms)
+                .Include(c => c.Categories).ThenInclude(r => r.Photos)
+                .Include(w => w.WardNavigation)
+                .Include(d => d.DistrictNavigation)
+                .Include(pr => pr.ProvinceNavigation)
+                .Where(op => op.HotelId == hotelId)
+                .SingleOrDefaultAsync();
+
+            return hotels;
+        }
     }
 }

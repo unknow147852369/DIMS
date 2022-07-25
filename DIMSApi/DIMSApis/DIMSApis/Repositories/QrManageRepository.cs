@@ -141,7 +141,7 @@ namespace DIMSApis.Repositories
             if (qrvertify != null)
             {
                 if (qrvertify.BookingDetail.Booking.HotelId.Equals(qrIn.HotelId)
-                    && qrvertify.BookingDetail.RoomId.Equals(qrIn.RoomId))
+                    && qrvertify.BookingDetail.Room.RoomName.Equals(qrIn.RoomName.Trim()))
                 {
                     condition = "1";
                 }

@@ -6,6 +6,8 @@ namespace DIMSApis.Interfaces
 {
     public interface IHotelManage
     {
+        Task<Hotel> GetFullHotelDetail(int hotelId);
+
         Task<IEnumerable<Hotel>> GetListHotels(int userID);
         Task<IEnumerable<HotelRequest>> GetListHotelRequests(int userID);
         Task<string> SendAHotelAddRequest(int userId,HotelRequestAddInput newHotel);
