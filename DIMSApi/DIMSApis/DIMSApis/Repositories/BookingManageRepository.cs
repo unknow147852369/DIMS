@@ -217,7 +217,7 @@ namespace DIMSApis.Repositories
             if (ppi.VoucherId != null)
             {
                 bok.Voucher = await _context.Vouchers
-                    .Where(a => a.EndDate.Value.Date >= DateTime.Now.Date && a.VoucherId.Equals(ppi.VoucherId) && a.Quantitylimited > 0)
+                    .Where(a => a.EndDate.Value.Date >= DateTime.Now.Date && a.VoucherId.Equals(ppi.VoucherId) && a.Quantitylimited > 0 && a.Status.Value)
                     .FirstOrDefaultAsync();
                 if (bok.Voucher != null)
                 {

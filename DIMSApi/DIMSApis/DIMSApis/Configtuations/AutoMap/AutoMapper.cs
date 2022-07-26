@@ -9,6 +9,12 @@ namespace DIMSApis.Configtuations.AutoMap
     {
         public AutoMapper()
         {
+            CreateMap<AhotelVoucherCreate, Voucher>()
+                .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
+                ;
+            CreateMap<AHotelVouchersInput, Voucher>()
+                ;
+            //
             CreateMap<HotelRequestUpdateInput, HotelRequest>()
                 .ForMember(a => a.PendingStatus, option => option.MapFrom(tbl => "PENDING"))
                 .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
@@ -115,15 +121,18 @@ namespace DIMSApis.Configtuations.AutoMap
                 ;
             //
             CreateMap<Hotel, AHotelOutput>()
-                .ForMember(a => a.TotalRoom, option => option.MapFrom(tbl => tbl.Rooms.Count))
-                .ForMember(a => a.WardName, option => option.MapFrom(tbl => tbl.WardNavigation.Name))
-                .ForMember(a => a.ProvinceName, option => option.MapFrom(tbl => tbl.ProvinceNavigation.Name))
-                .ForMember(a => a.DistrictName, option => option.MapFrom(tbl => tbl.DistrictNavigation.Name))
+                .ForMember(a => a.Ward, option => option.MapFrom(tbl => tbl.WardNavigation.Name))
+                .ForMember(a => a.Province, option => option.MapFrom(tbl => tbl.ProvinceNavigation.Name))
+                .ForMember(a => a.District, option => option.MapFrom(tbl => tbl.DistrictNavigation.Name))
+                .ForMember(a => a.Categories, option => option.MapFrom(tbl => tbl.Categories))
+                .ForMember(a => a.Photos, option => option.MapFrom(tbl => tbl.Photos))
+                .ForMember(a => a.Menus, option => option.MapFrom(tbl => tbl.Menus))
+                .ForMember(a => a.Vouchers, option => option.MapFrom(tbl => tbl.Vouchers))
                 ;
-            CreateMap<Room, AllRoomOutput>()
-                .ForMember(a => a.CategoryName, option => option.MapFrom(tbl => tbl.Category.CategoryName))
-                .ForMember(a => a.Quanity, option => option.MapFrom(tbl => tbl.Category.Quanity))
-                ;
+            CreateMap<Photo, AHotelPhotosOutput>();
+            CreateMap<Menu, AHotelMenuOutput>();
+            CreateMap<Voucher, AHotelVouchersOutput>();
+
             //
             CreateMap<NewInboundUser, InboundUser>()
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))

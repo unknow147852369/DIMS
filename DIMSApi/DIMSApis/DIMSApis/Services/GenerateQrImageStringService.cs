@@ -43,11 +43,11 @@ namespace DIMSApis.Services
 
         }
 
-        public void GetQrDetail(VertifyQrInput qri, out string bookingID, out string RoomID, out string RandomString)
+        public void GetQrDetail(string QrContent, out string bookingID, out string RoomID, out string RandomString)
         {
             try
             {
-                var token = qri.QrContent;
+                var token =QrContent;
                 var item = Base64Decode(token);
                 var ls = item.Split('+').ToList();
                 bookingID = ls[1];

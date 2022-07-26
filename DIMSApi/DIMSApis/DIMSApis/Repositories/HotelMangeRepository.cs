@@ -345,21 +345,85 @@ namespace DIMSApis.Repositories
             }
         }
 
-        public async Task<Hotel> GetFullHotelDetail(int hotelId)
+        public async Task<AHotelOutput> GetFullHotelDetail(int hotelId)
         {
-            var hotels = await _context.Hotels
+            var hotel = await _context.Hotels
                 .Include(p => p.Photos)
                 .Include(p => p.Vouchers)
                 .Include(h => h.HotelType)
+                .Include(m => m.Menus)
                 .Include(c => c.Categories).ThenInclude(r => r.Rooms)
                 .Include(c => c.Categories).ThenInclude(r => r.Photos)
+                .Include(c => c.Categories).ThenInclude(r => r.SpecialPrices)
                 .Include(w => w.WardNavigation)
                 .Include(d => d.DistrictNavigation)
                 .Include(pr => pr.ProvinceNavigation)
                 .Where(op => op.HotelId == hotelId)
                 .SingleOrDefaultAsync();
 
-            return hotels;
+            var returnHotel = _mapper.Map<AHotelOutput>(hotel);
+
+            return returnHotel;
+        }
+
+        public async Task<string> RemoveAVoucher(int voucherId)
+        {
+            try
+            {
+                var item = await _context.Vouchers
+                        .Where(op => op.VoucherId == voucherId).SingleOrDefaultAsync();
+                if(item == null) { return "voucher not exist"; }
+                item.Status = false;
+
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public async Task<string> AddVoucher(AhotelVoucherCreate newVoucher)
+        {
+            try
+            {
+                var voucher = _mapper.Map<Voucher>(newVoucher);
+                await _context.AddRangeAsync(voucher);
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public async Task<string> UpdateAVoucher(AHotelVouchersInput newVoucher)
+        {
+            try
+            {
+                var item = await _context.Vouchers
+                           .Where(op => op.VoucherId == newVoucher.VoucherId && op.HotelId == newVoucher.HotelId).SingleOrDefaultAsync();
+                if(item == null) { return "VOucher not exist in hotel"; }
+                _mapper.Map(newVoucher,item);
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+
+        public async Task<IEnumerable<Voucher>> GetListVouchers(int hotelId)
+        {
+            var vpuchers = await _context.Vouchers
+                .Where(op => op.HotelId == hotelId).ToListAsync();
+            if (vpuchers.Count == 0) { return null; }
+            return vpuchers;
         }
     }
 }

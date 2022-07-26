@@ -28,6 +28,7 @@ namespace DIMSApis.Controllers
             if (check == null) { return BadRequest(new DataRespone { Message = "Empty" }); }
             return Ok(check);
         }
+        //
 
         [HttpGet("List-Hotels")]
         public async Task<IActionResult> GetListHotels()
@@ -352,6 +353,72 @@ namespace DIMSApis.Controllers
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var check = await _hotel.RemoveARoom(RoomId);
+            if (check == null) { return BadRequest("Not Found"); }
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "Remove success" });
+            }
+            else if (check.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "Remove success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "Remove fail" + check });
+            }
+        }
+        //
+        [HttpGet("List-Vouchers")]
+        public async Task<IActionResult> GetListVouchers(int hotelId)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _hotel.GetListVouchers(hotelId);
+            if (check == null) { return BadRequest(new DataRespone { Message = "Not found" }); }
+            return Ok(check);
+        }
+
+        [HttpPut("Update-A-Voucher")]
+        public async Task<IActionResult> UpdateAVoucher(AHotelVouchersInput newVoucher)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _hotel.UpdateAVoucher(newVoucher);
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "Update success" });
+            }
+            else if (check.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "Update success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "Update fail" + check });
+            }
+        }
+        [HttpPost("Add-A-Voucher")]
+        public async Task<IActionResult> AddVoucher(AhotelVoucherCreate newVoucher)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _hotel.AddVoucher(newVoucher);
+            if (check == null) { return BadRequest("Not Found"); }
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "Add success" });
+            }
+            else if (check.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "Add success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "Add fail " + check });
+            }
+        }
+        [HttpDelete("Remove-A-Vocuher")]
+        public async Task<IActionResult> RemoveAVoucher(int VoucherId)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _hotel.RemoveAVoucher(VoucherId);
             if (check == null) { return BadRequest("Not Found"); }
             if (check.Equals("1"))
             {

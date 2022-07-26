@@ -125,33 +125,39 @@ namespace DIMSApis.Repositories
             return null;
         }
 
-        public async Task<string> vertifyQrContent(VertifyQrInput qrIn)
+        public async Task<string> vertifyQrContent(int HotelId, string RoomName, string QrContent)
         {
-            var condition = "";
-            string BookingId, RoomId,RandomString;
-            _generateqr.GetQrDetail(qrIn, out BookingId, out RoomId,out RandomString);
-            var qrvertify = await _context.Qrs
-                .Include(b => b.BookingDetail).ThenInclude(r => r.Room)
-                .Include(b => b.BookingDetail).ThenInclude(a => a.Booking)
-                .Where(c => c.BookingDetail.BookingId.Equals(int.Parse(BookingId))
-                && c.BookingDetail.RoomId.Equals(int.Parse(RoomId))
-                && c.Status == true)
-                .FirstOrDefaultAsync();
-
-            if (qrvertify != null)
+            try
             {
-                if (qrvertify.BookingDetail.Booking.HotelId.Equals(qrIn.HotelId)
-                    && qrvertify.BookingDetail.Room.RoomName.Equals(qrIn.RoomName.Trim()))
+                var condition = "";
+                string BookingId, RoomId, RandomString;
+                _generateqr.GetQrDetail(QrContent, out BookingId, out RoomId, out RandomString);
+                var qrvertify = await _context.Qrs
+                    .Include(b => b.BookingDetail).ThenInclude(r => r.Room)
+                    .Include(b => b.BookingDetail).ThenInclude(a => a.Booking)
+                    .Where(c => c.BookingDetail.BookingId.Equals(int.Parse(BookingId))
+                    && c.BookingDetail.RoomId.Equals(int.Parse(RoomId))
+                    && c.Status == true)
+                    .FirstOrDefaultAsync();
+
+                if (qrvertify != null)
                 {
-                    condition = "1";
+                    if (qrvertify.BookingDetail.Booking.HotelId.Equals(HotelId)
+                        && qrvertify.BookingDetail.Room.RoomName.Equals(RoomName.Trim()))
+                    {
+                        condition = "1";
+                    }
+                    else
+                    {
+                        condition = "0";
+                    }
                 }
-                else
-                {
-                    condition = "0";
-                }
+                else { condition = "wrong infrom"; }
+                return condition;
+            }catch (Exception ex)
+            {
+                return "wrong infrom";
             }
-            else { condition = "wrong infrom"; }
-            return condition;
         }
     }
 }
