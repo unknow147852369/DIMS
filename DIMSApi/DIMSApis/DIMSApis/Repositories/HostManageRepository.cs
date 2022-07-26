@@ -487,6 +487,7 @@ namespace DIMSApis.Repositories
                 if (check == null || check.QrCheckUp == null) { return "0"; }
                 check.QrCheckUp.Status = false;
                 check.QrCheckUp.CheckOut = DateTime.Now;
+                check.Deposit = check.TotalPrice;
                 await _checkoutmail.SendCheckOutBillEmailAsync(check);
                 check.BookingDetails.ToList().ForEach(q => q.Qr.Status = false);
                 check.Status = false;
@@ -561,6 +562,7 @@ namespace DIMSApis.Repositories
             try
             {
                 var roomBooking = await _context.BookingDetails
+                    .Include(b=>b.Booking)
                     .Include(m => m.BookingDetailMenus.Where(op => op.BookingDetailMenuStatus.Value)).ThenInclude(m => m.Menu)
                     .Where(op => op.BookingDetailId == ex.First().BookingDetailId)
                     .SingleOrDefaultAsync();
@@ -603,6 +605,16 @@ namespace DIMSApis.Repositories
                     await _context.SaveChangesAsync();
                 }
                 roomBooking.ExtraFee = roomBooking.BookingDetailMenus.Sum(s => s.BookingDetailMenuQuanity * s.BookingDetailMenuPrice);
+                roomBooking.Booking.SubTotal = roomBooking.Booking.SubTotal + roomBooking.ExtraFee;
+                if (roomBooking.Booking.VoucherId != null)
+                {
+                    roomBooking.Booking.TotalPrice = Math.Round((double)((roomBooking.Booking.SubTotal - (roomBooking.Booking.SubTotal *roomBooking.Booking.VoucherSale/100))), 2);
+                }
+                else
+                {
+                    roomBooking.Booking.TotalPrice = roomBooking.Booking.SubTotal;
+                }
+                
                 if (await _context.SaveChangesAsync() > 0)
                     return "1";
                 return "3";
@@ -643,6 +655,7 @@ namespace DIMSApis.Repositories
             try
             {
                 var roomBooking = await _context.BookingDetails
+                    .Include(m=>m.Booking)
                     .Include(m => m.BookingDetailMenus.Where(op => op.BookingDetailMenuStatus.Value)).ThenInclude(m => m.Menu)
                     .Where(op => op.BookingDetailId == prEx.First().BookingDetailId)
                     .SingleOrDefaultAsync();
@@ -661,6 +674,16 @@ namespace DIMSApis.Repositories
                     await _context.SaveChangesAsync();
                 }
                 roomBooking.ExtraFee = roomBooking.BookingDetailMenus.Sum(s => s.BookingDetailMenuQuanity * s.BookingDetailMenuPrice);
+                roomBooking.Booking.SubTotal = roomBooking.Booking.SubTotal + roomBooking.ExtraFee;
+                if (roomBooking.Booking.VoucherId != null)
+                {
+                    roomBooking.Booking.TotalPrice = Math.Round((double)((roomBooking.Booking.SubTotal - (roomBooking.Booking.SubTotal * roomBooking.Booking.VoucherSale / 100))), 2);
+                }
+                else
+                {
+                    roomBooking.Booking.TotalPrice = roomBooking.Booking.SubTotal;
+                }
+
                 if (await _context.SaveChangesAsync() > 0)
                     return "1";
                 return "3";
@@ -769,6 +792,21 @@ namespace DIMSApis.Repositories
 
             var returnResult = _mapper.Map<IEnumerable<NewInboundUser>>(CustomerInfo);
             return returnResult;
+        }
+
+        public Task<RoomDetailInfoOutput> GetFullRoomMoneyDetailByDate(int Date)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RoomDetailInfoOutput> GetFullRoomMoneyDetailByMonth(int Month)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RoomDetailInfoOutput> GetFullRoomMoneyDetailByYear(int Year)
+        {
+            throw new NotImplementedException();
         }
     }
 }

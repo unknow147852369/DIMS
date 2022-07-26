@@ -47,20 +47,20 @@ namespace DIMSApis.Services
         }
         private async Task<string> GetHtmlBody(Booking bok)
         {
-            string body = File.ReadAllText(@"Material/HotelCheckOutBill.html");
-            //string body = Material.MaterialMail.HotelBillHtmlCode();
+            //string body = File.ReadAllText(@"Material/HotelCheckOutBill.html");
+            string body = Material.MaterialMail.HotelCheckOutBillCode();
             body = body.Replace("#HOTELNAME#", $"{bok.Hotel.HotelName}");
             body = body.Replace("#LOCATION2#", $"{bok.Email}");
             body = body.Replace("#LOCATION3#", bok.FullName == null ? "" : bok.FullName);
             body = body.Replace("#LOCATION4#", bok.PhoneNumber == null ? "" : bok.PhoneNumber);
-            body = body.Replace("#LOCATION5#", $"{bok.TotalPrice}");
+            body = body.Replace("#LOCATION5#", $"{fomatCurrencyVN(bok.TotalPrice)}");
             body = body.Replace("#BOOKINGID#", $"{bok.BookingId}");
             body = body.Replace("#CHECKIN#", $"{bok.QrCheckUp.CheckIn}");
             body = body.Replace("#CHECKOUT#", $"{bok.QrCheckUp.CheckOut}");
             body = body.Replace("#TOTALDATE#", $"{bok.TotalNight}");
 
-            string inbounuserCode = File.ReadAllText(@"Material/CheckOutInboundUserCodeHTML.txt", Encoding.UTF8);
-            //string inbounuser = Material.MaterialMail.BookingDetailHtmlCode();
+            //string inbounuserCode = File.ReadAllText(@"Material/CheckOutInboundUserCodeHTML.txt", Encoding.UTF8);
+            string inbounuserCode = Material.MaterialMail.CheckOutInboundUserCode();
             var fullUsers = "";
             foreach (var user in bok.InboundUsers)
             {
@@ -74,15 +74,16 @@ namespace DIMSApis.Services
             }
             body = body.Replace("<!--#LOCATIONUSERDETAIL#-->", fullUsers);
 
-            string FeeDetailFirstCode = File.ReadAllText(@"Material/HotelFeeFirstCodeHTML.txt", Encoding.UTF8);
-            string FeeDetailSecondCode = File.ReadAllText(@"Material/HotelFeeSecondCodeHTML.txt", Encoding.UTF8);
-            //string FeeDetailCode = Material.MaterialMail.BookingDetailHtmlCode();
+            //string FeeDetailFirstCode = File.ReadAllText(@"Material/HotelFeeFirstCodeHTML.txt", Encoding.UTF8);
+            //string FeeDetailSecondCode = File.ReadAllText(@"Material/HotelFeeSecondCodeHTML.txt", Encoding.UTF8);
+            string FeeDetailFirstCode = Material.MaterialMail.HotelFeeFirstCode();
+            string FeeDetailSecondCode = Material.MaterialMail.HotelFeeSecondCode();
             var FeeDetail = "";
             foreach (var itemDetail in bok.BookingDetails)
             {
                 var newTxt = FeeDetailFirstCode;
                 newTxt = newTxt.Replace("#ROOMNAME#", $"{itemDetail.Room.RoomName}");
-                newTxt = newTxt.Replace("#ROOMTOTAL#", $"{itemDetail.AveragePrice}");
+                newTxt = newTxt.Replace("#ROOMTOTAL#", $"{fomatCurrencyVN(itemDetail.AveragePrice)}");
                 foreach (var item in itemDetail.BookingDetailMenus)
                 {
                     var newFeeTxt = FeeDetailSecondCode;
@@ -107,6 +108,17 @@ namespace DIMSApis.Services
                 body = body.Replace("#VOUCHER#", "");
             }
 
+            body = body.Replace("#RATE#", "$"+ (bok.CurrencyRate == null ? "23000" : bok.CurrencyRate));
+            double rate = 0;
+            if (bok.CurrencyRate == null)
+            {
+                rate = 23000;
+            }
+            else
+            {
+                rate = (double)bok.CurrencyRate;
+            }
+            body = body.Replace("#USD#", $"${Math.Round((double)(bok.TotalPrice * (1 / (rate)) * 1000),2)}");
             body = body.Replace("#TOTAL#", $"{fomatCurrencyVN(bok.TotalPrice)}");
 
             return body;

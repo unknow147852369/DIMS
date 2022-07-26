@@ -65,6 +65,7 @@ namespace DIMSApis.Configtuations.AutoMap
             //
             CreateMap<LocalPaymentInput, Booking>()
                 .ForMember(a => a.BookingDetails, option => option.MapFrom(tbl => tbl.BookingDetails))
+                .ForMember(a => a.SubTotal, option => option.MapFrom(tbl => tbl.TotalPrice))
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
                 .ForMember(a => a.StartDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.Add(new TimeSpan(14, 00, 0))))
