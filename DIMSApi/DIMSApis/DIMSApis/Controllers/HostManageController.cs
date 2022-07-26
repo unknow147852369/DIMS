@@ -53,7 +53,7 @@ namespace DIMSApis.Controllers
             }
             else
             {
-                return BadRequest("Not found");
+                return BadRequest(check);
             }
         }
         [HttpPut("Update-Clean-Status")]

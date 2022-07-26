@@ -34,5 +34,9 @@ namespace DIMSApis.Interfaces
         Task<HotelCateInfoOutput> GetAHotelAllInfo(int hotelId, int userId);
 
         Task<RoomDetailInfoOutput> GetADetailRoom(int userId, int RoomId, DateTime today);
+
+
+
+
     }
 }

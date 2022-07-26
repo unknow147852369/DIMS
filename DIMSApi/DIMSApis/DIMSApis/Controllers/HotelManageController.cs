@@ -217,10 +217,10 @@ namespace DIMSApis.Controllers
             }
         }
         [HttpDelete("Remove-A-Hotel-Cate")]
-        public async Task<IActionResult> RemoveAHotelCate(int PhotoId)
+        public async Task<IActionResult> RemoveAHotelCate(int categoriID)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var HotelCate = await _hotel.RemoveAHotelCate(PhotoId);
+            var HotelCate = await _hotel.RemoveAHotelCate(categoriID);
             if (HotelCate == null) { return BadRequest("Not Found"); }
             if (HotelCate.Equals("1"))
             {

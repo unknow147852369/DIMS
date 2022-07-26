@@ -16,10 +16,11 @@ namespace DIMSApis.Repositories
         private readonly IFireBaseService _fireBase;
         private readonly IMailQrService _qrmail;
         private readonly IMailBillService _billmail;
+        private readonly IMailCheckOut _checkoutmail;
 
         private string error = "";
 
-        public HostManageRepository(fptdimsContext context, IMapper mapper, IOtherService other, IMailBillService billmail, IMailQrService qrmail, IFireBaseService fireBase, IGenerateQr generateqr)
+        public HostManageRepository(IMailCheckOut checkoutmail, fptdimsContext context, IMapper mapper, IOtherService other, IMailBillService billmail, IMailQrService qrmail, IFireBaseService fireBase, IGenerateQr generateqr)
         {
             _context = context;
             _mapper = mapper;
@@ -28,6 +29,7 @@ namespace DIMSApis.Repositories
             _qrmail = qrmail;
             _fireBase = fireBase;
             _generateqr = generateqr;
+            _checkoutmail = checkoutmail;
         }
 
         public async Task<IEnumerable<HotelOutput>> GetListAllHotel(int userId)
@@ -470,24 +472,34 @@ namespace DIMSApis.Repositories
 
         public async Task<string> CheckOutLocal(int hotelId, int BookingID)
         {
-            var check = await _context.Bookings
-                .Include(q => q.QrCheckUp)
-                .Include(q => q.BookingDetails).ThenInclude(q => q.Qr)
-                .Include(q => q.BookingDetails).ThenInclude(q => q.Room)
-                .Where(op => op.BookingId == BookingID && op.HotelId == hotelId)
-                .SingleOrDefaultAsync();
+            try
+            {
+                var check = await _context.Bookings
+                    .Include(q => q.InboundUsers)
+                    .Include(q => q.QrCheckUp)
+                    .Include(q => q.Hotel)
+                    .Include(q => q.BookingDetails).ThenInclude(q => q.Qr)
+                    .Include(q => q.BookingDetails).ThenInclude(q => q.Room)
+                    .Include(q => q.BookingDetails).ThenInclude(q => q.BookingDetailMenus)
+                    .Where(op => op.BookingId == BookingID && op.HotelId == hotelId)
+                    .SingleOrDefaultAsync();
 
-            if (check == null || check.QrCheckUp == null) { return "0"; }
-            check.QrCheckUp.Status = false;
-            check.QrCheckUp.CheckOut = DateTime.Now;
-            check.BookingDetails.ToList().ForEach(q => q.Qr.Status = false);
-            check.Status = false;
-            check.BookingDetails.ToList().ForEach(q => q.Status = false);
-            check.BookingDetails.ToList().ForEach(q => q.Room.CleanStatus = true);
+                if (check == null || check.QrCheckUp == null) { return "0"; }
+                check.QrCheckUp.Status = false;
+                check.QrCheckUp.CheckOut = DateTime.Now;
+                await _checkoutmail.SendCheckOutBillEmailAsync(check);
+                check.BookingDetails.ToList().ForEach(q => q.Qr.Status = false);
+                check.Status = false;
+                check.BookingDetails.ToList().ForEach(q => q.Status = false);
+                check.BookingDetails.ToList().ForEach(q => q.Room.CleanStatus = true);
 
-            if (await _context.SaveChangesAsync() > 0)
-                return "1";
-            return "3";
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
 
         public async Task<string> UpdateCleanStatus(int RoomID)
