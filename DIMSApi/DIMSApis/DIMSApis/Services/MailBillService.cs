@@ -5,6 +5,7 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using System.Globalization;
 using System.Text;
 
 namespace DIMSApis.Services
@@ -33,8 +34,11 @@ namespace DIMSApis.Services
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
         }
-
-        private async Task<string> GetHtmlBody(Booking bok, string qrMainLink)
+        private string fomatCurrencyVN(double? value)
+        {
+            return string.Format(new CultureInfo("vi-VN"), "{0:#,##0.00}", value * 1000);
+        }
+       private async Task<string> GetHtmlBody(Booking bok, string qrMainLink)
         {
             //string body = File.ReadAllText(@"Material/HotelBill.html");
             string body = Material.MaterialMail.HotelBillHtmlCode();
@@ -50,13 +54,13 @@ namespace DIMSApis.Services
             body = body.Replace("#LOCATION10#", $"{bok.PaymentMethod}");
             body = body.Replace("#LOCATION111#", $"{bok.CreateDate}");
             body = body.Replace("#LOCATION11#", $"{bok.TotalNight}");
-            body = body.Replace("#LOCATION12#", $"{bok.SubTotal}");
+            body = body.Replace("#LOCATION12#", $"{fomatCurrencyVN(bok.SubTotal)}");
 
             if (bok.VoucherId != null)
             {
                 body = body.Replace("#LOCATION9#", $"{bok.Voucher.VoucherName}");
                 body = body.Replace("#LOCATION13#", $"{bok.Voucher.VoucherSale}%");
-                body = body.Replace("#LOCATION14#", $"{bok.VoucherDiscoundPrice}");
+                body = body.Replace("#LOCATION14#", $"{fomatCurrencyVN(bok.VoucherDiscoundPrice)}");
             }
             else
             {
@@ -65,8 +69,8 @@ namespace DIMSApis.Services
                 body = body.Replace("#LOCATION14#", "");
             }
 
-            body = body.Replace("#LOCATION15#", $"{bok.TotalPrice}");
-            body = body.Replace("#LOCATION16#", $"{bok.Deposit}");
+            body = body.Replace("#LOCATION15#", $"{fomatCurrencyVN(bok.TotalPrice)}");
+            body = body.Replace("#LOCATION16#", $"{fomatCurrencyVN(bok.Deposit)}");
 
             //string lines = File.ReadAllText(@"Material/BokingHotelDetailCodeHTML.txt", Encoding.UTF8);
             string lines = Material.MaterialMail.BookingDetailHtmlCode();
@@ -76,7 +80,7 @@ namespace DIMSApis.Services
                 var newTxt = lines;
                 newTxt = newTxt.Replace("#DETAIL1#", $"{itemDetail.Room.RoomName}");
                 newTxt = newTxt.Replace("#DETAIL2#", $"{itemDetail.Room.Category.CategoryName}");
-                newTxt = newTxt.Replace("#DETAIL3#", $"${itemDetail.AveragePrice}");
+                newTxt = newTxt.Replace("#DETAIL3#", $"{fomatCurrencyVN(itemDetail.AveragePrice)}");
                 fullDetal = fullDetal + newTxt + "\n";
             }
             body = body.Replace("<!--#LOCATIONDETAIL#-->", fullDetal);

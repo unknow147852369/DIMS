@@ -22,7 +22,7 @@ namespace DIMSApis.Services
             });
 
 
-            var amount = (long?)((bok.TotalPrice * (1 / bok.CurrencyRate) * 1000)*100);
+            var amount = (long?)((bok.Deposit * (1 / bok.CurrencyRate) * 1000)*100);
             var chage = charges.Create(new ChargeCreateOptions
             {
                 Amount = amount,
@@ -33,6 +33,7 @@ namespace DIMSApis.Services
                 Metadata = new Dictionary<string, string>()
                 {
                     {"BookingId" , bok.BookingId.ToString() },
+                    {"Deposit" , bok.Deposit.ToString() },
                     {"RealTotal",  bok.TotalPrice.ToString() },
                 },
 
