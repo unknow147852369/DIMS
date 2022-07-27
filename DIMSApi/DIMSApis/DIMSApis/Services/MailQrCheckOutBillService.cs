@@ -53,7 +53,6 @@ namespace DIMSApis.Services
             body = body.Replace("#LOCATION2#", $"{bok.Email}");
             body = body.Replace("#LOCATION3#", bok.FullName == null ? "" : bok.FullName);
             body = body.Replace("#LOCATION4#", bok.PhoneNumber == null ? "" : bok.PhoneNumber);
-            body = body.Replace("#LOCATION5#", $"{fomatCurrencyVN(bok.TotalPrice)}");
             body = body.Replace("#BOOKINGID#", $"{bok.BookingId}");
             body = body.Replace("#CHECKIN#", $"{bok.QrCheckUp.CheckIn}");
             body = body.Replace("#CHECKOUT#", $"{bok.QrCheckUp.CheckOut}");
@@ -68,7 +67,7 @@ namespace DIMSApis.Services
                 newTxt = newTxt.Replace("#NAME#", $"{user.UserName}");
                 newTxt = newTxt.Replace("#SEX#", $"{user.UserSex}");
                 newTxt = newTxt.Replace("#IDCARD#", $"{user.UserIdCard}");
-                newTxt = newTxt.Replace("#BIRTHDAY#", $"{user.UserBirthday}");
+                newTxt = newTxt.Replace("#BIRTHDAY#", $"{user.UserBirthday.Value.ToShortDateString()}");
                 newTxt = newTxt.Replace("#ADDRESS#", $"{user.UserAddress}");
                 fullUsers = fullUsers + newTxt + "\n";
             }
@@ -108,18 +107,22 @@ namespace DIMSApis.Services
                 body = body.Replace("#VOUCHER#", "");
             }
 
-            body = body.Replace("#RATE#", "$"+ (bok.CurrencyRate == null ? "23000" : bok.CurrencyRate));
+           
             double rate = 0;
             if (bok.CurrencyRate == null)
             {
-                rate = 23000;
+                body = body.Replace("#RATE#", "");
+                body = body.Replace("#USD#", "");
             }
             else
             {
                 rate = (double)bok.CurrencyRate;
+                body = body.Replace("#RATE#", "$" + rate);
+                body = body.Replace("#USD#", $"${Math.Round((double)(bok.TotalPrice * (1 / (rate)) * 1000), 2)}");
             }
-            body = body.Replace("#USD#", $"${Math.Round((double)(bok.TotalPrice * (1 / (rate)) * 1000),2)}");
+            
             body = body.Replace("#TOTAL#", $"{fomatCurrencyVN(bok.TotalPrice)}");
+            body = body.Replace("#LOCATION5#", $"{fomatCurrencyVN(bok.TotalPrice)}");
 
             return body;
         }

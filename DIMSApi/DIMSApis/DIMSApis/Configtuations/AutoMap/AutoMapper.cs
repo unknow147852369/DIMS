@@ -9,6 +9,23 @@ namespace DIMSApis.Configtuations.AutoMap
     {
         public AutoMapper()
         {
+
+            CreateMap<Hotel,FullRoomMoneyDetailSumaryOutput>()
+                .ForMember(a => a.TotalPriceByfilter, option => option.MapFrom(tbl => tbl.Bookings.Sum(s=>s.TotalPrice)))
+                .ForMember(a => a.Bookings, option => option.MapFrom(tbl => tbl.Bookings))
+                ;
+            CreateMap<Booking, FullRoomMoneyDetailFirstOutput>()
+                .ForMember(a => a.BookingDetails, option => option.MapFrom(tbl => tbl.BookingDetails))
+                .ForMember(a => a.InboundUsers, option => option.MapFrom(tbl => tbl.InboundUsers))
+                ;
+            CreateMap<InboundUser, FullRoomMoneyDetailThirdOutput>()
+                ;
+            CreateMap<BookingDetail, FullRoomMoneyDetailSecondOutput>()
+                .ForMember(a => a.BookingDetailMenus, option => option.MapFrom(tbl => tbl.BookingDetailMenus))
+                ;
+            CreateMap<BookingDetailMenu, FullRoomMoneyDetailMenusOutput>()
+                ;
+            //
             CreateMap<AhotelVoucherCreate, Voucher>()
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 ;
@@ -65,13 +82,14 @@ namespace DIMSApis.Configtuations.AutoMap
             //
             CreateMap<LocalPaymentInput, Booking>()
                 .ForMember(a => a.BookingDetails, option => option.MapFrom(tbl => tbl.BookingDetails))
-                .ForMember(a => a.SubTotal, option => option.MapFrom(tbl => tbl.TotalPrice))
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
                 .ForMember(a => a.StartDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.Add(new TimeSpan(14, 00, 0))))
                 .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.AddDays((double)(tbl.TotalNight)).Add(new TimeSpan(12, 00, 0))));
                 ;
-            CreateMap<PaymentProcessingDetailInput, BookingDetail>()
+            CreateMap<LocalPaymentBookingdetailInput, BookingDetail>()
+                .ForMember(a => a.AveragePrice, option => option.MapFrom(tbl => tbl.TotalRoomPrice))
+                .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 ;
             //
             CreateMap<Room, RoomDetailInfoOutput>()

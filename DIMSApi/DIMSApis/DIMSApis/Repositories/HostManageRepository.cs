@@ -375,35 +375,36 @@ namespace DIMSApis.Repositories
                  ;
 
             var data = await roomprice.ToListAsync();
+            bok.SubTotal = ppi.BookingDetails.Sum(s => s.TotalRoomPrice);
+            bok.TotalPrice = ppi.BookingDetails.Sum(s => s.TotalRoomPrice);
             foreach (BookingDetail r in bok.BookingDetails)
             {
-                var detail = data
-                    .Where(op => op.RoomId == r.RoomId);
+                //var detail = data
+                //    .Where(op => op.RoomId == r.RoomId);
 
-                var specialDate = detail.Select(s => s.Category.SpecialPrices);
-                var sumSpecialPrice = specialDate.Select(s => s.Sum(op => op.SpecialPrice1));
-                var normalDate = bok.TotalNight - specialDate.Select(s => s.Count()).First();
-                var normalPrice = detail.Sum(op => op.RoomPrice);
-                var AveragePrice = (normalDate * normalPrice) + sumSpecialPrice.First();
-                r.AveragePrice = AveragePrice;
+                //var specialDate = detail.Select(s => s.Category.SpecialPrices);
+                //var sumSpecialPrice = specialDate.Select(s => s.Sum(op => op.SpecialPrice1));
+                //var normalDate = bok.TotalNight - specialDate.Select(s => s.Count()).First();
+                //var normalPrice = detail.Sum(op => op.RoomPrice);
+                //var AveragePrice = (normalDate * normalPrice) + sumSpecialPrice.First();
+
                 r.StartDate = bok.StartDate;
                 r.EndDate = bok.EndDate;
-                r.Status = true;
                 r.BookingDetailPrices.Add(new BookingDetailPrice
                 {
-                    Price = normalPrice,
+                    Price = Math.Round((double)(r.AveragePrice/bok.TotalNight),2),
                     Status = true,
                 });
-                var oj = specialDate.ToList()[0];
-                foreach (var item in oj)
-                {
-                    r.BookingDetailPrices.Add(new BookingDetailPrice
-                    {
-                        Date = item.SpecialDate,
-                        Price = item.SpecialPrice1,
-                        Status = true,
-                    });
-                }
+                //var oj = specialDate.ToList()[0];
+                //foreach (var item in oj)
+                //{
+                //    r.BookingDetailPrices.Add(new BookingDetailPrice
+                //    {
+                //        Date = item.SpecialDate,
+                //        Price = item.SpecialPrice1,
+                //        Status = true,
+                //    });
+                //}
             }
 
             bok.UserId = userId;
@@ -794,19 +795,46 @@ namespace DIMSApis.Repositories
             return returnResult;
         }
 
-        public Task<RoomDetailInfoOutput> GetFullRoomMoneyDetailByDate(int Date)
+        public async Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyDetailByDate(int hotelID, DateTime Date)
         {
-            throw new NotImplementedException();
+            var lsHotelBooked = await _context.Hotels
+                .Include(tbl => tbl.Bookings.Where(op => (op.EndDate.Value.Date >= Date.Date && op.StartDate.Value.Date <= Date.Date) && op.QrCheckUp.CheckOut != null && op.QrCheckUp.Status == false))
+                .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.InboundUsers)
+                .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.QrCheckUp)
+                .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.BookingDetails).ThenInclude(tbl => tbl.BookingDetailMenus)
+                .Where(op => op.HotelId == hotelID)
+                .SingleOrDefaultAsync();
+            var returnLs = _mapper.Map<FullRoomMoneyDetailSumaryOutput>(lsHotelBooked);
+
+            return returnLs;
         }
 
-        public Task<RoomDetailInfoOutput> GetFullRoomMoneyDetailByMonth(int Month)
+        public async Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyDetailByMonth(int hotelID, int Month, int Year)
         {
-            throw new NotImplementedException();
+            var lsHotelBooked = await _context.Hotels
+                .Include(tbl => tbl.Bookings.Where(op => op.EndDate.Value.Month == Month && op.EndDate.Value.Year == Year && op.QrCheckUp.CheckOut != null && op.QrCheckUp.Status == false))
+                .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.InboundUsers)
+                .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.QrCheckUp)
+                .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.BookingDetails).ThenInclude(tbl => tbl.BookingDetailMenus)
+                .Where(op => op.HotelId == hotelID)
+                .SingleOrDefaultAsync();
+            var returnLs = _mapper.Map<FullRoomMoneyDetailSumaryOutput>(lsHotelBooked);
+
+            return returnLs;
         }
 
-        public Task<RoomDetailInfoOutput> GetFullRoomMoneyDetailByYear(int Year)
+        public async Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyDetailByYear(int hotelID,int Year)
         {
-            throw new NotImplementedException();
+            var lsHotelBooked = await _context.Hotels
+                .Include(tbl => tbl.Bookings.Where(op => op.EndDate.Value.Year == Year && op.QrCheckUp.CheckOut != null && op.QrCheckUp.Status == false))
+                .Include(tbl=>tbl.Bookings).ThenInclude(tbl => tbl.InboundUsers)
+                .Include(tbl=>tbl.Bookings).ThenInclude(tbl => tbl.QrCheckUp)
+                .Include(tbl=>tbl.Bookings).ThenInclude(tbl => tbl.BookingDetails).ThenInclude(tbl => tbl.BookingDetailMenus)
+                .Where(op=>op.HotelId ==hotelID)
+                .SingleOrDefaultAsync();
+            var returnLs = _mapper.Map<FullRoomMoneyDetailSumaryOutput>(lsHotelBooked);
+
+            return returnLs;
         }
     }
 }

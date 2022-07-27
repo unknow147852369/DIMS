@@ -231,6 +231,30 @@ namespace DIMSApis.Controllers
             return Ok(HotelRoom);
         }
 
+        [HttpGet("Get-Money-info-By-Year")]
+        public async Task<IActionResult> GetFullRoomMoneyDetailByYear(int hotelId,int year)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _host.GetFullRoomMoneyDetailByYear(hotelId, year);
+            if(check == null  && check.Bookings.Count()==0) { return BadRequest(new DataRespone { Message = "No date to calculate!" }); }
+            return Ok(check);
+        }
 
+        [HttpGet("Get-Money-info-By-Month")]
+        public async Task<IActionResult> GetFullRoomMoneyDetailByMonth(int hotelId, int mounth,int year)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _host.GetFullRoomMoneyDetailByMonth(hotelId, mounth,year);
+            if (check == null && check.Bookings.Count() == 0) { return BadRequest(new DataRespone { Message = "No date to calculate!" }); }
+            return Ok(check);
+        }
+        [HttpGet("Get-Money-info-By-Date")]
+        public async Task<IActionResult> GetFullRoomMoneyDetailByDate(int hotelId, DateTime date)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _host.GetFullRoomMoneyDetailByDate(hotelId, date);
+            if (check == null && check.Bookings.Count() == 0) { return BadRequest(new DataRespone { Message = "No date to calculate!" }); }
+            return Ok(check);
+        }
     }
 }

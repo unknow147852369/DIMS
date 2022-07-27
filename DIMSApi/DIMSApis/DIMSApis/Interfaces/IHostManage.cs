@@ -36,9 +36,9 @@ namespace DIMSApis.Interfaces
         Task<RoomDetailInfoOutput> GetADetailRoom(int userId, int RoomId, DateTime today);
 
 
-        Task<RoomDetailInfoOutput> GetFullRoomMoneyDetailByDate(int Date);
-        Task<RoomDetailInfoOutput> GetFullRoomMoneyDetailByMonth(int Month);
-        Task<RoomDetailInfoOutput> GetFullRoomMoneyDetailByYear(int Year);
+        Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyDetailByDate(int hotelID,DateTime Date);
+        Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyDetailByMonth(int hotelID, int Month,int year);
+        Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyDetailByYear(int  hotelID,int Year);
 
 
 

@@ -23,8 +23,8 @@
         public double? Deposit { get; set; }
         public bool? Status { get; set; }
 
-        //public virtual ICollection<BookingDetail> BookingDetails { get; set; }
-        //public virtual ICollection<InboundUser> InboundUsers { get; set; }
+        public virtual ICollection<FullRoomMoneyDetailSecondOutput> BookingDetails { get; set; }
+        public virtual ICollection<FullRoomMoneyDetailThirdOutput> InboundUsers { get; set; }
 
 
     }
