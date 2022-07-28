@@ -231,11 +231,20 @@ namespace DIMSApis.Controllers
             return Ok(HotelRoom);
         }
 
-        [HttpGet("Get-Money-info-By-Filter")]
+        [HttpGet("Get-Money-Checkout-info-By-Filter")]
         public async Task<IActionResult> GetFullRoomMoneyDetailByDate(int hotelId, DateTime startDate ,DateTime endDate)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var check = await _host.GetFullRoomMoneyDetailByFilter(hotelId, startDate,endDate);
+            if (check == null && check.Bookings.Count() == 0) { return BadRequest(new DataRespone { Message = "No date to calculate!" }); }
+            return Ok(check);
+        }
+
+        [HttpGet("Get-Money-not-Checkout-info-By-Filter")]
+        public async Task<IActionResult> GetFullRoomMoneyNotCheckOutDetailByDate(int hotelId, DateTime startDate, DateTime endDate)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _host.GetFullRoomMoneyNotCheckOutDetailByDate(hotelId, startDate, endDate);
             if (check == null && check.Bookings.Count() == 0) { return BadRequest(new DataRespone { Message = "No date to calculate!" }); }
             return Ok(check);
         }

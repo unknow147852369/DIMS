@@ -607,14 +607,9 @@ namespace DIMSApis.Repositories
                 }
                 roomBooking.ExtraFee = roomBooking.BookingDetailMenus.Sum(s => s.BookingDetailMenuQuanity * s.BookingDetailMenuPrice);
                 roomBooking.Booking.SubTotal = roomBooking.Booking.SubTotal + roomBooking.ExtraFee;
-                if (roomBooking.Booking.VoucherId != null)
-                {
-                    roomBooking.Booking.TotalPrice = Math.Round((double)((roomBooking.Booking.SubTotal - (roomBooking.Booking.SubTotal *roomBooking.Booking.VoucherSale/100))), 2);
-                }
-                else
-                {
-                    roomBooking.Booking.TotalPrice = roomBooking.Booking.SubTotal;
-                }
+
+                roomBooking.Booking.TotalPrice = roomBooking.Booking.SubTotal;
+                
                 
                 if (await _context.SaveChangesAsync() > 0)
                     return "1";
@@ -676,14 +671,8 @@ namespace DIMSApis.Repositories
                 }
                 roomBooking.ExtraFee = roomBooking.BookingDetailMenus.Sum(s => s.BookingDetailMenuQuanity * s.BookingDetailMenuPrice);
                 roomBooking.Booking.SubTotal = roomBooking.Booking.SubTotal + roomBooking.ExtraFee;
-                if (roomBooking.Booking.VoucherId != null)
-                {
-                    roomBooking.Booking.TotalPrice = Math.Round((double)((roomBooking.Booking.SubTotal - (roomBooking.Booking.SubTotal * roomBooking.Booking.VoucherSale / 100))), 2);
-                }
-                else
-                {
-                    roomBooking.Booking.TotalPrice = roomBooking.Booking.SubTotal;
-                }
+                roomBooking.Booking.Deposit = roomBooking.Booking.Deposit + roomBooking.ExtraFee;
+                roomBooking.Booking.TotalPrice = roomBooking.Booking.SubTotal;
 
                 if (await _context.SaveChangesAsync() > 0)
                     return "1";
@@ -812,5 +801,21 @@ namespace DIMSApis.Repositories
             return returnLs;
         }
 
+        public async Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyNotCheckOutDetailByDate(int hotelId, DateTime startDate, DateTime endDate)
+        {
+            var lsHotelBooked = await _context.Hotels
+                .Include(tbl => tbl.Bookings
+                .Where(op => op.QrCheckUp.CheckOut == null )
+                .Where(op => op.EndDate.Value.Date >= startDate.Date && op.EndDate.Value.Date <= endDate.Date)
+                 )
+                .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.InboundUsers)
+                .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.QrCheckUp)
+                .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.BookingDetails).ThenInclude(tbl => tbl.BookingDetailMenus)
+                .Where(op => op.HotelId == hotelId)
+                .SingleOrDefaultAsync();
+            var returnLs = _mapper.Map<FullRoomMoneyDetailSumaryOutput>(lsHotelBooked);
+
+            return returnLs;
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace DIMSApis.Configtuations.AutoMap
         {
 
             CreateMap<Hotel,FullRoomMoneyDetailSumaryOutput>()
-                .ForMember(a => a.TotalPriceByfilter, option => option.MapFrom(tbl => tbl.Bookings.Sum(s=>s.TotalPrice)))
+                .ForMember(a => a.TotalPriceByfilter, option => option.MapFrom(tbl => tbl.Bookings.Sum(s=>s.Deposit)))
                 .ForMember(a => a.Bookings, option => option.MapFrom(tbl => tbl.Bookings))
                 ;
             CreateMap<Booking, FullRoomMoneyDetailFirstOutput>()

@@ -37,6 +37,7 @@ namespace DIMSApis.Interfaces
 
 
         Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyDetailByFilter(int hotelID, DateTime startDate, DateTime endDate);
+        Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyNotCheckOutDetailByDate(int hotelId, DateTime startDate, DateTime endDate);
 
     }
 }
