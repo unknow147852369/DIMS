@@ -806,7 +806,7 @@ namespace DIMSApis.Repositories
             var lsHotelBooked = await _context.Hotels
                 .Include(tbl => tbl.Bookings
                 .Where(op => op.QrCheckUp.CheckOut == null )
-                .Where(op => op.QrCheckUp.CheckOut.Value.Date >= startDate.Date && op.QrCheckUp.CheckOut.Value.Date <= endDate.Date)
+                .Where(op => op.QrCheckUp.CheckIn.Value.Date >= startDate.Date && op.QrCheckUp.CheckIn.Value.Date <= endDate.Date)
                  )
                 .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.InboundUsers)
                 .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.QrCheckUp)
