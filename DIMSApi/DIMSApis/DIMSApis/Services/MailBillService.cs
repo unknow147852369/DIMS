@@ -36,7 +36,7 @@ namespace DIMSApis.Services
         }
         private string fomatCurrencyVN(double? value)
         {
-            return string.Format(new CultureInfo("vi-VN"), "{0:#,##0.00}", value * 1000);
+            return string.Format(new CultureInfo("vi-VN"), "{0:#,##0 VND}", value * 1000);
         }
        private async Task<string> GetHtmlBody(Booking bok, string qrMainLink)
         {

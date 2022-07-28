@@ -795,10 +795,13 @@ namespace DIMSApis.Repositories
             return returnResult;
         }
 
-        public async Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyDetailByDate(int hotelID, DateTime Date)
+        public async Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyDetailByFilter(int hotelID, DateTime startDate, DateTime endDate)
         {
             var lsHotelBooked = await _context.Hotels
-                .Include(tbl => tbl.Bookings.Where(op => (op.EndDate.Value.Date >= Date.Date && op.StartDate.Value.Date <= Date.Date) && op.QrCheckUp.CheckOut != null && op.QrCheckUp.Status == false))
+                .Include(tbl => tbl.Bookings
+                .Where(op=>op.QrCheckUp.CheckOut != null && op.QrCheckUp.Status == false)
+                .Where(op => op.EndDate.Value.Date >= startDate.Date && op.EndDate.Value.Date <= endDate.Date)
+                 )
                 .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.InboundUsers)
                 .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.QrCheckUp)
                 .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.BookingDetails).ThenInclude(tbl => tbl.BookingDetailMenus)
@@ -809,32 +812,5 @@ namespace DIMSApis.Repositories
             return returnLs;
         }
 
-        public async Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyDetailByMonth(int hotelID, int Month, int Year)
-        {
-            var lsHotelBooked = await _context.Hotels
-                .Include(tbl => tbl.Bookings.Where(op => op.EndDate.Value.Month == Month && op.EndDate.Value.Year == Year && op.QrCheckUp.CheckOut != null && op.QrCheckUp.Status == false))
-                .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.InboundUsers)
-                .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.QrCheckUp)
-                .Include(tbl => tbl.Bookings).ThenInclude(tbl => tbl.BookingDetails).ThenInclude(tbl => tbl.BookingDetailMenus)
-                .Where(op => op.HotelId == hotelID)
-                .SingleOrDefaultAsync();
-            var returnLs = _mapper.Map<FullRoomMoneyDetailSumaryOutput>(lsHotelBooked);
-
-            return returnLs;
-        }
-
-        public async Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyDetailByYear(int hotelID,int Year)
-        {
-            var lsHotelBooked = await _context.Hotels
-                .Include(tbl => tbl.Bookings.Where(op => op.EndDate.Value.Year == Year && op.QrCheckUp.CheckOut != null && op.QrCheckUp.Status == false))
-                .Include(tbl=>tbl.Bookings).ThenInclude(tbl => tbl.InboundUsers)
-                .Include(tbl=>tbl.Bookings).ThenInclude(tbl => tbl.QrCheckUp)
-                .Include(tbl=>tbl.Bookings).ThenInclude(tbl => tbl.BookingDetails).ThenInclude(tbl => tbl.BookingDetailMenus)
-                .Where(op=>op.HotelId ==hotelID)
-                .SingleOrDefaultAsync();
-            var returnLs = _mapper.Map<FullRoomMoneyDetailSumaryOutput>(lsHotelBooked);
-
-            return returnLs;
-        }
     }
 }
