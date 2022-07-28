@@ -1,4 +1,5 @@
 ﻿using DIMSApis.Interfaces;
+using DIMSApis.Models.Data;
 using DIMSApis.Models.Helper;
 using DIMSApis.Models.Input;
 using Microsoft.AspNetCore.Authorization;
@@ -246,6 +247,24 @@ namespace DIMSApis.Controllers
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var check = await _host.GetFullRoomMoneyNotCheckOutDetailByDate(hotelId, startDate, endDate);
             if (check == null && check.Bookings.Count() == 0) { return BadRequest(new DataRespone { Message = "No date to calculate!" }); }
+            return Ok(check);
+        }
+
+        [HttpGet("Get-All-Book-By-Page")]
+        public async Task<IActionResult> HostgetListBookingByPage(int hotelId,int currentPage,int PageSize)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _host.HostgetListBookingByPage<Booking>(hotelId, currentPage, PageSize);
+            if (check == null && check.Result.Count() == 0) { return BadRequest(new DataRespone { Message = "No Data!" }); }
+            return Ok(check);
+        }
+
+        [HttpGet("Get-A-Book-Full-Detail")]
+        public async Task<IActionResult> HostGetABookingFullDetail(int  bookingID)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _host.HostGetABookingFullDetail(bookingID);
+            if (check == null) { return BadRequest(new DataRespone { Message = "No Data!" }); }
             return Ok(check);
         }
     }

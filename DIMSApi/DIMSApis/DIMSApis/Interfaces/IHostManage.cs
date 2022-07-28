@@ -1,4 +1,5 @@
 ﻿using DIMSApis.Models.Data;
+using DIMSApis.Models.Helper;
 using DIMSApis.Models.Input;
 using DIMSApis.Models.Output;
 
@@ -39,5 +40,8 @@ namespace DIMSApis.Interfaces
         Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyDetailByFilter(int hotelID, DateTime startDate, DateTime endDate);
         Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyNotCheckOutDetailByDate(int hotelId, DateTime startDate, DateTime endDate);
 
+        Task<Pagination<Booking>> HostgetListBookingByPage<T>(int hotelID,int CurrentPage,int pageSize) where T : class;
+
+        Task<ABookingFullOutput> HostGetABookingFullDetail(int bookingID);
     }
 }

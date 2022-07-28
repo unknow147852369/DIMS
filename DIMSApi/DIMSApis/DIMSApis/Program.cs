@@ -92,6 +92,7 @@ builder.Services.AddScoped<IFireBaseService, FireBaseService>();
 builder.Services.AddScoped<IMailBillService, MailBillService>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 builder.Services.AddScoped<IMailCheckOut, MailQrCheckOutBillService>();
+builder.Services.AddScoped<IPaginationService, PaginationService>();
 //>Add more
 
 var app = builder.Build();

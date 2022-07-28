@@ -9,7 +9,27 @@ namespace DIMSApis.Configtuations.AutoMap
     {
         public AutoMapper()
         {
-
+            CreateMap<Booking, ABookingFullOutput>()
+                .ForMember(a => a.BookingDetails, option => option.MapFrom(tbl => tbl.BookingDetails))
+                .ForMember(a => a.Voucher, option => option.MapFrom(tbl => tbl.Voucher))
+                .ForMember(a => a.QrCheckUp, option => option.MapFrom(tbl => tbl.QrCheckUp))
+                .ForMember(a => a.InboundUsers, option => option.MapFrom(tbl => tbl.InboundUsers))
+                ;
+            CreateMap<QrCheckUp, ABookingFullQRcheckUpOutput>()
+                ;
+            CreateMap<InboundUser, ABookingFullInboundUSersOutput>()
+                ;
+            CreateMap<Voucher, ABookingFullVoucher>()
+                ;
+            CreateMap<BookingDetail, ABookingFullBookingDetailsOutput>()
+                .ForMember(a => a.BookingDetailMenus, option => option.MapFrom(tbl => tbl.BookingDetailMenus))
+                .ForMember(a => a.Qr, option => option.MapFrom(tbl => tbl.Qr))
+                ;
+            CreateMap<BookingDetailMenu, ABookingFullBookingDetailMenuOutput>()
+                ;
+            CreateMap<Qr, ABookingFullBookingDetailQrsOutput>()
+                ;
+            //
             CreateMap<Hotel,FullRoomMoneyDetailSumaryOutput>()
                 .ForMember(a => a.TotalPriceByfilter, option => option.MapFrom(tbl => tbl.Bookings.Sum(s=>s.Deposit)))
                 .ForMember(a => a.Bookings, option => option.MapFrom(tbl => tbl.Bookings))

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DIMSApis.Interfaces;
 using DIMSApis.Models.Data;
+using DIMSApis.Models.Helper;
 using DIMSApis.Models.Input;
 using DIMSApis.Models.Output;
 using Microsoft.EntityFrameworkCore;
@@ -17,10 +18,11 @@ namespace DIMSApis.Repositories
         private readonly IMailQrService _qrmail;
         private readonly IMailBillService _billmail;
         private readonly IMailCheckOut _checkoutmail;
+        private readonly IPaginationService _pagination;
 
         private string error = "";
 
-        public HostManageRepository(IMailCheckOut checkoutmail, fptdimsContext context, IMapper mapper, IOtherService other, IMailBillService billmail, IMailQrService qrmail, IFireBaseService fireBase, IGenerateQr generateqr)
+        public HostManageRepository(IPaginationService pagination,IMailCheckOut checkoutmail, fptdimsContext context, IMapper mapper, IOtherService other, IMailBillService billmail, IMailQrService qrmail, IFireBaseService fireBase, IGenerateQr generateqr)
         {
             _context = context;
             _mapper = mapper;
@@ -30,6 +32,7 @@ namespace DIMSApis.Repositories
             _fireBase = fireBase;
             _generateqr = generateqr;
             _checkoutmail = checkoutmail;
+            _pagination = pagination;
         }
 
         public async Task<IEnumerable<HotelOutput>> GetListAllHotel(int userId)
@@ -815,6 +818,30 @@ namespace DIMSApis.Repositories
                 .SingleOrDefaultAsync();
             var returnLs = _mapper.Map<FullRoomMoneyDetailSumaryOutput>(lsHotelBooked);
 
+            return returnLs;
+        }
+
+        public async Task<Pagination<Booking>> HostgetListBookingByPage<T>(int hotelID,int CurrentPage, int pageSize) where T : class
+        {
+            IQueryable<Booking> lsBooks =  _context.Bookings
+                .Where(op => op.HotelId == hotelID)
+                .OrderByDescending(o=>o.CreateDate);
+
+            var returnLS = await _pagination.GetPagination(lsBooks,CurrentPage,pageSize);
+            return returnLS;
+        }
+
+        public async Task<ABookingFullOutput> HostGetABookingFullDetail(int bookingID)
+        {
+            var fullDetailBooking = await _context.Bookings
+                .Include(tbl => tbl.InboundUsers)
+                .Include(tbl => tbl.QrCheckUp)
+                .Include(tbl => tbl.Voucher)
+                .Include(tbl => tbl.BookingDetails).ThenInclude(tbl=>tbl.BookingDetailMenus)
+                .Include(tbl => tbl.BookingDetails).ThenInclude(tbl=>tbl.Qr)
+                .Where(op=>op.BookingId==bookingID)
+                .SingleOrDefaultAsync();
+            var returnLs =_mapper.Map<ABookingFullOutput>(fullDetailBooking);
             return returnLs;
         }
     }
