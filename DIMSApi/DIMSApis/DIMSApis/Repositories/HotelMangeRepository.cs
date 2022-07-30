@@ -498,8 +498,8 @@ namespace DIMSApis.Repositories
         public async Task<IEnumerable<Category>> GetListSpecialPrice(int hotelId)
         {
             var lsSpecialPrice = await _context.Categories
-                .Include(tbl => tbl.SpecialPrices)
-                .Where(op=>op.HotelId == hotelId)
+                .Include(tbl => tbl.SpecialPrices.Where(op=>op.SpecialDate.Value.Date >= DateTime.Now.Date))
+                .Where(op=>op.HotelId == hotelId )
                 .ToListAsync();
 
             return lsSpecialPrice;
