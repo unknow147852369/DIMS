@@ -824,6 +824,7 @@ namespace DIMSApis.Repositories
         public async Task<Pagination<Booking>> HostgetListBookingByPage<T>(int hotelID,int CurrentPage, int pageSize) where T : class
         {
             IQueryable<Booking> lsBooks =  _context.Bookings
+                .Include(tbl=>tbl.QrCheckUp)
                 .Where(op => op.HotelId == hotelID)
                 .OrderByDescending(o=>o.CreateDate);
 
