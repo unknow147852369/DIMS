@@ -189,7 +189,7 @@ namespace DIMSApis.Repositories
                 .Include(w => w.WardNavigation)
                 .Include(d => d.DistrictNavigation)
                 .Include(pr => pr.ProvinceNavigation)
-                .Include(r => r.Rooms.Where(bd => bd.BookingDetails.All(op => (
+                .Include(r => r.Rooms.Where(bd => bd.BookingDetails.Where(op => op.Status.Value).All(op => (
                                                   !(((op.StartDate.Value.Date > StartDate.Date && op.StartDate.Value.Date < EndDate.Date)
                                                   && (op.EndDate.Value.Date > StartDate.Date && op.EndDate.Value.Date < EndDate.Date))
                                                   || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > EndDate.Date)
@@ -226,68 +226,35 @@ namespace DIMSApis.Repositories
             DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight);
             if (ArrivalDate.Date < DateTime.Now.Date || TotalNight <= 0 || peopleQuanity <= 0) { return null; }
 
-            IQueryable<Room> lsRoom = _context.Rooms
-                                        .Include(c => c.Category).ThenInclude(b => b.Photos)
-                                        .Where(op => op.HotelId == hotelId && op.Category.Quanity >= peopleQuanity && op.Status == true)
-                                        .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => !(
-                                                                      ((op.StartDate > StartDate && op.StartDate < EndDate) && (op.EndDate > StartDate && op.EndDate < EndDate))
-                                                                      || (op.StartDate < EndDate && op.EndDate > EndDate)
-                                                                      || (op.StartDate < StartDate && op.EndDate > StartDate))
-                                                                    ));
-            if (lsRoom == null) { return null; }
-            IQueryable<Photo> catephoto = _context.Photos
-                .Where(op => op.HotelId == hotelId);
+            IQueryable<Category> lsCateRooms = _context.Categories
+                .Include(p => p.Photos)
+                .Include(pr => pr.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date))
+                .Include(r => r.Rooms)
+                .Where(op => op.HotelId == hotelId && op.Quanity >= peopleQuanity && op.Status == true);
+
+            if (lsCateRooms == null) { return null; }
 
             var AHotel = await _context.Hotels
+                .Include(p => p.Vouchers.Where(op => op.EndDate.Value.Date >= DateTime.Now.Date))
                 .Include(p => p.Photos)
                 .Include(h => h.HotelType)
                 .Include(c => c.Categories)
-                .Include(r => r.Rooms)
+                .Include(r => r.Rooms.Where(op => op.Status == true)
+                                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
+                                                    !(((op.StartDate.Value.Date >= StartDate.Date && op.StartDate.Value.Date <= EndDate.Date)
+                                                    && (op.EndDate.Value.Date >= StartDate.Date && op.EndDate.Value.Date <= EndDate.Date))
+                                                    || (op.StartDate.Value.Date <= StartDate.Date && op.EndDate.Value.Date >= EndDate.Date)
+                                                    || (op.StartDate.Value.Date <= EndDate.Date && op.EndDate.Value.Date >= EndDate.Date)
+                                                    || (op.StartDate.Value.Date <= StartDate.Date && op.EndDate.Value.Date >= StartDate.Date)
+                                                    ))
+                                                )))
                 .Include(w => w.WardNavigation)
                 .Include(d => d.DistrictNavigation)
                 .Include(pr => pr.ProvinceNavigation)
-                .Where(op => op.Status == true && op.HotelId == hotelId)
+                .Where(op => op.HotelId == hotelId )
                 .SingleOrDefaultAsync();
 
-            var result = lsRoom
-            .GroupBy(item => new
-            {
-                item.CategoryId,
-                item.HotelId,
-                item.Category.CategoryName,
-                item.Category.CateDescrpittion,
-                item.Category.Quanity,
-                item.Category.Status,
-            })
-            .Select(gr => new HotelCateOutput
-            {
-                CategoryId = (int)gr.Key.CategoryId,
-                HotelId = gr.Key.HotelId,
-                CategoryName = gr.Key.CategoryName,
-                CateDescrpittion = gr.Key.CateDescrpittion,
-                Quanity = gr.Key.Quanity,
-                CateStatus = gr.Key.Status,
-
-                CatePhotos = catephoto.Select(op => new HotelCatePhotosOutput
-                {
-                    PhotoId = op.PhotoId,
-                    CategoryId = op.CategoryId,
-                    PhotoUrl = op.PhotoUrl,
-                    CreateDate = op.CreateDate,
-                    IsMain = op.IsMain,
-                    Status = op.Status,
-                }).Where(a => a.CategoryId == (int)gr.Key.CategoryId).OrderBy(s => s.IsMain).ToList(),
-
-                Rooms = lsRoom.Select(op => new HotelCateRoomOutput
-                {
-                    CategoryId = op.CategoryId,
-                    RoomId = op.RoomId,
-                    RoomName = op.RoomName,
-                    RoomDescription = op.RoomDescription,
-                    RoomPrice = op.RoomPrice,
-                    Status = op.Status,
-                }).Where(a => a.CategoryId == (int)gr.Key.CategoryId).ToList(),
-            }).ToList();
+            var result = await lsCateRooms.ToListAsync();
 
             var HotelDetail = new HotelCateInfoOutput();
             _mapper.Map(AHotel, HotelDetail);
@@ -297,6 +264,7 @@ namespace DIMSApis.Repositories
             HotelDetail.LsCate = fullCateRoom;
 
             return HotelDetail;
+
         }
 
         public async Task<IEnumerable<District>> ListAllDistrict()
