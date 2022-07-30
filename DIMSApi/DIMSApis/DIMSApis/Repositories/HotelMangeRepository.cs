@@ -425,5 +425,84 @@ namespace DIMSApis.Repositories
             if (vpuchers.Count == 0) { return null; }
             return vpuchers;
         }
+
+        public async Task<string> RemoveASpecialPrice(int specialPeiceID)
+        {
+            try
+            {
+                var item = await _context.SpecialPrices
+                        .Where(op => op.SpecialPriceId == specialPeiceID).SingleOrDefaultAsync();
+                if (item == null) { return "specialPeice not exist"; }
+                _context.SpecialPrices.Remove(item);
+
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public async Task<string> AddSpecialPrice(ICollection<NewCategorySpecialPriceSecondInput> newSpecialPrice)
+        {
+            try
+            {
+                var check = await _context.Categories
+                    .Include(tbl => tbl.SpecialPrices)
+                    .Where(op=>op.CategoryId == newSpecialPrice.Select(s=>s.CategoryId).First())
+                    .SingleOrDefaultAsync();
+                if(check == null) { return "not found cate"; }
+                var lsDate = check.SpecialPrices.ToList();
+                
+                foreach (var item in newSpecialPrice)
+                {
+                    
+                    if (lsDate.Select(s=>s.SpecialDate.Value.Date).Contains(item.SpecialDate.Value.Date))
+                    {
+                        return "some date are exist";
+                    }
+                }
+                var returnSpec = _mapper.Map<ICollection<SpecialPrice>>(newSpecialPrice);
+                
+                await _context.AddRangeAsync(returnSpec);
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public async Task<string> UpdateASpecialPrice(NewCategorySpecialPriceUpdateInput newSpecialPrice)
+        {
+            try
+            {
+                var item = await _context.SpecialPrices
+                           .Where(op => op.SpecialPriceId == newSpecialPrice.SpecialPriceId && op.CategoryId == newSpecialPrice.CategoryId).SingleOrDefaultAsync();
+                if (item == null) { return "SpecialPrice not exist in hotel"; }
+                _mapper.Map(newSpecialPrice, item);
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+
+        public async Task<IEnumerable<Category>> GetListSpecialPrice(int hotelId)
+        {
+            var lsSpecialPrice = await _context.Categories
+                .Include(tbl => tbl.SpecialPrices)
+                .Where(op=>op.HotelId == hotelId)
+                .ToListAsync();
+
+            return lsSpecialPrice;
+        }
     }
 }

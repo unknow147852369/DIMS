@@ -433,5 +433,71 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Remove fail" + check });
             }
         }
+        //
+        [HttpGet("List-SpecialPrices")]
+        public async Task<IActionResult> GetListSpecialPrice(int hotelId)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _hotel.GetListSpecialPrice(hotelId);
+            if (check == null) { return BadRequest(new DataRespone { Message = "Not found" }); }
+            return Ok(check);
+        }
+
+        [HttpPut("Update-A-SpecialPrice")]
+        public async Task<IActionResult> UpdateASpecialPrice(NewCategorySpecialPriceUpdateInput newSpecialPrice)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _hotel.UpdateASpecialPrice(newSpecialPrice);
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "Update success" });
+            }
+            else if (check.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "Update success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "Update fail" + check });
+            }
+        }
+        [HttpPost("Add-A-SpecialPrice")]
+        public async Task<IActionResult> AddVoucher(ICollection<NewCategorySpecialPriceSecondInput> newSpecialPrice)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _hotel.AddSpecialPrice(newSpecialPrice);
+            if (check == null) { return BadRequest("Not Found"); }
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "Add success" });
+            }
+            else if (check.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "Add success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "Add fail " + check });
+            }
+        }
+        [HttpDelete("Remove-A-SpecialPrice")]
+        public async Task<IActionResult> RemoveASpecialPrice(int SpecialPriceID)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _hotel.RemoveASpecialPrice(SpecialPriceID);
+            if (check == null) { return BadRequest("Not Found"); }
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "Remove success" });
+            }
+            else if (check.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "Remove success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "Remove fail" + check });
+            }
+        }
     }
 }

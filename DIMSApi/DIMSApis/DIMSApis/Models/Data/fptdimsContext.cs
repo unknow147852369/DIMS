@@ -538,6 +538,7 @@ namespace DIMSApis.Models.Data
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.SpecialPrices)
                     .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SpecialPrice_Categories");
             });
 
