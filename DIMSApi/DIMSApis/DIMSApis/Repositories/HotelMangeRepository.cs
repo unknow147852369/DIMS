@@ -108,7 +108,12 @@ namespace DIMSApis.Repositories
             var hotelCate = await _context.Categories
                     .Where(op => op.HotelId == newCate.HotelId && op.CategoryId == newCate.CategoryId).SingleOrDefaultAsync();
             if (hotelCate == null) { return "Not found Cate in hotel"; }
-
+            var lsRoomCate =await _context.Rooms
+                .Where(op=>op.CategoryId == newCate.CategoryId).ToListAsync();
+            if (lsRoomCate.Count()>0)
+            {
+                lsRoomCate.ForEach(f => f.RoomPrice = newCate.PriceDefault);
+            }
             _mapper.Map(newCate, hotelCate);
 
             if (await _context.SaveChangesAsync() > 0)
@@ -208,6 +213,10 @@ namespace DIMSApis.Repositories
                 {
                     return "not found category in hotel";
                 }
+                else
+                {
+                    r.RoomPrice = cate.Where(op => op.CategoryId == r.CategoryId).Select(s => s.PriceDefault).SingleOrDefault();
+                }
                 if(rooms.Count() > 0)
                 {
                     if(rooms.Select(s => s.RoomName).ToList().Contains(r.RoomName))
@@ -236,12 +245,9 @@ namespace DIMSApis.Repositories
             {
                 return "not found category in hotel";
             }
-            if (rooms.Count() > 0)
+            else
             {
-                if (rooms.Select(s => s.RoomName).ToList().Contains(newRoom.RoomName))
-                {
-                    return "Room name" + item.RoomName + " Name exist";
-                }
+                item.RoomPrice = cate.Where(op => op.CategoryId == newRoom.CategoryId).Select(s => s.PriceDefault).SingleOrDefault();
             }
             _mapper.Map(newRoom, item);
             item.RoomPrice = cate.Where(op => op.CategoryId == item.CategoryId).Select(s => s.PriceDefault).First();
