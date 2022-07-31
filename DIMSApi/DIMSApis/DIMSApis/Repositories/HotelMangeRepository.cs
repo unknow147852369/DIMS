@@ -457,19 +457,12 @@ namespace DIMSApis.Repositories
         {
             try
             {
-                var check = await _context.Categories
-                    .Include(tbl => tbl.SpecialPrices.Where(op=>op.SpecialDate.Value.Date >= DateTime.Now.Date))
-                    .Where(op => op.CategoryId == newSpecialPrice.Select(s => s.CategoryId).First())
-                    .SingleOrDefaultAsync();
-                if (check == null) { return "not found cate"; }
-                var lsDate = check.SpecialPrices.ToList();
-
                 foreach (var item in newSpecialPrice)
                 {
-                    if (lsDate.Select(s => s.SpecialDate.Value.Date).Contains(item.SpecialDate.Value.Date))
-                    {
-                        return "some date are exist";
-                    }
+                    var checkCateSpec = await _context.SpecialPrices
+                    .Where(op => op.CategoryId == item.CategoryId && op.SpecialDate.Value.Date == item.SpecialDate.Value.Date)
+                    .SingleOrDefaultAsync();
+                    if(checkCateSpec != null) { return "specialDate: " + item.SpecialDate+" &cate:"+item.CategoryId + " is exist"; }
                 }
                 var returnSpec = _mapper.Map<ICollection<SpecialPrice>>(newSpecialPrice);
 
@@ -499,15 +492,14 @@ namespace DIMSApis.Repositories
                 foreach (var item in newSpecialPrice)
                 {
                     var check = await _context.SpecialPrices
-                               .Where(op => op.SpecialPriceId == item.SpecialPriceId && op.CategoryId == item.CategoryId)
+                               .Where(op => op.SpecialPriceId == item.SpecialPriceId)
                                .SingleOrDefaultAsync();
                     if (check == null) { return "SpecialPrice not exist in hotel"; }
-
-                        if (lsDate.Select(s => s.SpecialDate.Value.Date).Contains(item.SpecialDate.Value.Date))
-                        {
-                            return "some date are exist";
-                        }
-
+                    var checkCateSpec = await _context.SpecialPrices
+                        .Where(op => op.CategoryId == item.CategoryId && op.SpecialDate.Value.Date == item.SpecialDate.Value.Date)
+                        .SingleOrDefaultAsync();
+                    if (checkCateSpec != null) {return "specialDate: " + item.SpecialDate + " &cate:" + item.CategoryId + " is exist"; }
+                    
                     _mapper.Map(item, check);
                     await _context.SaveChangesAsync();
                 }
