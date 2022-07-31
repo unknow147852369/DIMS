@@ -41,9 +41,9 @@ namespace DIMSApis.Interfaces
         Task<string> UpdateAVoucher(AHotelVouchersInput newVoucher);
         Task<IEnumerable<Voucher>> GetListVouchers(int hotelId);
 
-        Task<string> RemoveASpecialPrice(int specialPeiceID);
+        Task<string> RemoveASpecialPrice(ICollection<newSpecialPriceIDInput> SpecialPrice);
         Task<string> AddSpecialPrice(ICollection<NewCategorySpecialPriceSecondInput> newSpecialPrice);
-        Task<string> UpdateASpecialPrice(NewCategorySpecialPriceUpdateInput newSpecialPrice);
+        Task<string> UpdateASpecialPrice(ICollection<NewCategorySpecialPriceUpdateInput> newSpecialPrice);
         Task<IEnumerable<Category>> GetListSpecialPrice(int hotelId);
     }
 }

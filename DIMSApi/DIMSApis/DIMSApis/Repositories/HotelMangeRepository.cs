@@ -108,9 +108,9 @@ namespace DIMSApis.Repositories
             var hotelCate = await _context.Categories
                     .Where(op => op.HotelId == newCate.HotelId && op.CategoryId == newCate.CategoryId).SingleOrDefaultAsync();
             if (hotelCate == null) { return "Not found Cate in hotel"; }
-            var lsRoomCate =await _context.Rooms
-                .Where(op=>op.CategoryId == newCate.CategoryId).ToListAsync();
-            if (lsRoomCate.Count()>0)
+            var lsRoomCate = await _context.Rooms
+                .Where(op => op.CategoryId == newCate.CategoryId).ToListAsync();
+            if (lsRoomCate.Count() > 0)
             {
                 lsRoomCate.ForEach(f => f.RoomPrice = newCate.PriceDefault);
             }
@@ -203,7 +203,7 @@ namespace DIMSApis.Repositories
         {
             var cate = await _context.Categories
                 .Where(op => op.HotelId == newRoom.HotelId).ToListAsync();
-            var rooms =await _context.Rooms
+            var rooms = await _context.Rooms
                 .Where(op => op.HotelId == newRoom.HotelId).ToListAsync();
             var item = _mapper.Map<ICollection<Room>>(newRoom.Rooms).ToList();
             item.ForEach(f => { f.HotelId = newRoom.HotelId; });
@@ -217,11 +217,11 @@ namespace DIMSApis.Repositories
                 {
                     r.RoomPrice = cate.Where(op => op.CategoryId == r.CategoryId).Select(s => s.PriceDefault).SingleOrDefault();
                 }
-                if(rooms.Count() > 0)
+                if (rooms.Count() > 0)
                 {
-                    if(rooms.Select(s => s.RoomName).ToList().Contains(r.RoomName))
+                    if (rooms.Select(s => s.RoomName).ToList().Contains(r.RoomName))
                     {
-                        return "Room name" +r.RoomName+ " Name exist";
+                        return "Room name" + r.RoomName + " Name exist";
                     }
                 }
                 r.RoomPrice = cate.Where(op => op.CategoryId == r.CategoryId).Select(s => s.PriceDefault).First();
@@ -235,7 +235,7 @@ namespace DIMSApis.Repositories
         public async Task<string> UpdateARoom(NewUpdateRoomInput newRoom)
         {
             var item = await _context.Rooms
-                    .Where(op => op.HotelId == newRoom.HotelId  && op.RoomId == newRoom.RoomId).SingleOrDefaultAsync();
+                    .Where(op => op.HotelId == newRoom.HotelId && op.RoomId == newRoom.RoomId).SingleOrDefaultAsync();
             if (item == null) { return "Not found room in hotel"; }
             var cate = await _context.Categories
                .Where(op => op.HotelId == newRoom.HotelId).ToListAsync();
@@ -268,13 +268,13 @@ namespace DIMSApis.Repositories
         public async Task<IEnumerable<Hotel>> GetListHotels(int userID)
         {
             var hotels = await _context.Hotels
-                .Include(p=>p.Photos)
+                .Include(p => p.Photos)
                 .Where(op => op.UserId == userID).ToListAsync();
             if (hotels.Count == 0) { return null; }
             return hotels;
         }
 
-        public async Task<string> SendAHotelAddRequest(int userId,HotelRequestAddInput newHotel)
+        public async Task<string> SendAHotelAddRequest(int userId, HotelRequestAddInput newHotel)
         {
             try
             {
@@ -284,7 +284,8 @@ namespace DIMSApis.Repositories
                 if (await _context.SaveChangesAsync() > 0)
                     return "1";
                 return "3";
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return ex.Message;
             }
@@ -294,11 +295,10 @@ namespace DIMSApis.Repositories
         {
             try
             {
-
                 var hotel = await _context.Hotels
-                    .Include(h=>h.HotelRequest)
-                    .Where(op=>op.HotelId == newHotel.HotelId).SingleOrDefaultAsync();
-                if(hotel == null) { return "NO hotel found"; }
+                    .Include(h => h.HotelRequest)
+                    .Where(op => op.HotelId == newHotel.HotelId).SingleOrDefaultAsync();
+                if (hotel == null) { return "NO hotel found"; }
                 if (hotel.HotelRequest == null)
                 {
                     hotel.HotelRequest = _mapper.Map<HotelRequest>(newHotel);
@@ -306,7 +306,7 @@ namespace DIMSApis.Repositories
                 else
                 {
                     hotel.HotelRequest.HotelAddress = newHotel.HotelAddress;
-                    hotel.HotelRequest.HotelName  = newHotel.HotelName;
+                    hotel.HotelRequest.HotelName = newHotel.HotelName;
                     hotel.HotelTypeId = newHotel.HotelTypeId;
                     hotel.Province = newHotel.Province;
                     hotel.District = newHotel.District;
@@ -378,7 +378,7 @@ namespace DIMSApis.Repositories
             {
                 var item = await _context.Vouchers
                         .Where(op => op.VoucherId == voucherId).SingleOrDefaultAsync();
-                if(item == null) { return "voucher not exist"; }
+                if (item == null) { return "voucher not exist"; }
                 item.Status = false;
 
                 if (await _context.SaveChangesAsync() > 0)
@@ -400,7 +400,8 @@ namespace DIMSApis.Repositories
                 if (await _context.SaveChangesAsync() > 0)
                     return "1";
                 return "3";
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return ex.Message;
             }
@@ -412,8 +413,8 @@ namespace DIMSApis.Repositories
             {
                 var item = await _context.Vouchers
                            .Where(op => op.VoucherId == newVoucher.VoucherId && op.HotelId == newVoucher.HotelId).SingleOrDefaultAsync();
-                if(item == null) { return "VOucher not exist in hotel"; }
-                _mapper.Map(newVoucher,item);
+                if (item == null) { return "VOucher not exist in hotel"; }
+                _mapper.Map(newVoucher, item);
                 if (await _context.SaveChangesAsync() > 0)
                     return "1";
                 return "3";
@@ -432,18 +433,19 @@ namespace DIMSApis.Repositories
             return vpuchers;
         }
 
-        public async Task<string> RemoveASpecialPrice(int specialPeiceID)
+        public async Task<string> RemoveASpecialPrice(ICollection<newSpecialPriceIDInput> SpecialPrice)
         {
             try
             {
-                var item = await _context.SpecialPrices
-                        .Where(op => op.SpecialPriceId == specialPeiceID).SingleOrDefaultAsync();
-                if (item == null) { return "specialPeice not exist"; }
-                _context.SpecialPrices.Remove(item);
-
-                if (await _context.SaveChangesAsync() > 0)
-                    return "1";
-                return "3";
+                foreach (var itemr in SpecialPrice)
+                {
+                    var item = await _context.SpecialPrices
+                            .Where(op => op.SpecialPriceId == itemr.SpecialPriceID).SingleOrDefaultAsync();
+                    if (item == null) { return "specialPeice not exist"; }
+                    _context.SpecialPrices.Remove(item);
+                    await _context.SaveChangesAsync();
+                }
+                return "1";
             }
             catch (Exception ex)
             {
@@ -456,22 +458,21 @@ namespace DIMSApis.Repositories
             try
             {
                 var check = await _context.Categories
-                    .Include(tbl => tbl.SpecialPrices)
-                    .Where(op=>op.CategoryId == newSpecialPrice.Select(s=>s.CategoryId).First())
+                    .Include(tbl => tbl.SpecialPrices.Where(op=>op.SpecialDate.Value.Date >= DateTime.Now.Date))
+                    .Where(op => op.CategoryId == newSpecialPrice.Select(s => s.CategoryId).First())
                     .SingleOrDefaultAsync();
-                if(check == null) { return "not found cate"; }
+                if (check == null) { return "not found cate"; }
                 var lsDate = check.SpecialPrices.ToList();
-                
+
                 foreach (var item in newSpecialPrice)
                 {
-                    
-                    if (lsDate.Select(s=>s.SpecialDate.Value.Date).Contains(item.SpecialDate.Value.Date))
+                    if (lsDate.Select(s => s.SpecialDate.Value.Date).Contains(item.SpecialDate.Value.Date))
                     {
                         return "some date are exist";
                     }
                 }
                 var returnSpec = _mapper.Map<ICollection<SpecialPrice>>(newSpecialPrice);
-                
+
                 await _context.AddRangeAsync(returnSpec);
                 if (await _context.SaveChangesAsync() > 0)
                     return "1";
@@ -483,17 +484,34 @@ namespace DIMSApis.Repositories
             }
         }
 
-        public async Task<string> UpdateASpecialPrice(NewCategorySpecialPriceUpdateInput newSpecialPrice)
+        public async Task<string> UpdateASpecialPrice(ICollection<NewCategorySpecialPriceUpdateInput> newSpecialPrice)
         {
             try
             {
-                var item = await _context.SpecialPrices
-                           .Where(op => op.SpecialPriceId == newSpecialPrice.SpecialPriceId && op.CategoryId == newSpecialPrice.CategoryId).SingleOrDefaultAsync();
-                if (item == null) { return "SpecialPrice not exist in hotel"; }
-                _mapper.Map(newSpecialPrice, item);
-                if (await _context.SaveChangesAsync() > 0)
-                    return "1";
-                return "3";
+                var check1 = await _context.Categories
+                    .Include(tbl => tbl.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date))
+                    .Where(op => op.CategoryId == newSpecialPrice.Select(s => s.CategoryId).First())
+                    .SingleOrDefaultAsync();
+                if (check1 == null) { return "not found cate"; }
+                var lsDate = check1.SpecialPrices.ToList();
+
+
+                foreach (var item in newSpecialPrice)
+                {
+                    var check = await _context.SpecialPrices
+                               .Where(op => op.SpecialPriceId == item.SpecialPriceId && op.CategoryId == item.CategoryId)
+                               .SingleOrDefaultAsync();
+                    if (check == null) { return "SpecialPrice not exist in hotel"; }
+
+                        if (lsDate.Select(s => s.SpecialDate.Value.Date).Contains(item.SpecialDate.Value.Date))
+                        {
+                            return "some date are exist";
+                        }
+
+                    _mapper.Map(item, check);
+                    await _context.SaveChangesAsync();
+                }
+                return "1";
             }
             catch (Exception ex)
             {
@@ -504,8 +522,8 @@ namespace DIMSApis.Repositories
         public async Task<IEnumerable<Category>> GetListSpecialPrice(int hotelId)
         {
             var lsSpecialPrice = await _context.Categories
-                .Include(tbl => tbl.SpecialPrices.Where(op=>op.SpecialDate.Value.Date >= DateTime.Now.Date))
-                .Where(op=>op.HotelId == hotelId )
+                .Include(tbl => tbl.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date))
+                .Where(op => op.HotelId == hotelId)
                 .ToListAsync();
 
             return lsSpecialPrice;

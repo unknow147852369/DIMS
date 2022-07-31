@@ -444,7 +444,7 @@ namespace DIMSApis.Controllers
         }
 
         [HttpPut("Update-A-SpecialPrice")]
-        public async Task<IActionResult> UpdateASpecialPrice(NewCategorySpecialPriceUpdateInput newSpecialPrice)
+        public async Task<IActionResult> UpdateASpecialPrice(ICollection<NewCategorySpecialPriceUpdateInput> newSpecialPrice)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var check = await _hotel.UpdateASpecialPrice(newSpecialPrice);
@@ -481,10 +481,10 @@ namespace DIMSApis.Controllers
             }
         }
         [HttpDelete("Remove-A-SpecialPrice")]
-        public async Task<IActionResult> RemoveASpecialPrice(int SpecialPriceID)
+        public async Task<IActionResult> RemoveASpecialPrice(ICollection<newSpecialPriceIDInput> SpecialPrice)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var check = await _hotel.RemoveASpecialPrice(SpecialPriceID);
+            var check = await _hotel.RemoveASpecialPrice(SpecialPrice);
             if (check == null) { return BadRequest("Not Found"); }
             if (check.Equals("1"))
             {
