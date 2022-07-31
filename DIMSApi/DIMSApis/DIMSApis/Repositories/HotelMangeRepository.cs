@@ -462,7 +462,7 @@ namespace DIMSApis.Repositories
                     var checkCateSpec = await _context.SpecialPrices
                     .Where(op => op.CategoryId == item.CategoryId && op.SpecialDate.Value.Date == item.SpecialDate.Value.Date)
                     .SingleOrDefaultAsync();
-                    if(checkCateSpec != null) { return "specialDate: " + item.SpecialDate+" &cate:"+item.CategoryId + " is exist"; }
+                    if(checkCateSpec != null) { return "specialDate: " + item.SpecialDate+" &cate:"+item.CategoryId + " is wrong"; }
                 }
                 var returnSpec = _mapper.Map<ICollection<SpecialPrice>>(newSpecialPrice);
 
@@ -481,12 +481,6 @@ namespace DIMSApis.Repositories
         {
             try
             {
-                var check1 = await _context.Categories
-                    .Include(tbl => tbl.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date))
-                    .Where(op => op.CategoryId == newSpecialPrice.Select(s => s.CategoryId).First())
-                    .SingleOrDefaultAsync();
-                if (check1 == null) { return "not found cate"; }
-                var lsDate = check1.SpecialPrices.ToList();
 
 
                 foreach (var item in newSpecialPrice)
@@ -495,11 +489,14 @@ namespace DIMSApis.Repositories
                                .Where(op => op.SpecialPriceId == item.SpecialPriceId)
                                .SingleOrDefaultAsync();
                     if (check == null) { return "SpecialPrice not exist in hotel"; }
-                    var checkCateSpec = await _context.SpecialPrices
-                        .Where(op => op.CategoryId == item.CategoryId && op.SpecialDate.Value.Date == item.SpecialDate.Value.Date)
-                        .SingleOrDefaultAsync();
-                    if (checkCateSpec != null) {return "specialDate: " + item.SpecialDate + " &cate:" + item.CategoryId + " is exist"; }
-                    
+                    if(!(check.CategoryId == item.CategoryId && check.SpecialDate.Value.Date == item.SpecialDate.Value.Date))
+                    {
+                        var checkCateSpec = await _context.SpecialPrices
+                            .Where(op => op.CategoryId == item.CategoryId && op.SpecialDate.Value.Date == item.SpecialDate.Value.Date)
+                            .SingleOrDefaultAsync();
+                        if (checkCateSpec != null) { return "specialDate: " + item.SpecialDate + " &cate:" + item.CategoryId + " is wrong"; }
+                    }
+                   
                     _mapper.Map(item, check);
                     await _context.SaveChangesAsync();
                 }
