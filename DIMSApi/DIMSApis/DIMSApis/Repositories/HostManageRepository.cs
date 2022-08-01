@@ -817,7 +817,7 @@ namespace DIMSApis.Repositories
                 .Where(op => op.HotelId == hotelId)
                 .SingleOrDefaultAsync();
             var returnLs = _mapper.Map<FullRoomMoneyDetailSumaryOutput>(lsHotelBooked);
-
+            returnLs.TotalPriceByfilter = returnLs.Bookings.Sum(s => s.TotalPrice);
             return returnLs;
         }
 

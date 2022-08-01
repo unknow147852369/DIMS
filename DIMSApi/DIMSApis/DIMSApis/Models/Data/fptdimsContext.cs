@@ -22,6 +22,7 @@ namespace DIMSApis.Models.Data
         public virtual DbSet<BookingDetailPrice> BookingDetailPrices { get; set; } = null!;
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<District> Districts { get; set; } = null!;
+        public virtual DbSet<DoorLog> DoorLogs { get; set; } = null!;
         public virtual DbSet<Facility> Facilities { get; set; } = null!;
         public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
         public virtual DbSet<Hotel> Hotels { get; set; } = null!;
@@ -189,6 +190,30 @@ namespace DIMSApis.Models.Data
                     .WithMany(p => p.Districts)
                     .HasForeignKey(d => d.ProvinceId)
                     .HasConstraintName("FK_level2s_level1s");
+            });
+
+            modelBuilder.Entity<DoorLog>(entity =>
+            {
+                entity.ToTable("DoorLog");
+
+                entity.Property(e => e.DoorLogId).ValueGeneratedNever();
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.DoorCondition)
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+
+                entity.Property(e => e.DoorQrContent)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RoomlId).HasColumnName("RoomlID");
+
+                entity.HasOne(d => d.Rooml)
+                    .WithMany(p => p.DoorLogs)
+                    .HasForeignKey(d => d.RoomlId)
+                    .HasConstraintName("FK_DoorLog_Rooms");
             });
 
             modelBuilder.Entity<Facility>(entity =>

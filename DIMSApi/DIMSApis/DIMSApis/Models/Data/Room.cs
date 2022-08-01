@@ -8,6 +8,7 @@ namespace DIMSApis.Models.Data
         public Room()
         {
             BookingDetails = new HashSet<BookingDetail>();
+            DoorLogs = new HashSet<DoorLog>();
         }
 
         public int RoomId { get; set; }
@@ -24,5 +25,6 @@ namespace DIMSApis.Models.Data
         public virtual Category? Category { get; set; }
         public virtual Hotel? Hotel { get; set; }
         public virtual ICollection<BookingDetail> BookingDetails { get; set; }
+        public virtual ICollection<DoorLog> DoorLogs { get; set; }
     }
 }

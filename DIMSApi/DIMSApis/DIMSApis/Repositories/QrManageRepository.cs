@@ -139,7 +139,7 @@ namespace DIMSApis.Repositories
                     && c.BookingDetail.RoomId.Equals(int.Parse(RoomId))
                     && c.Status == true)
                     .FirstOrDefaultAsync();
-
+                
                 if (qrvertify != null)
                 {
                     if (qrvertify.BookingDetail.Booking.HotelId.Equals(HotelId)
@@ -153,7 +153,20 @@ namespace DIMSApis.Repositories
                     }
                 }
                 else { condition = "wrong infrom"; }
-                return condition;
+                var log = new DoorLog
+                {
+                    RoomlId = int.Parse(RoomId),
+                    CreateDate = DateTime.Now,
+                    DoorQrContent = QrContent,
+                    DoorCondition = condition,
+                    DoorLogStatus = true
+                };
+                await _context.AddAsync(log);
+                if (await _context.SaveChangesAsync() > 0)
+                {
+                    return condition;
+                }
+                return "0";
             }catch (Exception ex)
             {
                 return "wrong infrom";
