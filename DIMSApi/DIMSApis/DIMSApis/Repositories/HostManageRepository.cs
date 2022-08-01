@@ -674,7 +674,7 @@ namespace DIMSApis.Repositories
                 }
                 roomBooking.ExtraFee = roomBooking.BookingDetailMenus.Sum(s => s.BookingDetailMenuQuanity * s.BookingDetailMenuPrice);
                 roomBooking.Booking.SubTotal = roomBooking.Booking.SubTotal + roomBooking.ExtraFee;
-                roomBooking.Booking.Deposit = roomBooking.Booking.Deposit + roomBooking.ExtraFee;
+
                 roomBooking.Booking.TotalPrice = roomBooking.Booking.SubTotal;
 
                 if (await _context.SaveChangesAsync() > 0)
