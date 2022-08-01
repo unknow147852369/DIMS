@@ -608,6 +608,7 @@ namespace DIMSApis.Repositories
                     }
                     await _context.SaveChangesAsync();
                 }
+                roomBooking.Booking.SubTotal = roomBooking.Booking.SubTotal - roomBooking.ExtraFee;
                 roomBooking.ExtraFee = roomBooking.BookingDetailMenus.Sum(s => s.BookingDetailMenuQuanity * s.BookingDetailMenuPrice);
                 roomBooking.Booking.SubTotal = roomBooking.Booking.SubTotal + roomBooking.ExtraFee;
 
@@ -672,6 +673,7 @@ namespace DIMSApis.Repositories
 
                     await _context.SaveChangesAsync();
                 }
+                roomBooking.Booking.SubTotal = roomBooking.Booking.SubTotal - roomBooking.ExtraFee;
                 roomBooking.ExtraFee = roomBooking.BookingDetailMenus.Sum(s => s.BookingDetailMenuQuanity * s.BookingDetailMenuPrice);
                 roomBooking.Booking.SubTotal = roomBooking.Booking.SubTotal + roomBooking.ExtraFee;
 
@@ -838,7 +840,7 @@ namespace DIMSApis.Repositories
                 .Include(tbl => tbl.InboundUsers)
                 .Include(tbl => tbl.QrCheckUp)
                 .Include(tbl => tbl.Voucher)
-                .Include(tbl => tbl.BookingDetails).ThenInclude(tbl=>tbl.BookingDetailMenus)
+                .Include(tbl => tbl.BookingDetails).ThenInclude(tbl=>tbl.BookingDetailMenus.Where(op=>op.BookingDetailMenuQuanity>0))
                 .Include(tbl => tbl.BookingDetails).ThenInclude(tbl=>tbl.Qr)
                 .Where(op=>op.BookingId==bookingID)
                 .SingleOrDefaultAsync();
