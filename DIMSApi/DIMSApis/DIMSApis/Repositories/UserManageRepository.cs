@@ -105,7 +105,43 @@ namespace DIMSApis.Repositories
             }
             return null;
         }
+        public async Task<string> HostGetActiveCodeMailSend(int userId)
+        {
+            var otpCode = await _context.Otps.Include(u => u.User)
+               .Where(a => a.Purpose.Equals("ACTIVE ACCOUNT") && userId == a.UserId).SingleOrDefaultAsync();
+            otpCode.CodeOtp = _other.RandomString(6);
 
+            if (await _context.SaveChangesAsync() > 0)
+            {
+                try
+                {
+                    await _mail.SendEmailAsync(otpCode.User.Email, otpCode.CodeOtp);
+                }
+                catch (Exception ex)
+                {
+                    return "2";
+                }
+            }
+            return "1";
+        }
+
+        public async Task<string> HostActiveAccount(string activeCode, int userId)
+        {
+            var user = await _context.Users
+                 .Where(a => userId == a.UserId).SingleOrDefaultAsync();
+            var otpCode = await _context.Otps
+                .Where(a => a.Purpose.Equals("ACTIVE ACCOUNT") && userId == a.UserId).SingleOrDefaultAsync();
+            if (otpCode == null)
+                return "Already Active";
+            if (otpCode.CodeOtp.Trim().Equals(activeCode.Trim()))
+            {
+                otpCode.CodeOtp = null;
+                user.Role = "HOST";
+            }
+            if (await _context.SaveChangesAsync() > 0)
+                return "1";
+            return "2";
+        }
         public async Task<IEnumerable<Ward>> SearchWard(string ward)
         {
             var terms = _other.RemoveMark(ward);

@@ -61,9 +61,9 @@ namespace DIMSApis.Repositories
             return false;
         }
 
-        public async Task<User> Login(LoginInput userinput)
+        public async Task<User> LoginUser(LoginInput userinput)
         {
-            var user = await _context.Users.Where(u => u.Email == userinput.Email.ToLower() && u.Status == true && u.Role != "ADMIN").SingleOrDefaultAsync();
+            var user = await _context.Users.Where(u => u.Email == userinput.Email.ToLower() && (u.Status == true && u.Role == "USER" || u.Role == "WAIT_USER")).SingleOrDefaultAsync();
             if (user == null)
                 return null;
 
@@ -85,7 +85,19 @@ namespace DIMSApis.Repositories
             return user;
         }
 
-        public async Task<bool> Register(RegisterInput userinput)
+        public async Task<User> LoginHost(LoginInput userinput)
+        {
+            var user = await _context.Users.Where(u => u.Email == userinput.Email.ToLower() && (u.Status == true && u.Role == "HOST" || u.Role == "WAIT_HOST")).SingleOrDefaultAsync();
+            if (user == null)
+                return null;
+
+            if (!_otherservice.VerifyPasswordHash(userinput.Password, user.PasswordHash, user.PasswordSalt))
+                return null;
+
+            return user;
+        }
+
+        public async Task<bool> UserRegister(RegisterInput userinput)
         {
             byte[] passwordHash, passwordSalt;
             _otherservice.CreatePasswordHash(userinput.Password, out passwordHash, out passwordSalt);
@@ -129,21 +141,48 @@ namespace DIMSApis.Repositories
             return false;
         }
 
-        public async Task<bool> ForgoPassChangeCHEAT(ForgotPassInput pass)
+        public async Task<string> RegisterHotelManagerRole(RegisterInput userinput)
         {
-            var user = await _context.Users
-                .Where(u => u.Email == pass.Email.ToLower() && u.Status == true).SingleOrDefaultAsync();
-           
-            if (user == null )
-                return false;
-           
-                byte[] passwordHash, passwordSalt;
-                _otherservice.CreatePasswordHash(pass.Password, out passwordHash, out passwordSalt);
-                user.PasswordHash = passwordHash;
-                user.PasswordSalt = passwordSalt;
-   
-   
+            byte[] passwordHash, passwordSalt;
+            _otherservice.CreatePasswordHash(userinput.Password, out passwordHash, out passwordSalt);
+            var checkcode = _otherservice.RandomString(6);
+            var ltOtp = new List<NewOtpInput>();
+            ltOtp.Add(new NewOtpInput
+            {
+                Purpose = purpose1,
+                CodeOtp = checkcode,
+                CreateDate = DateTime.Now,
+                Status = 1,
+            });
+            ltOtp.Add(new NewOtpInput
+            {
+                Purpose = purpose2,
+                CodeOtp = null,
+                CreateDate = DateTime.Now,
+                Status = 1,
+            });
+            User user = new()
+            {
+                Email = userinput.Email.ToLower(),
+                CreateDate = DateTime.Now,
+                Gender = "UNKNOW",
+                Role = "WAIT_HOST",
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                Status = true,
+            };
+
+            _mapper.Map(ltOtp, user.Otps);
+            await _mail.SendEmailAsync(user.Email, checkcode);
+            await _context.Users.AddAsync(user);
             if (await _context.SaveChangesAsync() > 0)
+                return "1";
+            return "3";
+        }
+
+        public async Task<bool> HotelManagerExists(string email)
+        {
+            if (await _context.Users.AnyAsync(x => x.Email == email && x.Role == "HOST" || x.Role == "WAIT_HOST"))
                 return true;
             return false;
         }

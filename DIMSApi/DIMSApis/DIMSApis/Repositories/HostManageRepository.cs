@@ -12,6 +12,7 @@ namespace DIMSApis.Repositories
     {
         private readonly fptdimsContext _context;
         private readonly IMapper _mapper;
+        private readonly IMail _mail;
         private readonly IOtherService _other;
         private readonly IGenerateQr _generateqr;
         private readonly IFireBaseService _fireBase;
@@ -22,7 +23,7 @@ namespace DIMSApis.Repositories
 
         private string error = "";
 
-        public HostManageRepository(IPaginationService pagination,IMailCheckOut checkoutmail, fptdimsContext context, IMapper mapper, IOtherService other, IMailBillService billmail, IMailQrService qrmail, IFireBaseService fireBase, IGenerateQr generateqr)
+        public HostManageRepository(IMail mail, IPaginationService pagination,IMailCheckOut checkoutmail, fptdimsContext context, IMapper mapper, IOtherService other, IMailBillService billmail, IMailQrService qrmail, IFireBaseService fireBase, IGenerateQr generateqr)
         {
             _context = context;
             _mapper = mapper;
@@ -33,6 +34,7 @@ namespace DIMSApis.Repositories
             _generateqr = generateqr;
             _checkoutmail = checkoutmail;
             _pagination = pagination;
+             _mail=mail;
         }
 
         public async Task<IEnumerable<HotelOutput>> GetListAllHotel(int userId)
@@ -847,5 +849,7 @@ namespace DIMSApis.Repositories
             var returnLs =_mapper.Map<ABookingFullOutput>(fullDetailBooking);
             return returnLs;
         }
+
+      
     }
 }

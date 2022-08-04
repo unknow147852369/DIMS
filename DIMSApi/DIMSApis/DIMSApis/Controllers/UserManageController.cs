@@ -91,6 +91,40 @@ namespace DIMSApis.Controllers
             }
         }
 
+        [HttpPut("Host-Active-Account")]
+        public async Task<IActionResult> HostActiveAccount(string AcitveCode)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            string check = await _usermanage.HostActiveAccount(AcitveCode, userId);
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "Active success" });
+            }
+            else if (check.Equals("2"))
+            {
+                return BadRequest(new DataRespone { Message = "Wrong code" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = check });
+            }
+        }
+        [HttpPut("Host-Send-mail-active")]
+        public async Task<IActionResult> HostGetActiveCodeMailSend()
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _usermanage.HostGetActiveCodeMailSend(userId);
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "send Success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "send Fail" });
+            }
+        }
+
         //    [HttpPost("user-feedback")]
         //    public async Task<IActionResult> userFeedback(int BookingId ,FeedBackInput fb)
         //    {

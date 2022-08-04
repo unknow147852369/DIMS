@@ -22,11 +22,11 @@ namespace DIMSApis.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterInput user)
+        public async Task<IActionResult> UserRegister(RegisterInput user)
         {
             if (await _auth.UserExists(user.Email))
                 return BadRequest(new DataRespone { Message = "Email already exists" });
-            if (await _auth.Register(user))
+            if (await _auth.UserRegister(user))
             {
                 return Ok(new DataRespone { Message = "create success" });
             }
@@ -37,9 +37,9 @@ namespace DIMSApis.Controllers
         }
 
         [HttpPost("login-user")]
-        public async Task<IActionResult> Login(LoginInput userIn)
+        public async Task<IActionResult> LoginUser(LoginInput userIn)
         {
-            var user = await _auth.Login(userIn);
+            var user = await _auth.LoginUser(userIn);
 
             if (user == null)
                 return Unauthorized(new DataRespone { Message = "wrong email or password" });
@@ -71,7 +71,23 @@ namespace DIMSApis.Controllers
             };
             return Ok(login);
         }
+        [HttpPost("login-Host")]
+        public async Task<IActionResult> LoginHost(LoginInput userIn)
+        {
+            var user = await _auth.LoginHost(userIn);
 
+            if (user == null)
+                return Unauthorized(new DataRespone { Message = "wrong email or password" });
+
+            LoginOutput login = new()
+            {
+                UserId = user.UserId,
+                UserName = user.UserName,
+                Email = user.Email,
+                Token = _tokenService.CreateToken(user)
+            };
+            return Ok(login);
+        }
         [HttpPost("forgot-code-mail")]
         public async Task<IActionResult> ForgotCodeMailSend(ForgotCodeMailInput mail)
         {
@@ -98,17 +114,22 @@ namespace DIMSApis.Controllers
             }
         }
 
-        [HttpPost("forgot-pass-change-CHEAT")]
-        public async Task<IActionResult> ForgoPassChangeCHEAT(ForgotPassInput pass)
+        [HttpPost("Register-hotel-manager-role")]
+        public async Task<IActionResult> RegisterHotelManagerRole(RegisterInput user)
         {
-            if (await _auth.ForgoPassChangeCHEAT(pass))
+
+            if (await _auth.HotelManagerExists(user.Email))
+                return BadRequest(new DataRespone { Message = "Email already exists" });
+            var check = await _auth.RegisterHotelManagerRole(user); 
+            if (check.Equals("1"))
             {
-                return Ok(new DataRespone { Message = "change success" });
+                return Ok(new DataRespone { Message = "create success" });
             }
             else
             {
-                return BadRequest(new DataRespone { Message = "Nothing change" });
+                return BadRequest(new DataRespone { Message = "some thing went wrong" });
             }
         }
+
     }
 }
