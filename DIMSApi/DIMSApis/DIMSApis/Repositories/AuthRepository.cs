@@ -166,7 +166,7 @@ namespace DIMSApis.Repositories
                 Email = userinput.Email.ToLower(),
                 CreateDate = DateTime.Now,
                 Gender = "UNKNOW",
-                Role = "WAIT_HOST",
+                Role = "HOST",
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
                 Status = true,
