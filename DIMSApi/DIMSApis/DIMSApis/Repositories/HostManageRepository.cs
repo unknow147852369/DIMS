@@ -99,21 +99,16 @@ namespace DIMSApis.Repositories
                 .ToListAsync();
             if (allRoomStatus == null) { return null; }
             var lsHotelRoomNotBooked = await _context.Rooms
-                     .Include(c => c.BookingDetails).ThenInclude(b => b.Booking).ThenInclude(q => q.QrCheckUp)
-                    .Where(op => op.HotelId == hotelId)
-                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
-                                                  !(((op.StartDate.Value.Date > StartDate.Date && op.StartDate.Value.Date < EndDate.Date)
-                                                  && (op.EndDate.Value.Date > StartDate.Date && op.EndDate.Value.Date < EndDate.Date))
-                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > EndDate.Date)
-                                                  || (op.StartDate.Value.Date < EndDate.Date && op.EndDate.Value.Date > EndDate.Date)
-                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > StartDate.Date)
-                                                  || (op.StartDate.Value.Date == StartDate.Date
-                                                  || op.StartDate.Value.Date == EndDate.Date
-                                                  || op.EndDate.Value.Date == StartDate.Date
-                                                  || op.EndDate.Value.Date == EndDate.Date)
-                                                  ))
+                    .Where(op => op.Status == true && op.HotelId == hotelId)
+                    .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
+                                                    !(((op.StartDate.Value.Date >= StartDate.Date && op.StartDate.Value.Date <= EndDate.Date)
+                                                    && (op.EndDate.Value.Date >=  StartDate.Date && op.EndDate.Value.Date <= EndDate.Date))
+                                                    || (op.StartDate.Value.Date <=  StartDate.Date && op.EndDate.Value.Date >= EndDate.Date)
+                                                    || (op.StartDate.Value.Date <= EndDate.Date && op.EndDate.Value.Date >= EndDate.Date)
+                                                    || (op.StartDate.Value.Date <=StartDate.Date && op.EndDate.Value.Date >= StartDate.Date)
+                                                    ))
                                                 ))
-                                    .ToListAsync();
+                    .ToListAsync();
             var returnResult = _mapper.Map<IEnumerable<AHotelAllRoomStatusOutput>>(allRoomStatus);
 
             foreach (var result in returnResult)
@@ -122,26 +117,6 @@ namespace DIMSApis.Repositories
                 {
                     result.AllStatus = 1;
                     result.BookedStatus = false;
-                }
-                else
-                {
-                    var checkCheckIn = await _context.Bookings
-                        .Include(q => q.QrCheckUp)
-                        .Where(op => op.BookingDetails.Where(op => op.RoomId == result.RoomId
-                                                             && op.EndDate >= DateTime.Now.Date
-                                                               && op.Status == true
-                                                               ).Count() == 1)
-                        .SingleOrDefaultAsync();
-                    ;
-                    if (checkCheckIn.QrCheckUp.Status == true)
-                    {
-                        result.AllStatus = 2;
-                    }
-                    else
-                    {
-                        result.AllStatus = 4;
-                    }
-                    result.BookedStatus = true;
                 }
                 if (result.CleanStatus == true)
                 {
@@ -176,14 +151,13 @@ namespace DIMSApis.Repositories
 
             if (allRoomStatus == null) { return null; }
             var lsHotelRoomNotBooked = await _context.Rooms
-
-                    .Where(op => op.HotelId == hotelId)
-                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
-                                                  !(op.StartDate.Value.Date <= today.Date
-                                                  && op.EndDate.Value.Date >= today.Date)
+                .Where(op => op.Status == true && op.HotelId == hotelId)
+                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => 
+                                                  !((op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date)
                                                   )
                                                 ))
                                     .ToListAsync();
+
             var returnResult = _mapper.Map<IEnumerable<AHotelAllRoomStatusOutput>>(allRoomStatus);
 
             foreach (var result in returnResult)
@@ -198,11 +172,12 @@ namespace DIMSApis.Repositories
                     var checkCheckIn = await _context.Bookings
                         .Include(q => q.QrCheckUp)
                         .Where(op => op.BookingDetails.Where(op=>op.RoomId == result.RoomId
-                                                             && op.EndDate >= DateTime.Now.Date
+                                                             && op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date
                                                                && op.Status == true
                                                                ).Count()==1)
                         .SingleOrDefaultAsync();
                     ;
+                    result.BookingId = checkCheckIn.BookingId;
                     if (checkCheckIn.QrCheckUp.Status == true)
                     {
                         result.AllStatus = 2;
@@ -251,7 +226,23 @@ namespace DIMSApis.Repositories
                 }
                 else
                 {
-                    result.AllStatus = 2;
+                    var checkCheckIn = await _context.Bookings
+                        .Include(q => q.QrCheckUp)
+                        .Where(op => op.BookingDetails.Where(op => op.RoomId == result.RoomId
+                                                             && op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date
+                                                               && op.Status == true
+                                                               ).Count() == 1)
+                        .SingleOrDefaultAsync();
+                    ;
+                    result.BookingId = checkCheckIn.BookingId;
+                    if (checkCheckIn.QrCheckUp.Status == true)
+                    {
+                        result.AllStatus = 2;
+                    }
+                    else
+                    {
+                        result.AllStatus = 4;
+                    }
                     result.BookedStatus = true;
                 }
                 if (result.CleanStatus == true)
@@ -747,26 +738,7 @@ namespace DIMSApis.Repositories
                     result.AllStatus = 1;
                     result.BookedStatus = false;
                 }
-                else
-                {
-                    var checkCheckIn = await _context.Bookings
-                        .Include(q => q.QrCheckUp)
-                        .Where(op => op.BookingDetails.Where(op => op.RoomId == result.RoomId
-                                                             && op.EndDate >= DateTime.Now.Date
-                                                               && op.Status == true
-                                                               ).Count() == 1)
-                        .SingleOrDefaultAsync();
-                    ;
-                    if (checkCheckIn.QrCheckUp.Status == true)
-                    {
-                        result.AllStatus = 2;
-                    }
-                    else
-                    {
-                        result.AllStatus = 4;
-                    }
-                    result.BookedStatus = true;
-                }
+
                 if (result.CleanStatus == true)
                 {
                     result.AllStatus = 3;

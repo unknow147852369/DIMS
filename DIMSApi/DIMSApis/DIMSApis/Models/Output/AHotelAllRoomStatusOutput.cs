@@ -5,6 +5,7 @@
         public int RoomId { get; set; }
         public string? RoomName { get; set; }
         public int? HotelId { get; set; }
+        public int? BookingId { get; set; }
         public int? CategoryId { get; set; }
         public string? CategoryName { get; set; }
         public double? RoomPrice { get; set; }
