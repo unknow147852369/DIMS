@@ -88,7 +88,7 @@ namespace DIMSApis.Repositories
         public async Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelAllRoomStatusSearch(int userId, int hotelId, DateTime today, int totalnight)
         {
             DateTime StartDate = today.Add(new TimeSpan(14, 00, 0));
-            DateTime EndDate = _other.GetEndDate(today, totalnight);
+            DateTime EndDate = _other.GetEndDate(today, totalnight).AddDays(-1);
             var allRoomStatus = await _context.Rooms
                 .Include(c => c.Category)
                 .ThenInclude(sp => sp.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date
@@ -101,13 +101,12 @@ namespace DIMSApis.Repositories
             var lsHotelRoomNotBooked = await _context.Rooms
                     .Where(op => op.Status == true && op.HotelId == hotelId)
                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
-                                                    !(((op.StartDate.Value.Date > StartDate.Date && op.StartDate.Value.Date < EndDate.Date)
-                                                  && (op.EndDate.Value.Date > StartDate.Date && op.EndDate.Value.Date < EndDate.Date))
-                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > EndDate.Date)
-                                                  || (op.StartDate.Value.Date < EndDate.Date && op.EndDate.Value.Date > EndDate.Date)
-                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > StartDate.Date)
-                                                  || (op.StartDate.Value.Date == StartDate.Date)
-                                                  ))
+                                                      !(((op.StartDate.Value.Date >= StartDate.Date && op.StartDate.Value.Date <= EndDate.Date)
+                                                      && (op.EndDate.Value.Date >= StartDate.Date && op.EndDate.Value.Date <= EndDate.Date))
+                                                      || (op.StartDate.Value.Date <= StartDate.Date && op.EndDate.Value.Date >= EndDate.Date)
+                                                      || (op.StartDate.Value.Date <= EndDate.Date && op.EndDate.Value.Date >= EndDate.Date)
+                                                      || (op.StartDate.Value.Date <= StartDate.Date && op.EndDate.Value.Date >= StartDate.Date)
+                                                      ))
                                                 ))
                     .ToListAsync();
             var returnResult = _mapper.Map<IEnumerable<AHotelAllRoomStatusOutput>>(allRoomStatus);
@@ -416,10 +415,10 @@ namespace DIMSApis.Repositories
             IQueryable<Room> lsHotelRoomNotBooked = _context.Rooms
                     .Where(op => op.Status == true && op.HotelId == bok.HotelId)
                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
-                                                    !(((op.StartDate.Value.Date >= bok.StartDate.Value.Date && op.StartDate.Value.Date <= bok.EndDate.Value.Date)
-                                                    && (op.EndDate.Value.Date >= bok.StartDate.Value.Date && op.EndDate.Value.Date <= bok.EndDate.Value.Date))
-                                                    || (op.StartDate.Value.Date <= bok.StartDate.Value.Date && op.EndDate.Value.Date >= bok.EndDate.Value.Date)
-                                                    || (op.StartDate.Value.Date <= bok.EndDate.Value.Date && op.EndDate.Value.Date >= bok.EndDate.Value.Date)
+                                                    !(((op.StartDate.Value.Date >= bok.StartDate.Value.Date && op.StartDate.Value.Date <= bok.EndDate.Value.AddDays(-1).Date)
+                                                    && (op.EndDate.Value.Date >= bok.StartDate.Value.Date && op.EndDate.Value.Date <= bok.EndDate.Value.AddDays(-1).Date))
+                                                    || (op.StartDate.Value.Date <= bok.StartDate.Value.Date && op.EndDate.Value.Date >= bok.EndDate.Value.AddDays(-1).Date)
+                                                    || (op.StartDate.Value.Date <= bok.EndDate.Value.AddDays(-1).Date && op.EndDate.Value.Date >= bok.EndDate.Value.AddDays(-1).Date)
                                                     || (op.StartDate.Value.Date <= bok.StartDate.Value.Date && op.EndDate.Value.Date >= bok.StartDate.Value.Date)
                                                     ))
                                                 ));
@@ -705,7 +704,7 @@ namespace DIMSApis.Repositories
         public async Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelOnlyRoomStatus13Search(int userId, int hotelId, DateTime today, int totalnight)
         {
             DateTime StartDate = today.Add(new TimeSpan(14, 00, 0));
-            DateTime EndDate = _other.GetEndDate(today, totalnight);
+            DateTime EndDate = _other.GetEndDate(today, totalnight).AddDays(-1);
             var allRoomStatus = await _context.Rooms
                 .Include(c => c.Category)
                 .ThenInclude(sp => sp.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date
@@ -718,13 +717,12 @@ namespace DIMSApis.Repositories
             var lsHotelRoomNotBooked = await _context.Rooms
                     .Where(op => op.HotelId == hotelId)
                      .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
-                                                  !(((op.StartDate.Value.Date > StartDate.Date && op.StartDate.Value.Date < EndDate.Date)
-                                                  && (op.EndDate.Value.Date > StartDate.Date && op.EndDate.Value.Date < EndDate.Date))
-                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > EndDate.Date)
-                                                  || (op.StartDate.Value.Date < EndDate.Date && op.EndDate.Value.Date > EndDate.Date)
-                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > StartDate.Date)
-                                                  || (op.StartDate.Value.Date == StartDate.Date)
-                                                  ))
+                                                      !(((op.StartDate.Value.Date >= StartDate.Date && op.StartDate.Value.Date <= EndDate.Date)
+                                                      && (op.EndDate.Value.Date >= StartDate.Date && op.EndDate.Value.Date <= EndDate.Date))
+                                                      || (op.StartDate.Value.Date <= StartDate.Date && op.EndDate.Value.Date >= EndDate.Date)
+                                                      || (op.StartDate.Value.Date <= EndDate.Date && op.EndDate.Value.Date >= EndDate.Date)
+                                                      || (op.StartDate.Value.Date <= StartDate.Date && op.EndDate.Value.Date >= StartDate.Date)
+                                                      ))
                                                 ))
                                     .ToListAsync();
             var returnResult = _mapper.Map<IEnumerable<AHotelAllRoomStatusOutput>>(allRoomStatus);

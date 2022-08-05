@@ -178,7 +178,7 @@ namespace DIMSApis.Repositories
         public async Task<IEnumerable<HotelOutput>> GetListSearchHotel(string Location, string LocationName, DateTime ArrivalDate, int TotalNight)
         {
             DateTime StartDate = ArrivalDate;
-            DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight);
+            DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight).AddDays(-1);
             var terms = _other.RemoveMark(LocationName);
 
             if (ArrivalDate.Date < DateTime.Now.Date || TotalNight <= 0) { return null; }
@@ -190,16 +190,12 @@ namespace DIMSApis.Repositories
                 .Include(d => d.DistrictNavigation)
                 .Include(pr => pr.ProvinceNavigation)
                 .Include(r => r.Rooms.Where(bd => bd.BookingDetails.Where(op => op.Status.Value).All(op => (
-                                                  !(((op.StartDate.Value.Date > StartDate.Date && op.StartDate.Value.Date < EndDate.Date)
-                                                  && (op.EndDate.Value.Date > StartDate.Date && op.EndDate.Value.Date < EndDate.Date))
-                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > EndDate.Date)
-                                                  || (op.StartDate.Value.Date < EndDate.Date && op.EndDate.Value.Date > EndDate.Date)
-                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > StartDate.Date)
-                                                  || (op.StartDate.Value.Date == StartDate.Date
-                                                  || op.StartDate.Value.Date == EndDate.Date
-                                                  || op.EndDate.Value.Date == StartDate.Date
-                                                  || op.EndDate.Value.Date == EndDate.Date)
-                                                  ))
+                                                      !(((op.StartDate.Value.Date >= StartDate.Date && op.StartDate.Value.Date <= EndDate.Date)
+                                                      && (op.EndDate.Value.Date >= StartDate.Date && op.EndDate.Value.Date <= EndDate.Date))
+                                                      || (op.StartDate.Value.Date <= StartDate.Date && op.EndDate.Value.Date >= EndDate.Date)
+                                                      || (op.StartDate.Value.Date <= EndDate.Date && op.EndDate.Value.Date >= EndDate.Date)
+                                                      || (op.StartDate.Value.Date <= StartDate.Date && op.EndDate.Value.Date >= StartDate.Date)
+                                                      ))
                                                 )))
                 .Where(op => op.Rooms.Count() > 0);
 
@@ -223,36 +219,36 @@ namespace DIMSApis.Repositories
         public async Task<HotelCateInfoOutput> GetListAvaiableHotelCate(int? hotelId, DateTime ArrivalDate, int TotalNight, int peopleQuanity)
         {
             DateTime StartDate = ArrivalDate;
-            DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight);
+            DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight).AddDays(-1);
             if (ArrivalDate.Date < DateTime.Now.Date || TotalNight <= 0 || peopleQuanity <= 0) { return null; }
 
             IQueryable<Category> lsCateRooms = _context.Categories
                 .Include(p => p.Photos)
                 .Include(pr => pr.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date))
-                .Include(r => r.Rooms)
+                .Include(r => r.Rooms.Where(op => op.Status == true).Where(bd => bd.BookingDetails.Where(op => op.Status.Value).All(op => (
+                                                      !(((op.StartDate.Value.Date >= StartDate.Date && op.StartDate.Value.Date <= EndDate.Date)
+                                                      && (op.EndDate.Value.Date >= StartDate.Date && op.EndDate.Value.Date <= EndDate.Date))
+                                                      || (op.StartDate.Value.Date <= StartDate.Date && op.EndDate.Value.Date >= EndDate.Date)
+                                                      || (op.StartDate.Value.Date <= EndDate.Date && op.EndDate.Value.Date >= EndDate.Date)
+                                                      || (op.StartDate.Value.Date <= StartDate.Date && op.EndDate.Value.Date >= StartDate.Date)
+                                                      ))
+                                                    )))
                 .Where(op => op.HotelId == hotelId && op.Quanity >= peopleQuanity && op.Status == true);
 
             if (lsCateRooms == null) { return null; }
 
-            var AHotel = await _context.Hotels
+            var AHotel = await  _context.Hotels
                 .Include(p => p.Vouchers.Where(op => op.EndDate.Value.Date >= DateTime.Now.Date))
                 .Include(p => p.Photos)
                 .Include(h => h.HotelType)
                 .Include(c => c.Categories)
-                .Include(r => r.Rooms.Where(op => op.Status == true)
-                                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
-                                                    !(((op.StartDate.Value.Date >= StartDate.Date && op.StartDate.Value.Date <= EndDate.Date)
-                                                    && (op.EndDate.Value.Date >= StartDate.Date && op.EndDate.Value.Date <= EndDate.Date))
-                                                    || (op.StartDate.Value.Date <= StartDate.Date && op.EndDate.Value.Date >= EndDate.Date)
-                                                    || (op.StartDate.Value.Date <= EndDate.Date && op.EndDate.Value.Date >= EndDate.Date)
-                                                    || (op.StartDate.Value.Date <= StartDate.Date && op.EndDate.Value.Date >= StartDate.Date)
-                                                    ))
-                                                )))
                 .Include(w => w.WardNavigation)
                 .Include(d => d.DistrictNavigation)
                 .Include(pr => pr.ProvinceNavigation)
                 .Where(op => op.HotelId == hotelId )
                 .SingleOrDefaultAsync();
+
+
 
             var result = await lsCateRooms.ToListAsync();
 

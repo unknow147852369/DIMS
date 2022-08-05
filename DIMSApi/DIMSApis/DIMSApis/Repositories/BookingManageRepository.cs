@@ -250,10 +250,10 @@ namespace DIMSApis.Repositories
             IQueryable<Room> lsHotelRoomNotBooked = _context.Rooms
                     .Where(op => op.Status == true && op.HotelId == bok.HotelId)
                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
-                                                    !(((op.StartDate.Value.Date >= bok.StartDate.Value.Date && op.StartDate.Value.Date <= bok.EndDate.Value.Date)
-                                                    && (op.EndDate.Value.Date >= bok.StartDate.Value.Date && op.EndDate.Value.Date <= bok.EndDate.Value.Date))
-                                                    || (op.StartDate.Value.Date <= bok.StartDate.Value.Date && op.EndDate.Value.Date >= bok.EndDate.Value.Date)
-                                                    || (op.StartDate.Value.Date <= bok.EndDate.Value.Date && op.EndDate.Value.Date >= bok.EndDate.Value.Date)
+                                                    !(((op.StartDate.Value.Date >= bok.StartDate.Value.Date && op.StartDate.Value.Date <= bok.EndDate.Value.AddDays(-1).Date)
+                                                    && (op.EndDate.Value.Date >= bok.StartDate.Value.Date && op.EndDate.Value.Date <= bok.EndDate.Value.AddDays(-1).Date))
+                                                    || (op.StartDate.Value.Date <= bok.StartDate.Value.Date && op.EndDate.Value.Date >= bok.EndDate.Value.AddDays(-1).Date)
+                                                    || (op.StartDate.Value.Date <= bok.EndDate.Value.AddDays(-1).Date && op.EndDate.Value.Date >= bok.EndDate.Value.AddDays(-1).Date)
                                                     || (op.StartDate.Value.Date <= bok.StartDate.Value.Date && op.EndDate.Value.Date >= bok.StartDate.Value.Date)
                                                     ))
                                                 ));
