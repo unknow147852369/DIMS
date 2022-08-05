@@ -160,7 +160,7 @@ namespace DIMSApis.Repositories
             IQueryable<SpecialPrice> DatePrice = _context.SpecialPrices
                 .Include(c => c.Category).ThenInclude(r => r.Rooms.Where(op => ppi.BookingDetails.Select(s => s.RoomId).Contains(op.RoomId)))
                  .Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date
-                 && op.SpecialDate.Value.Date >= bok.StartDate.Value.AddDays(-1).Date
+                 && op.SpecialDate.Value.Date >= bok.StartDate.Value.Date
                  && op.SpecialDate.Value.Date <= bok.EndDate.Value.AddDays(-1).Date
                  && op.Status == true
                  && op.Category.Rooms.Where(op => ppi.BookingDetails.Select(s => s.RoomId).Contains(op.RoomId)).Count() > 0)
@@ -169,7 +169,7 @@ namespace DIMSApis.Repositories
             IQueryable<Room> roomprice = _context.Rooms
                 .Include(c => c.Category)
                 .ThenInclude(sp => sp.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date
-                                    && op.SpecialDate.Value.Date >= bok.StartDate.Value.AddDays(-1).Date
+                                    && op.SpecialDate.Value.Date >= bok.StartDate.Value.Date
                                     && op.SpecialDate.Value.Date <= bok.EndDate.Value.AddDays(-1).Date
                                     && op.Status.Value))
                 .Where(op => ppi.BookingDetails.Select(s => s.RoomId).Contains(op.RoomId)
