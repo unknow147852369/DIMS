@@ -101,12 +101,13 @@ namespace DIMSApis.Repositories
             var lsHotelRoomNotBooked = await _context.Rooms
                     .Where(op => op.Status == true && op.HotelId == hotelId)
                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
-                                                    !(((op.StartDate.Value.Date >= StartDate.Date && op.StartDate.Value.Date <= EndDate.Date)
-                                                    && (op.EndDate.Value.Date >=  StartDate.Date && op.EndDate.Value.Date <= EndDate.Date))
-                                                    || (op.StartDate.Value.Date <=  StartDate.Date && op.EndDate.Value.Date >= EndDate.Date)
-                                                    || (op.StartDate.Value.Date <= EndDate.Date && op.EndDate.Value.Date >= EndDate.Date)
-                                                    || (op.StartDate.Value.Date <=StartDate.Date && op.EndDate.Value.Date >= StartDate.Date)
-                                                    ))
+                                                    !(((op.StartDate.Value.Date > StartDate.Date && op.StartDate.Value.Date < EndDate.Date)
+                                                  && (op.EndDate.Value.Date > StartDate.Date && op.EndDate.Value.Date < EndDate.Date))
+                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > EndDate.Date)
+                                                  || (op.StartDate.Value.Date < EndDate.Date && op.EndDate.Value.Date > EndDate.Date)
+                                                  || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > StartDate.Date)
+                                                  || (op.StartDate.Value.Date == StartDate.Date)
+                                                  ))
                                                 ))
                     .ToListAsync();
             var returnResult = _mapper.Map<IEnumerable<AHotelAllRoomStatusOutput>>(allRoomStatus);
@@ -722,10 +723,7 @@ namespace DIMSApis.Repositories
                                                   || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > EndDate.Date)
                                                   || (op.StartDate.Value.Date < EndDate.Date && op.EndDate.Value.Date > EndDate.Date)
                                                   || (op.StartDate.Value.Date < StartDate.Date && op.EndDate.Value.Date > StartDate.Date)
-                                                  || (op.StartDate.Value.Date == StartDate.Date
-                                                  || op.StartDate.Value.Date == EndDate.Date
-                                                  || op.EndDate.Value.Date == StartDate.Date
-                                                  || op.EndDate.Value.Date == EndDate.Date)
+                                                  || (op.StartDate.Value.Date == StartDate.Date)
                                                   ))
                                                 ))
                                     .ToListAsync();
