@@ -38,7 +38,7 @@ namespace DIMSApis.Services
         {
             if (value.HasValue)
             {
-                return string.Format(new CultureInfo("vi-VN"), "{0:#,##0.00}", value * 1000);
+                return string.Format(new CultureInfo("vi-VN"), "{0:#,##0 VND}", value * 1000);
             }
             else
             {

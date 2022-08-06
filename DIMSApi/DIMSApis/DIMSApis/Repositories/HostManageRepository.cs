@@ -802,7 +802,7 @@ namespace DIMSApis.Repositories
             IQueryable<Booking> lsBooks =  _context.Bookings
                 .Include(tbl=>tbl.QrCheckUp)
                 .Where(op => op.HotelId == hotelID)
-                .OrderByDescending(o=>o.CreateDate);
+                .OrderByDescending(o=>o.BookingId);
              await lsBooks.ForEachAsync(l => l.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0)));
             var returnLS = await _pagination.GetPagination(lsBooks,CurrentPage,pageSize);
             return returnLS;
