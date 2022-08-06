@@ -42,7 +42,7 @@ namespace DIMSApis.Services
             body = body.Replace("#Location 2#", $"BooingID:{bok.BookingId}");
             body = body.Replace("#Location 3#", $"Your Room:{qri.RoomName}");
             body = body.Replace("#Location 4#", $"Start Date:{bok.StartDate}");
-            body = body.Replace("#Location 5#", $"End Date:{bok.EndDate}");
+            body = body.Replace("#Location 5#", $"End Date:{bok.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0))}");
             return body;
         }
     }

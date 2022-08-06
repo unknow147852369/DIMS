@@ -44,7 +44,7 @@ namespace DIMSApis.Repositories
                .Include(b => b.BookingDetails).ThenInclude(r => r.Room).ThenInclude(c => c.Category)
                .Where(op => op.UserId == UserId)
                .OrderByDescending(b => b.BookingId).ToListAsync();
-
+            bill.ForEach(b => b.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0)));
             return bill;
         }
 
@@ -69,8 +69,8 @@ namespace DIMSApis.Repositories
                     error += "Wrong date ;";
                 }
                 Booking bok = await PaymentCalculateData(ppi, userId);
-                //var paymentstatus = condition4;
-                var paymentstatus = _stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
+                var paymentstatus = condition4;
+                //var paymentstatus = _stripe.PayWithStripe(ppi.Email, ppi.Token, bok);
                 if (paymentstatus.Contains(condition4))
                 {
                     bok.PaymentMethod = condition1;
@@ -161,7 +161,7 @@ namespace DIMSApis.Repositories
                 .Include(c => c.Category).ThenInclude(r => r.Rooms.Where(op => ppi.BookingDetails.Select(s => s.RoomId).Contains(op.RoomId)))
                  .Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date
                  && op.SpecialDate.Value.Date >= bok.StartDate.Value.Date
-                 && op.SpecialDate.Value.Date <= bok.EndDate.Value.AddDays(-1).Date
+                 && op.SpecialDate.Value.Date <= bok.EndDate.Value.Date
                  && op.Status == true
                  && op.Category.Rooms.Where(op => ppi.BookingDetails.Select(s => s.RoomId).Contains(op.RoomId)).Count() > 0)
                 ;
@@ -170,7 +170,7 @@ namespace DIMSApis.Repositories
                 .Include(c => c.Category)
                 .ThenInclude(sp => sp.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date
                                     && op.SpecialDate.Value.Date >= bok.StartDate.Value.Date
-                                    && op.SpecialDate.Value.Date <= bok.EndDate.Value.AddDays(-1).Date
+                                    && op.SpecialDate.Value.Date <= bok.EndDate.Value.Date
                                     && op.Status.Value))
                 .Where(op => ppi.BookingDetails.Select(s => s.RoomId).Contains(op.RoomId)
                 )
@@ -250,10 +250,10 @@ namespace DIMSApis.Repositories
             IQueryable<Room> lsHotelRoomNotBooked = _context.Rooms
                     .Where(op => op.Status == true && op.HotelId == bok.HotelId)
                     .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (
-                                                    !(((op.StartDate.Value.Date >= bok.StartDate.Value.Date && op.StartDate.Value.Date <= bok.EndDate.Value.AddDays(-1).Date)
-                                                    && (op.EndDate.Value.Date >= bok.StartDate.Value.Date && op.EndDate.Value.Date <= bok.EndDate.Value.AddDays(-1).Date))
-                                                    || (op.StartDate.Value.Date <= bok.StartDate.Value.Date && op.EndDate.Value.Date >= bok.EndDate.Value.AddDays(-1).Date)
-                                                    || (op.StartDate.Value.Date <= bok.EndDate.Value.AddDays(-1).Date && op.EndDate.Value.Date >= bok.EndDate.Value.AddDays(-1).Date)
+                                                    !(((op.StartDate.Value.Date >= bok.StartDate.Value.Date && op.StartDate.Value.Date <= bok.EndDate.Value.Date)
+                                                    && (op.EndDate.Value.Date >= bok.StartDate.Value.Date && op.EndDate.Value.Date <= bok.EndDate.Value.Date))
+                                                    || (op.StartDate.Value.Date <= bok.StartDate.Value.Date && op.EndDate.Value.Date >= bok.EndDate.Value.Date)
+                                                    || (op.StartDate.Value.Date <= bok.EndDate.Value.Date && op.EndDate.Value.Date >= bok.EndDate.Value.Date)
                                                     || (op.StartDate.Value.Date <= bok.StartDate.Value.Date && op.EndDate.Value.Date >= bok.StartDate.Value.Date)
                                                     ))
                                                 ));

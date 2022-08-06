@@ -178,7 +178,7 @@ namespace DIMSApis.Repositories
         public async Task<IEnumerable<HotelOutput>> GetListSearchHotel(string Location, string LocationName, DateTime ArrivalDate, int TotalNight)
         {
             DateTime StartDate = ArrivalDate;
-            DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight).AddDays(-1);
+            DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight);
             var terms = _other.RemoveMark(LocationName);
 
             if (ArrivalDate.Date < DateTime.Now.Date || TotalNight <= 0) { return null; }
@@ -219,7 +219,7 @@ namespace DIMSApis.Repositories
         public async Task<HotelCateInfoOutput> GetListAvaiableHotelCate(int? hotelId, DateTime ArrivalDate, int TotalNight, int peopleQuanity)
         {
             DateTime StartDate = ArrivalDate;
-            DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight).AddDays(-1);
+            DateTime EndDate = _other.GetEndDate(ArrivalDate, TotalNight);
             if (ArrivalDate.Date < DateTime.Now.Date || TotalNight <= 0 || peopleQuanity <= 0) { return null; }
 
             IQueryable<Category> lsCateRooms = _context.Categories

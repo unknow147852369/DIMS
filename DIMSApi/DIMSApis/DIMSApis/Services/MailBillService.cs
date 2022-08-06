@@ -49,7 +49,7 @@ namespace DIMSApis.Services
             body = body.Replace("#LOCATION5#", $"{bok.PhoneNumber}");
             body = body.Replace("#LOCATION6#", $"{bok.PeopleQuanity}");
             body = body.Replace("#LOCATION7#", $"{bok.StartDate}");
-            body = body.Replace("#LOCATION8#", $"{bok.EndDate}");
+            body = body.Replace("#LOCATION8#", $"{bok.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0))}");
 
             body = body.Replace("#LOCATION10#", $"{bok.PaymentMethod}");
             body = body.Replace("#LOCATION111#", $"{bok.CreateDate}");

@@ -88,7 +88,7 @@ namespace DIMSApis.Repositories
         public async Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelAllRoomStatusSearch(int userId, int hotelId, DateTime today, int totalnight)
         {
             DateTime StartDate = today.Add(new TimeSpan(14, 00, 0));
-            DateTime EndDate = _other.GetEndDate(today, totalnight).AddDays(-1);
+            DateTime EndDate = _other.GetEndDate(today, totalnight);
             var allRoomStatus = await _context.Rooms
                 .Include(c => c.Category)
                 .ThenInclude(sp => sp.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date
@@ -704,7 +704,7 @@ namespace DIMSApis.Repositories
         public async Task<IEnumerable<AHotelAllRoomStatusOutput>> GetListAHotelOnlyRoomStatus13Search(int userId, int hotelId, DateTime today, int totalnight)
         {
             DateTime StartDate = today.Add(new TimeSpan(14, 00, 0));
-            DateTime EndDate = _other.GetEndDate(today, totalnight).AddDays(-1);
+            DateTime EndDate = _other.GetEndDate(today, totalnight);
             var allRoomStatus = await _context.Rooms
                 .Include(c => c.Category)
                 .ThenInclude(sp => sp.SpecialPrices.Where(op => op.SpecialDate.Value.Date >= DateTime.Now.Date
@@ -799,7 +799,7 @@ namespace DIMSApis.Repositories
                 .Include(tbl=>tbl.QrCheckUp)
                 .Where(op => op.HotelId == hotelID)
                 .OrderByDescending(o=>o.CreateDate);
-
+            lsBooks.ForEachAsync(l => l.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0)));
             var returnLS = await _pagination.GetPagination(lsBooks,CurrentPage,pageSize);
             return returnLS;
         }

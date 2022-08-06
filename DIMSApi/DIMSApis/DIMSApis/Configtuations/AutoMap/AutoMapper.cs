@@ -21,6 +21,7 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.Voucher, option => option.MapFrom(tbl => tbl.Voucher))
                 .ForMember(a => a.QrCheckUp, option => option.MapFrom(tbl => tbl.QrCheckUp))
                 .ForMember(a => a.InboundUsers, option => option.MapFrom(tbl => tbl.InboundUsers))
+                .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0))))
                 ;
             CreateMap<QrCheckUp, ABookingFullQRcheckUpOutput>()
                 ;
@@ -44,11 +45,13 @@ namespace DIMSApis.Configtuations.AutoMap
             CreateMap<Booking, FullRoomMoneyDetailFirstOutput>()
                 .ForMember(a => a.BookingDetails, option => option.MapFrom(tbl => tbl.BookingDetails))
                 .ForMember(a => a.InboundUsers, option => option.MapFrom(tbl => tbl.InboundUsers))
+                .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0))))
                 ;
             CreateMap<InboundUser, FullRoomMoneyDetailThirdOutput>()
                 ;
             CreateMap<BookingDetail, FullRoomMoneyDetailSecondOutput>()
                 .ForMember(a => a.BookingDetailMenus, option => option.MapFrom(tbl => tbl.BookingDetailMenus))
+                .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0))))
                 ;
             CreateMap<BookingDetailMenu, FullRoomMoneyDetailMenusOutput>()
                 ;
@@ -161,7 +164,7 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
                 .ForMember(a => a.StartDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.Add(new TimeSpan(14, 00, 0))))
-                .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.AddDays((double)(tbl.TotalNight)).Add(new TimeSpan(12, 00, 0))));
+                .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.AddDays((double)(tbl.TotalNight))));
             ;
             CreateMap<PaymentProcessingDetailInput, BookingDetail>()
                 ;
