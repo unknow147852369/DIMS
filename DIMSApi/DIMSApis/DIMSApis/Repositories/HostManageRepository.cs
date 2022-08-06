@@ -601,7 +601,9 @@ namespace DIMSApis.Repositories
                     }
                     await _context.SaveChangesAsync();
                 }
-                roomBooking.Booking.SubTotal = roomBooking.Booking.SubTotal - roomBooking.ExtraFee;
+               var subtotal = roomBooking.Booking.SubTotal;
+                var ExtraFee = roomBooking.ExtraFee == null ? 0 : roomBooking.ExtraFee;
+                roomBooking.Booking.SubTotal = subtotal - ExtraFee;
                 roomBooking.ExtraFee = roomBooking.BookingDetailMenus.Sum(s => s.BookingDetailMenuQuanity * s.BookingDetailMenuPrice);
                 roomBooking.Booking.SubTotal = roomBooking.Booking.SubTotal + roomBooking.ExtraFee;
 
@@ -666,7 +668,9 @@ namespace DIMSApis.Repositories
 
                     await _context.SaveChangesAsync();
                 }
-                roomBooking.Booking.SubTotal = roomBooking.Booking.SubTotal - roomBooking.ExtraFee;
+                var subtotal = roomBooking.Booking.SubTotal;
+                var ExtraFee = roomBooking.ExtraFee == null ? 0 : roomBooking.ExtraFee;
+                roomBooking.Booking.SubTotal = subtotal - ExtraFee;
                 roomBooking.ExtraFee = roomBooking.BookingDetailMenus.Sum(s => s.BookingDetailMenuQuanity * s.BookingDetailMenuPrice);
                 roomBooking.Booking.SubTotal = roomBooking.Booking.SubTotal + roomBooking.ExtraFee;
 
@@ -799,7 +803,7 @@ namespace DIMSApis.Repositories
                 .Include(tbl=>tbl.QrCheckUp)
                 .Where(op => op.HotelId == hotelID)
                 .OrderByDescending(o=>o.CreateDate);
-            lsBooks.ForEachAsync(l => l.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0)));
+             await lsBooks.ForEachAsync(l => l.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0)));
             var returnLS = await _pagination.GetPagination(lsBooks,CurrentPage,pageSize);
             return returnLS;
         }
