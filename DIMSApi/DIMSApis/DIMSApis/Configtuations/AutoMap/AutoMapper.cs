@@ -115,8 +115,8 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
                 .ForMember(a => a.StartDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.Add(new TimeSpan(14, 00, 0))))
-                .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.AddDays((double)(tbl.TotalNight)).Add(new TimeSpan(12, 00, 0))));
-                ;
+                .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.AddDays((double)(tbl.TotalNight-1))));
+            ;
             CreateMap<LocalPaymentBookingdetailInput, BookingDetail>()
                 .ForMember(a => a.AveragePrice, option => option.MapFrom(tbl => tbl.TotalRoomPrice))
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
@@ -164,7 +164,7 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 .ForMember(a => a.CreateDate, option => option.MapFrom(tbl => DateTime.Now))
                 .ForMember(a => a.StartDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.Add(new TimeSpan(14, 00, 0))))
-                .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.AddDays((double)(tbl.TotalNight))));
+                .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.ArrivalDate.Date.AddDays((double)(tbl.TotalNight-1))));
             ;
             CreateMap<PaymentProcessingDetailInput, BookingDetail>()
                 ;
