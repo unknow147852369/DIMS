@@ -31,6 +31,8 @@ namespace DIMSApis.Repositories
                             .SingleOrDefaultAsync();
 
             if (check == null || check.QrCheckUp == null) { return "0"; }
+            bool earlthcheck = check.StartDate.Value.Add(new TimeSpan(13, 00, 0)) > DateTime.Now;
+            if (earlthcheck) { return "can't check in earlier more than 1h your avaiable time to checkin is " + check.StartDate.Value.Add(new TimeSpan(13, 00, 0)); }
             check.Status = true;
             check.QrCheckUp.Status = true;
             check.QrCheckUp.CheckIn = DateTime.Now;
@@ -153,16 +155,16 @@ namespace DIMSApis.Repositories
                     }
                 }
                 else { condition = "wrong infrom"; }
-                var log = new DoorLog
-                {
-                    RoomlId = int.Parse(RoomId),
-                    CreateDate = DateTime.Now,
-                    DoorQrContent = QrContent,
-                    DoorCondition = condition,
-                    DoorLogStatus = true
-                };
-                await _context.AddAsync(log);
-                if (await _context.SaveChangesAsync() > 0)
+                //var log = new DoorLog
+                //{
+                //    RoomlId = int.Parse(RoomId),
+                //    CreateDate = DateTime.Now,
+                //    DoorQrContent = QrContent,
+                //    DoorCondition = condition,
+                //    DoorLogStatus = true
+                //};
+                //await _context.DoorLogs.AddAsync(log);
+                //if (await _context.SaveChangesAsync() > 0)
                 {
                     return condition;
                 }

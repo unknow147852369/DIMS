@@ -52,19 +52,19 @@ namespace DIMSApis.Controllers
         [HttpPut("Checkin-Online")]
         public async Task<IActionResult> CheckInOnline(int hotelId, int bookingID)
         {
-            var checkOut = await _qrmanage.CheckInOnline(hotelId,bookingID);
+            var checkIn = await _qrmanage.CheckInOnline(hotelId,bookingID);
 
-            if (checkOut.Equals("1"))
+            if (checkIn.Equals("1"))
             {
                 return Ok("CheckIn Success!");
             }
-            else if (checkOut.Equals("3"))
+            else if (checkIn.Equals("3"))
             {
                 return NoContent();
             }
             else
             {
-                return BadRequest("Not found");
+                return BadRequest(checkIn);
             }
         }
 
