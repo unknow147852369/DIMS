@@ -106,7 +106,7 @@ namespace DIMSApis.Repositories
             ltOtp.Add(new NewOtpInput
             {
                 Purpose = purpose1,
-                CodeOtp = checkcode,
+                CodeOtp = null,
                 CreateDate = DateTime.Now,
                 Status = 1,
             });
@@ -122,7 +122,7 @@ namespace DIMSApis.Repositories
                 Email = userinput.Email.ToLower(),
                 CreateDate = DateTime.Now,
                 Gender = "UNKNOW",
-                Role = "WAIT_USER",
+                Role = "USER",
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
                 Status = true,

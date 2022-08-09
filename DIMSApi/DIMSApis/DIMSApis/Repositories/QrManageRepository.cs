@@ -155,20 +155,20 @@ namespace DIMSApis.Repositories
                     }
                 }
                 else { condition = "wrong infrom"; }
-                //var log = new DoorLog
-                //{
-                //    RoomlId = int.Parse(RoomId),
-                //    CreateDate = DateTime.Now,
-                //    DoorQrContent = QrContent,
-                //    DoorCondition = condition,
-                //    DoorLogStatus = true
-                //};
-                //await _context.DoorLogs.AddAsync(log);
-                //if (await _context.SaveChangesAsync() > 0)
+                var log = new DoorLog
+                {
+                    RoomlId = int.Parse(RoomId),
+                    CreateDate = DateTime.Now,
+                    DoorQrContent = QrContent,
+                    DoorCondition = condition,
+                    DoorLogStatus = true
+                };
+                await _context.DoorLogs.AddAsync(log);
+                if (await _context.SaveChangesAsync() > 0)
                 {
                     return condition;
                 }
-                return "0";
+                return condition;
             }catch (Exception ex)
             {
                 return "wrong infrom";

@@ -196,8 +196,6 @@ namespace DIMSApis.Models.Data
             {
                 entity.ToTable("DoorLog");
 
-                entity.Property(e => e.DoorLogId).ValueGeneratedNever();
-
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.DoorCondition)
