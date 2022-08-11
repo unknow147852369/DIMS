@@ -12,12 +12,16 @@ namespace DIMSApis.Repositories
         private readonly fptdimsContext _context;
         private readonly IGenerateQr _generateqr;
         private readonly IMapper _mapper;
+        private readonly IOtherService _other;
+        private readonly IMailQrService _qrmail;
 
-        public QrManageRepository(fptdimsContext context, IMapper mapper, IGenerateQr generateqr)
+        public QrManageRepository(IMailQrService qrmail,IOtherService other,fptdimsContext context, IMapper mapper, IGenerateQr generateqr)
         {
             _context = context;
             _mapper = mapper;
             _generateqr = generateqr;
+            _other = other;
+            _qrmail = qrmail;
         }
 
 
@@ -25,19 +29,49 @@ namespace DIMSApis.Repositories
         public async Task<string> CheckInOnline(int hotelId, int BookingID)
         {
             var check = await _context.Bookings
+                               .Include(h=>h.Hotel)
                             .Include(q => q.QrCheckUp)
                             .Include(q => q.BookingDetails).ThenInclude(q => q.Qr)
+                            .Include(q => q.BookingDetails).ThenInclude(r=>r.Room)
                             .Where(op => op.BookingId == BookingID && op.HotelId == hotelId)
                             .SingleOrDefaultAsync();
 
             if (check == null || check.QrCheckUp == null) { return "0"; }
             bool earlthcheck = check.StartDate.Value.Add(new TimeSpan(13, 00, 0)) > DateTime.Now;
-            if (earlthcheck) { return "can't check in earlier more than 1h your avaiable time to checkin is " + check.StartDate.Value.Add(new TimeSpan(13, 00, 0)); }
+            if (earlthcheck) { return "can't check in earlier more than 1h your avaiable time to checkin is " + check.StartDate.Value.Date.Add(new TimeSpan(13, 00, 0)); }
+            if (check.QrCheckUp.CheckIn != null) { return "your bookingID has been checkin at " + check.QrCheckUp.CheckIn; }
             check.Status = true;
             check.QrCheckUp.Status = true;
             check.QrCheckUp.CheckIn = DateTime.Now;
+
+            var ListRoom = _mapper.Map<IEnumerable<QrInput>>(check.BookingDetails);
+            foreach (var room in ListRoom)
+            {
+                //
+                Qr qrdetail = new();
+                //
+                string DetailQrUrl = "";
+                string DetailQrContent = "";
+                var randomString = _other.RandomString(6);
+                _generateqr.GetQrDetailUrlContent(room, randomString, out DetailQrContent, out DetailQrUrl);
+
+                qrdetail.QrContent = DetailQrContent;
+
+                qrdetail.QrUrl = DetailQrUrl;
+                qrdetail.QrRandomString = randomString;
+
+                await _qrmail.SendQrEmailAsync(DetailQrUrl, check, room, check.Hotel.HotelName);
+
+                //
+                qrdetail.StartDate = check.StartDate;
+                qrdetail.EndDate = check.EndDate;
+                _mapper.Map(room, qrdetail);
+                qrdetail.Status = true;
+
+                await _context.Qrs.AddAsync(qrdetail);
+            }
+
             check.BookingDetails.ToList().ForEach(q => q.Status = true);
-            check.BookingDetails.ToList().ForEach(q => q.Qr.Status = true);
             if (await _context.SaveChangesAsync() > 0)
                 return "1";
             return "3";

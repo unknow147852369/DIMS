@@ -43,8 +43,10 @@ namespace DIMSApis.Repositories
                .Include(b => b.BookingDetails).ThenInclude(tbl=>tbl.BookingDetailMenus)
                .Include(b => b.BookingDetails).ThenInclude(r => r.Room).ThenInclude(c => c.Category)
                .Where(op => op.UserId == UserId)
-               .OrderByDescending(b => b.BookingId).ToListAsync();
-            bill.ForEach(b => b.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0)));
+               .OrderByDescending(b => b.BookingId).ToListAsync()
+               ;
+            bill.ToList().ForEach(b =>b.EndDate = b.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0)));
+            
             return bill;
         }
 
@@ -111,32 +113,32 @@ namespace DIMSApis.Repositories
 
                         await _context.QrCheckUps.AddAsync(qc);
 
-                        var ListRoom = _mapper.Map<IEnumerable<QrInput>>(bok.BookingDetails);
-                        foreach (var room in ListRoom)
-                        {
-                            //
-                            Qr qrdetail = new();
-                            //
-                            string DetailQrUrl = "";
-                            string DetailQrContent = "";
-                            var randomString = _other.RandomString(6);
-                            _generateqr.GetQrDetailUrlContent(room, randomString, out DetailQrContent, out DetailQrUrl);
+                        //var ListRoom = _mapper.Map<IEnumerable<QrInput>>(bok.BookingDetails);
+                        //foreach (var room in ListRoom)
+                        //{
+                        //    //
+                        //    Qr qrdetail = new();
+                        //    //
+                        //    string DetailQrUrl = "";
+                        //    string DetailQrContent = "";
+                        //    var randomString = _other.RandomString(6);
+                        //    _generateqr.GetQrDetailUrlContent(room, randomString, out DetailQrContent, out DetailQrUrl);
 
-                            qrdetail.QrContent = DetailQrContent;
+                        //    qrdetail.QrContent = DetailQrContent;
 
-                            qrdetail.QrUrl = DetailQrUrl;
-                            qrdetail.QrRandomString = randomString;
+                        //    qrdetail.QrUrl = DetailQrUrl;
+                        //    qrdetail.QrRandomString = randomString;
 
-                            await _qrmail.SendQrEmailAsync(DetailQrUrl, bok, room, bok.Hotel.HotelName);
+                        //    await _qrmail.SendQrEmailAsync(DetailQrUrl, bok, room, bok.Hotel.HotelName);
 
-                            //
-                            qrdetail.StartDate = bok.StartDate;
-                            qrdetail.EndDate = bok.EndDate;
-                            _mapper.Map(room, qrdetail);
-                            qrdetail.Status = false;
+                        //    //
+                        //    qrdetail.StartDate = bok.StartDate;
+                        //    qrdetail.EndDate = bok.EndDate;
+                        //    _mapper.Map(room, qrdetail);
+                        //    qrdetail.Status = false;
 
-                            await _context.Qrs.AddAsync(qrdetail);
-                        }
+                        //    await _context.Qrs.AddAsync(qrdetail);
+                        //}
                         if (await _context.SaveChangesAsync() > 0)
                             return "1";
                         return "3";

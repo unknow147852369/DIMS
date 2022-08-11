@@ -80,6 +80,8 @@ builder.Services.AddScoped<IQrManage, QrManageRepository>();
 builder.Services.AddScoped<IAdminManage, AdminManageRepository>();
 builder.Services.AddScoped<IHostManage, HostManageRepository>();
 builder.Services.AddScoped<IHotelManage, HotelMangeRepository>();
+builder.Services.AddScoped<IUserQr, UserQrRepository>();
+builder.Services.AddScoped<IHostQr, HostQrRepository>();
 
 
 builder.Services.AddScoped<ITokenService, DIMSApis.Services.TokenService>();

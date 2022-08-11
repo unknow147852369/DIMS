@@ -5,6 +5,7 @@
         public int BookingDetailId { get; set; }
         public int? BookingId { get; set; }
         public int RoomId { get; set; }
+        public string RoomName { get; set; }
         public double? AveragePrice { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
