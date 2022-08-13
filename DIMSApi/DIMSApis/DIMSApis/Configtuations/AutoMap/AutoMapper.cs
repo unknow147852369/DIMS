@@ -282,6 +282,8 @@ namespace DIMSApis.Configtuations.AutoMap
             CreateMap<Booking, BookingInfoOutput>()
                 .ForMember(a => a.BookingDetails, option => option.MapFrom(tbl => tbl.BookingDetails))
                 .ForMember(a => a.QrCheckUp, option => option.MapFrom(tbl => tbl.QrCheckUp))
+                .ForMember(a => a.HotelAddress, option => option.MapFrom(tbl => tbl.Hotel.HotelAddress))
+                .ForMember(a => a.HotelName, option => option.MapFrom(tbl => tbl.Hotel.HotelName))
                 .ForMember(a => a.InboundUsers, option => option.MapFrom(tbl => tbl.InboundUsers))
                 .ForMember(a => a.EndDate, option => option.MapFrom(tbl => tbl.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0))))
                 ;
@@ -289,6 +291,7 @@ namespace DIMSApis.Configtuations.AutoMap
             CreateMap<BookingDetail, BookingDetailInfoOutput>()
                .ForMember(a => a.BookingDetailMenus, option => option.MapFrom(tbl => tbl.BookingDetailMenus))
                .ForMember(a => a.Qr, option => option.MapFrom(tbl => tbl.Qr))
+               .ForMember(a => a.CategoryName, option => option.MapFrom(tbl => tbl.Room.Category.CategoryName))
                .ForMember(a => a.RoomName, option => option.MapFrom(tbl => tbl.Room.RoomName))
                 ;
 

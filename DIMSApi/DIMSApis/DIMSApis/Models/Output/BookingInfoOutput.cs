@@ -4,6 +4,8 @@
     {
         public int BookingId { get; set; }
         public int? HotelId { get; set; }
+        public string? HotelName { get; set; }
+        public string? HotelAddress { get; set; }
         public int? UserId { get; set; }
         public string? FullName { get; set; }
         public string? Email { get; set; }
