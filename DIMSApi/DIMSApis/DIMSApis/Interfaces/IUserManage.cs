@@ -6,6 +6,9 @@ namespace DIMSApis.Interfaces
 {
     public interface IUserManage
     {
+        Task<string> UserGetNewActiceCodeQrRoom(string email);
+        Task<string> UserGetNewQrRoom(NewRenewQrRoomInput infoInput);
+
         Task<int> CreateNoMarkColumCHEAT();
 
         Task<int> GetActiveCodeMailSend(int userId);

@@ -36,10 +36,21 @@ namespace DIMSApis.Services
 
         private string GetHtmlBody(string link, Booking bok, QrInput qri, string hotelName)
         {
-            string body = Material.MaterialMail.MailQrHtmlCode();
+           string body = Material.MaterialMail.MailQrHtmlCode();
+            //string body = File.ReadAllText(@"Material/MailQR.html");
             body = body.Replace("#IMAGE-QR#", link);
             body = body.Replace("#Location 1#", $"Hotel:{hotelName}");
             body = body.Replace("#Location 2#", $"BooingID:{bok.BookingId}");
+            if (bok.BookingDetails.First().Qr != null)
+            {
+                body = body.Replace("#Location 2.1#", $"Create Date:{bok.BookingDetails.First().Qr.QrCreateDate}");
+                body = body.Replace("#Location 3.1#", $"Latest Renew:{bok.BookingDetails.First().Qr.QrLimitNumber}");
+            }
+            else
+            {
+                body = body.Replace("#Location 2.1#", $"Create Date:{qri.QrCreateDate}");
+                body = body.Replace("#Location 3.1#", $"Latest Renew:{qri.QrLimitNumber}");
+            }
             body = body.Replace("#Location 3#", $"Your Room:{qri.RoomName}");
             body = body.Replace("#Location 4#", $"Start Date:{bok.StartDate}");
             body = body.Replace("#Location 5#", $"End Date:{bok.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0))}");

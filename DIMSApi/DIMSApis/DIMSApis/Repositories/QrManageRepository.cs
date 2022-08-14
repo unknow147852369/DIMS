@@ -63,10 +63,10 @@ namespace DIMSApis.Repositories
                 await _qrmail.SendQrEmailAsync(DetailQrUrl, check, room, check.Hotel.HotelName);
 
                 //
+                _mapper.Map(room, qrdetail);
                 qrdetail.StartDate = check.StartDate;
                 qrdetail.EndDate = check.EndDate;
-                _mapper.Map(room, qrdetail);
-                qrdetail.Status = true;
+
 
                 await _context.Qrs.AddAsync(qrdetail);
             }

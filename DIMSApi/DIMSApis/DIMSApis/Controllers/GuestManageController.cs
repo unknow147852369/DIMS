@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DIMSApis.Interfaces;
 using DIMSApis.Models.Helper;
+using DIMSApis.Models.Input;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DIMSApis.Controllers
@@ -16,6 +17,42 @@ namespace DIMSApis.Controllers
         {
             _usermanage = usermanage;
             _mapper = mapper;
+        }
+
+        [HttpGet("User-get-active-code-Qr-room")]
+        public async Task<IActionResult> UserGetNewActiceCodeQrRoom(string email)
+        {
+            var check = await _usermanage.UserGetNewActiceCodeQrRoom(email);
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "send active code success" });
+            }
+            else if (check.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "send active code  success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "send active code  fail " + check });
+            }
+        }
+
+        [HttpPost("User-get-new-Qr-room")]
+        public async Task<IActionResult> UserGetNewQrRoom(NewRenewQrRoomInput infoInput)
+        {
+            var check = await _usermanage.UserGetNewQrRoom(infoInput);
+            if (check.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "renew qr success" });
+            }
+            else if (check.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "renew qr success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "renew qr fail " + check });
+            }
         }
 
         [HttpGet("Search-Hotel")]
@@ -81,5 +118,6 @@ namespace DIMSApis.Controllers
             if (districts == null) { return NotFound("not found"); }
             return Ok(districts);
         }
+
     }
 }

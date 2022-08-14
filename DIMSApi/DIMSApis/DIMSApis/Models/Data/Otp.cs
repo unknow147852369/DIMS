@@ -8,6 +8,7 @@ namespace DIMSApis.Models.Data
         public int OtpId { get; set; }
         public int? UserId { get; set; }
         public string? Purpose { get; set; }
+        public string? OtpEmail { get; set; }
         public string? CodeOtp { get; set; }
         public DateTime? CreateDate { get; set; }
         public int? Status { get; set; }

@@ -13,16 +13,18 @@ namespace DIMSApis.Repositories
         private readonly IMapper _mapper;
         private readonly IOtherService _other;
         private readonly IMail _mail;
-        private readonly IFireBaseService _firebase;
+        private readonly IGenerateQr _generateqr;
+        private readonly IMailQrService _qrmail;
         private string purpose1 = "ACTIVE ACCOUNT";
 
-        public UserManageRepository(IFireBaseService firebase, IMail mail, fptdimsContext context, IMapper mapper, IOtherService other)
+        public UserManageRepository(IMailQrService qrmail,IGenerateQr generateqr, IMail mail, fptdimsContext context, IMapper mapper, IOtherService other)
         {
             _context = context;
             _mapper = mapper;
             _other = other;
             _mail = mail;
-            _firebase = firebase;
+            _generateqr = generateqr;
+            _qrmail = qrmail;
         }
 
         public async Task<User> GetUserDetail(int userId)
@@ -356,7 +358,105 @@ namespace DIMSApis.Repositories
             return 0;
         }
 
-        
-        
+        public async Task<string> UserGetNewActiceCodeQrRoom(string email)
+        {
+            try
+            {
+                var checkemail = await _context.Otps
+                    .Where(op => op.OtpEmail == email)
+                    .FirstOrDefaultAsync();
+                var otpCode = _other.RandomString(6);
+                if (checkemail ==null)
+                {
+                    var newMail = new Otp{
+                        OtpEmail = email,
+                        CodeOtp = otpCode,
+                        CreateDate = DateTime.Now,
+                        Status = 1,
+                        Purpose ="RENEWQR",
+                    };
+                    await _context.Otps.AddAsync(newMail);
+                }
+                else
+                {
+                    checkemail.CodeOtp = otpCode;
+                }
+
+                if (await _context.SaveChangesAsync() > 0)
+                {
+                   await _mail.SendEmailAsync(email, otpCode);
+                }
+                return "1";
+            }catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public async Task<string> UserGetNewQrRoom(NewRenewQrRoomInput infoInput)
+        {
+            try
+            {
+
+                var checkcodel = await _context.Otps
+                    .Where(op => op.OtpEmail == infoInput.email && op.Purpose == "RENEWQR" && op.CodeOtp == infoInput.OtpCode)
+                    .FirstOrDefaultAsync();
+                if (checkcodel == null)
+                {
+                    return "wrong OtpCode !";
+                }
+                
+                var check = await _context.Bookings
+                               .Include(h => h.Hotel)
+                            .Include(q => q.QrCheckUp)
+                            .Include(q => q.BookingDetails).ThenInclude(q => q.Qr)
+                            .Include(q => q.BookingDetails).ThenInclude(r => r.Room)
+                            .Where(op => op.BookingId == infoInput.BookingId && op.BookingDetails.All(r=>r.Room.RoomName.Equals(infoInput.RoomName)))
+                            .SingleOrDefaultAsync();
+                if (check == null)
+                {
+                    return "booking info wrong!";
+                }
+
+                checkcodel.CodeOtp = null;
+
+                var ListRoom = _mapper.Map<IEnumerable<QrInput>>(check.BookingDetails);
+                var room = ListRoom.FirstOrDefault();
+                var returndetail = check.BookingDetails.First();
+                if(returndetail.Qr.QrLimitNumber == 3)
+                {
+                    return "You have reach limit to renew Qr 3 times";
+                }
+                string DetailQrUrl = "";
+                string DetailQrContent = "";
+                var randomString = _other.RandomString(6);
+                _generateqr.GetQrDetailUrlContent(room, randomString, out DetailQrContent, out DetailQrUrl);
+
+                returndetail.Qr.QrContent = DetailQrContent;
+
+                returndetail.Qr.QrUrl = DetailQrUrl;
+                returndetail.Qr.QrRandomString = randomString;
+                if (returndetail.Qr.QrCreateDate.Value.Date == DateTime.Now.Date)
+                {
+                    returndetail.Qr.QrLimitNumber += 1;
+                }
+                else
+                {
+                    returndetail.Qr.QrCreateDate = DateTime.Now;
+                    returndetail.Qr.QrLimitNumber = 0;
+                }
+
+                await _qrmail.SendQrEmailAsync(DetailQrUrl, check, room, check.Hotel.HotelName);
+
+                check.BookingDetails.ToList().ForEach(q => q.Status = true);
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
     }
 }

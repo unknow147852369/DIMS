@@ -424,6 +424,8 @@ namespace DIMSApis.Models.Data
                     .HasColumnType("datetime")
                     .HasColumnName("createDate");
 
+                entity.Property(e => e.OtpEmail).IsUnicode(false);
+
                 entity.Property(e => e.Purpose).HasMaxLength(50);
 
                 entity.Property(e => e.Status).HasColumnName("status");
@@ -471,7 +473,7 @@ namespace DIMSApis.Models.Data
 
             modelBuilder.Entity<Qr>(entity =>
             {
-                entity.HasIndex(e => e.BookingDetailId, "IX_Qrs")
+                entity.HasIndex(e => e.BookingDetailId, "IX_Qrs_1")
                     .IsUnique();
 
                 entity.Property(e => e.QrId).HasColumnName("QrID");
@@ -481,6 +483,8 @@ namespace DIMSApis.Models.Data
                 entity.Property(e => e.EndDate).HasColumnType("datetime");
 
                 entity.Property(e => e.QrContent).IsUnicode(false);
+
+                entity.Property(e => e.QrCreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.QrRandomString)
                     .HasMaxLength(10)

@@ -322,10 +322,10 @@ namespace DIMSApis.Repositories
                         await _qrmail.SendQrEmailAsync(DetailQrUrl, bok, room, bok.Hotel.HotelName);
 
                         //
+                        _mapper.Map(room, qrdetail);
                         qrdetail.StartDate = bok.StartDate;
                         qrdetail.EndDate = bok.EndDate;
-                        _mapper.Map(room, qrdetail);
-                        qrdetail.Status = true;
+
 
                         await _context.Qrs.AddAsync(qrdetail);
                     }

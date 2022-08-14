@@ -274,9 +274,13 @@ namespace DIMSApis.Configtuations.AutoMap
                 .ForMember(a => a.UserId, option => option.MapFrom(tbl => tbl.Booking.UserId))
                 .ForMember(a => a.RoomName, option => option.MapFrom(tbl => tbl.Room.RoomName))
                 .ForMember(a => a.HotelId, option => option.MapFrom(tbl => tbl.Booking.HotelId))
+                .ForMember(a => a.QrCreateDate, option => option.MapFrom(tbl => DateTime.Now))
+                .ForMember(a => a.QrLimitNumber, option => option.MapFrom(tbl => 0))
                 ;
             CreateMap<QrInput, Qr>()
-                .ForMember(a => a.Status, option => option.MapFrom(tbl => false))
+                .ForMember(a => a.Status, option => option.MapFrom(tbl => true))
+                .ForMember(a => a.QrCreateDate, option => option.MapFrom(tbl => DateTime.Now))
+                .ForMember(a => a.QrLimitNumber, option => option.MapFrom(tbl => 0))
                 ;
             //
             CreateMap<Booking, BookingInfoOutput>()
