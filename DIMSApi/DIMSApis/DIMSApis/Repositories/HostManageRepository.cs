@@ -749,18 +749,10 @@ namespace DIMSApis.Repositories
 
         public async Task<IEnumerable<BookingInboundUserFirstOutput>> GetAllInboundUserBookingInfo(int hotelId)
         {
-            var CustomerInfo = await _context.InboundUsers
-                    .Where(op => op.Booking.HotelId == hotelId && op.Booking.Status.Value)
-                     .Where(a => a.Booking.BookingDetails.Where(op => op.Status.Value).All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
-                                                    (op.StartDate.Value.Date <= DateTime.Now.Date
-                                                    && op.EndDate.Value.Date >= DateTime.Now.Date
-                                                    )
-                                                    )
-                                                ))
-                                    .ToListAsync();
+
             var fullDetailBooking = await _context.Bookings
                .Include(tbl => tbl.InboundUsers)
-               .Include(tbl => tbl.BookingDetails)
+               .Include(tbl => tbl.BookingDetails).ThenInclude(r=>r.Room)
                .Where(op => op.HotelId == hotelId && op.Status.Value)
                .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
                                                     (op.StartDate.Value.Date <= DateTime.Now.Date

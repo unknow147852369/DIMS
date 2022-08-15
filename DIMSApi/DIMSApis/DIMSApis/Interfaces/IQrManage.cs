@@ -9,7 +9,7 @@ namespace DIMSApis.Interfaces
 
         Task<string> vertifyQrContent(int HotelId, string RoomName, string QrContent);
 
-        Task<Booking> vertifyMainQrCheckIn(VertifyMainQrInput qrIn);
+        Task<string> vertifyMainQrCheckIn(VertifyMainQrInput qrIn);
 
         Task<string> getStringToCheckRoom(int hotel, string roomName);
 
