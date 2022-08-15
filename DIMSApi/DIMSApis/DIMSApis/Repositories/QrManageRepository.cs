@@ -126,7 +126,7 @@ namespace DIMSApis.Repositories
             return st;
         }
 
-        public async Task<Booking> vertifyMainQrCheckIn(VertifyMainQrInput qrIn)
+        public async Task<string> vertifyMainQrCheckIn(VertifyMainQrInput qrIn)
         {
             string BookingId, HotelId,randomString;
             _generateqr.GetMainQrDetail(qrIn, out BookingId, out HotelId,out randomString);
@@ -145,19 +145,54 @@ namespace DIMSApis.Repositories
             if (qrvertify != null)
             {
                 var check = await _context.Bookings
+                               .Include(h => h.Hotel)
                             .Include(q => q.QrCheckUp)
-                            .Include(ib=>ib.InboundUsers)
                             .Include(q => q.BookingDetails).ThenInclude(q => q.Qr)
-                            .Where(op => op.BookingId.Equals(int.Parse(BookingId)) && op.HotelId == qrIn.HotelId)
+                            .Include(q => q.BookingDetails).ThenInclude(r => r.Room)
+                            .Where(op => op.BookingId.Equals(int.Parse(BookingId)) && op.HotelId.Equals(int.Parse(HotelId)))
                             .SingleOrDefaultAsync();
 
-                if (check == null || check.QrCheckUp == null) { return null; }
+                if (check == null || check.QrCheckUp == null) { return "0"; }
+                bool earlthcheck = check.StartDate.Value.Add(new TimeSpan(13, 00, 0)) > DateTime.Now;
+                //if (earlthcheck) { return "can't check in earlier more than 1h your avaiable time to checkin is " + check.StartDate.Value.Date.Add(new TimeSpan(13, 00, 0)); }
+                if (check.QrCheckUp.CheckIn != null) { return "your bookingID has been checkin at " + check.QrCheckUp.CheckIn; }
+                check.Status = true;
                 check.QrCheckUp.Status = true;
                 check.QrCheckUp.CheckIn = DateTime.Now;
+
+                var ListRoom = _mapper.Map<IEnumerable<QrInput>>(check.BookingDetails);
+                foreach (var room in ListRoom)
+                {
+                    //
+                    Qr qrdetail = new();
+                    //
+                    string DetailQrUrl = "";
+                    string DetailQrContent = "";
+                    var randomStringRoom = _other.RandomString(6);
+                    _generateqr.GetQrDetailUrlContent(room, randomStringRoom, out DetailQrContent, out DetailQrUrl);
+
+                    qrdetail.QrContent = DetailQrContent;
+
+                    qrdetail.QrUrl = DetailQrUrl;
+                    qrdetail.QrRandomString = randomStringRoom;
+
+                    await _qrmail.SendQrEmailAsync(DetailQrUrl, check, room, check.Hotel.HotelName);
+
+                    //
+                    _mapper.Map(room, qrdetail);
+                    qrdetail.StartDate = check.StartDate;
+                    qrdetail.EndDate = check.EndDate;
+
+
+                    await _context.Qrs.AddAsync(qrdetail);
+                }
+
+                check.BookingDetails.ToList().ForEach(q => q.Status = true);
                 if (await _context.SaveChangesAsync() > 0)
-                    return check;
+                    return "1";
+                return "3";
             }
-            return null;
+            return "0";
         }
 
         public async Task<string> vertifyQrContent(int HotelId, string RoomName, string QrContent)
