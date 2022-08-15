@@ -34,6 +34,7 @@ namespace DIMSApis.Repositories
                             .Include(q => q.BookingDetails).ThenInclude(q => q.Qr)
                             .Include(q => q.BookingDetails).ThenInclude(r => r.Room)
                             .Where(op => op.BookingId == bookingID && op.BookingDetails.All(r => r.BookingDetailId == bookingdetailID))
+                            .Where(op => op.QrCheckUp.CheckOut == null)
                             .SingleOrDefaultAsync();
                 if (check == null)
                 {
