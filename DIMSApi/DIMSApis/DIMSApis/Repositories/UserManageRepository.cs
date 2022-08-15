@@ -448,7 +448,6 @@ namespace DIMSApis.Repositories
 
                 await _qrmail.SendQrEmailAsync(DetailQrUrl, check, room, check.Hotel.HotelName);
 
-                check.BookingDetails.ToList().ForEach(q => q.Status = true);
                 if (await _context.SaveChangesAsync() > 0)
                     return "1";
                 return "3";
