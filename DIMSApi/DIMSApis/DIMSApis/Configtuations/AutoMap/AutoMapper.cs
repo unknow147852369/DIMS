@@ -9,6 +9,11 @@ namespace DIMSApis.Configtuations.AutoMap
     {
         public AutoMapper()
         {
+            CreateMap<Booking,BookingInboundUserFirstOutput>()
+                .ForMember(a => a.InboundUsers, option => option.MapFrom(tbl => tbl.InboundUsers))
+                .ForMember(a => a.BookingDetails, option => option.MapFrom(tbl => tbl.BookingDetails))
+                ;
+            //
             CreateMap<NewCategorySpecialPriceSecondInput,SpecialPrice >()
                 .ForMember(a => a.Status, option => option.MapFrom(tbl => 1))
                 .ForMember(a => a.SpecialDate, option => option.MapFrom(tbl => tbl.SpecialDate.Value.Date))

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DIMSApis.Interfaces;
 using DIMSApis.Models.Data;
+using DIMSApis.Models.Input;
 using Microsoft.EntityFrameworkCore;
 
 namespace DIMSApis.Repositories
@@ -22,9 +23,61 @@ namespace DIMSApis.Repositories
             _qrmail = qrmail;
         }
 
-        public Task<string> UserGetNewQrRoom(int userId, int bookingdetailID)
+        public async Task<string> UserGetNewQrRoom(int bookingID, int bookingdetailID )
         {
-            throw new NotImplementedException();
+            try
+            {
+
+                var check = await _context.Bookings
+                               .Include(h => h.Hotel)
+                            .Include(q => q.QrCheckUp)
+                            .Include(q => q.BookingDetails).ThenInclude(q => q.Qr)
+                            .Include(q => q.BookingDetails).ThenInclude(r => r.Room)
+                            .Where(op => op.BookingId == bookingID && op.BookingDetails.All(r => r.BookingDetailId == bookingdetailID))
+                            .SingleOrDefaultAsync();
+                if (check == null)
+                {
+                    return "booking info wrong!";
+                }
+
+
+                var ListRoom = _mapper.Map<IEnumerable<QrInput>>(check.BookingDetails);
+                var room = ListRoom.FirstOrDefault();
+                var returndetail = check.BookingDetails.First();
+                if (returndetail.Qr.QrLimitNumber == 3)
+                {
+                    return "You have reach limit to renew Qr 3 times";
+                }
+                string DetailQrUrl = "";
+                string DetailQrContent = "";
+                var randomString = _other.RandomString(6);
+                _generateqr.GetQrDetailUrlContent(room, randomString, out DetailQrContent, out DetailQrUrl);
+
+                returndetail.Qr.QrContent = DetailQrContent;
+
+                returndetail.Qr.QrUrl = DetailQrUrl;
+                returndetail.Qr.QrRandomString = randomString;
+                if (returndetail.Qr.QrCreateDate.Value.Date == DateTime.Now.Date)
+                {
+                    returndetail.Qr.QrLimitNumber += 1;
+                }
+                else
+                {
+                    returndetail.Qr.QrCreateDate = DateTime.Now;
+                    returndetail.Qr.QrLimitNumber = 0;
+                }
+
+                await _qrmail.SendQrEmailAsync(DetailQrUrl, check, room, check.Hotel.HotelName);
+
+                check.BookingDetails.ToList().ForEach(q => q.Status = true);
+                if (await _context.SaveChangesAsync() > 0)
+                    return "1";
+                return "3";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
     }
 }

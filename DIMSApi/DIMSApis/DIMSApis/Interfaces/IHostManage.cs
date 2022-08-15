@@ -13,7 +13,7 @@ namespace DIMSApis.Interfaces
         Task<string> UpdateCleanStatus(int RoomID);
         Task<string> AddInboundUser(checkInInput checkIn);
         Task<string> CheckOutLocal(int hotelId,int bookingID);
-        Task<IEnumerable<NewInboundUser>> GetAllInboundUserBookingInfo(int hotelId);
+        Task<IEnumerable<BookingInboundUserFirstOutput>> GetAllInboundUserBookingInfo(int hotelId);
         Task<string> LocalPaymentFinal(LocalPaymentInput ppi, int userId);
         Task<string> CheckRoomDateBooking(CheckRoomDateInput chek);
         Task<string> AddItemMenu(ICollection<ItemMenuInput> item);

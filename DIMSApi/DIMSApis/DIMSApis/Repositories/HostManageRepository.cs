@@ -747,7 +747,7 @@ namespace DIMSApis.Repositories
             return returnResult.Where(op => op.BookedStatus == false);
         }
 
-        public async Task<IEnumerable<NewInboundUser>> GetAllInboundUserBookingInfo(int hotelId)
+        public async Task<IEnumerable<BookingInboundUserFirstOutput>> GetAllInboundUserBookingInfo(int hotelId)
         {
             var CustomerInfo = await _context.InboundUsers
                     .Where(op => op.Booking.HotelId == hotelId && op.Booking.Status.Value)
@@ -758,8 +758,19 @@ namespace DIMSApis.Repositories
                                                     )
                                                 ))
                                     .ToListAsync();
+            var fullDetailBooking = await _context.Bookings
+               .Include(tbl => tbl.InboundUsers)
+               .Include(tbl => tbl.BookingDetails)
+               .Where(op => op.HotelId == hotelId && op.Status.Value)
+               .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => (op.EndDate.Value.Date > DateTime.Today.Date &&
+                                                    (op.StartDate.Value.Date <= DateTime.Now.Date
+                                                    && op.EndDate.Value.Date >= DateTime.Now.Date
+                                                    )
+                                                    )
+                                                ))
+                                    .ToListAsync();
 
-            var returnResult = _mapper.Map<IEnumerable<NewInboundUser>>(CustomerInfo);
+            var returnResult = _mapper.Map<IEnumerable<BookingInboundUserFirstOutput>>(fullDetailBooking);
             return returnResult;
         }
 

@@ -2,6 +2,6 @@
 {
     public interface IUserQr
     {
-        Task<string> UserGetNewQrRoom(int userId, int bookingdetailID);
+        Task<string> UserGetNewQrRoom(int bookingID, int bookingdetailID);
     }
 }
