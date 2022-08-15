@@ -45,7 +45,6 @@ namespace DIMSApis.Repositories
                .Where(op => op.UserId == UserId)
                .OrderByDescending(b => b.BookingId).ToListAsync()
                ;
-            bill.ToList().ForEach(b =>b.EndDate = b.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0)));
             
             return bill;
         }
