@@ -38,7 +38,7 @@ namespace DIMSApis.Repositories
 
             if (check == null || check.QrCheckUp == null) { return "0"; }
             bool earlthcheck = check.StartDate.Value.Add(new TimeSpan(13, 00, 0)) > DateTime.Now;
-            if (earlthcheck) { return "can't check in earlier more than 1h your avaiable time to checkin is " + check.StartDate.Value.Date.Add(new TimeSpan(13, 00, 0)); }
+            //if (earlthcheck) { return "can't check in earlier more than 1h your avaiable time to checkin is " + check.StartDate.Value.Date.Add(new TimeSpan(13, 00, 0)); }
             if (check.QrCheckUp.CheckIn != null) { return "your bookingID has been checkin at " + check.QrCheckUp.CheckIn; }
             check.Status = true;
             check.QrCheckUp.Status = true;
