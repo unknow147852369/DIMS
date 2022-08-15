@@ -139,7 +139,7 @@ namespace DIMSApis.Repositories
                 return null;
             }
             var qrvertify = await _context.QrCheckUps
-                .Include(b => b.Booking)
+                .Include(b => b.Booking).ThenInclude(b=>b.BookingDetails).ThenInclude(q=>q.Qr)
                 .Where(op => op.BookingId.Equals(int.Parse(BookingId)) && op.QrCheckUpRandomString.Equals(randomString.Trim()))
                 .FirstOrDefaultAsync();
             if (qrvertify != null)
@@ -154,7 +154,6 @@ namespace DIMSApis.Repositories
                 if (check == null || check.QrCheckUp == null) { return null; }
                 check.QrCheckUp.Status = true;
                 check.QrCheckUp.CheckIn = DateTime.Now;
-                check.BookingDetails.ToList().ForEach(q => q.Qr.Status = true);
                 if (await _context.SaveChangesAsync() > 0)
                     return check;
             }
