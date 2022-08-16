@@ -825,6 +825,80 @@ namespace DIMSApis.Repositories
             return returnLs;
         }
 
-      
+        public async Task<ABookingFullBookingDetailQrsOutput> GetADetailRoomQr(int userId, int bookingDetailId)
+        {
+            try
+            {
+                var check = await _context.Qrs
+                    .Include(b => b.BookingDetail)
+                    .Where(op => op.BookingDetailId == bookingDetailId)
+                    .FirstOrDefaultAsync();
+                if (check == null) { return null; }
+                var log = new QrViewLog
+                {
+                    BookingDetailId = bookingDetailId,
+                    UserId = userId,
+                    QrViewLogCreateDate = DateTime.Now,
+                    QrViewLogStatus =true,
+                };
+                await _context.QrViewLogs.AddAsync(log);
+
+                if (await _context.SaveChangesAsync() > 0)
+                {
+                    var returnItem = _mapper.Map<ABookingFullBookingDetailQrsOutput>(check);
+                    return returnItem;
+                }
+                return null;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<HostDoorLogoutput>> HostGetDoorLog(int roomId, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var check = await _context.DoorLogs
+                    .Include(b => b.Rooml)
+                    .Where(op => op.RoomlId == roomId)
+                    .Where(op =>op.CreateDate >= startDate && op.CreateDate<=endDate)
+                    .ToListAsync();
+                if (check == null) { return null; }
+
+                    var returnItem = _mapper.Map<IEnumerable<HostDoorLogoutput>>(check);
+                    return returnItem;
+                
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<HostQrViewLogOutput>> HostGetQrViewLog(int hotelId, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var check = await _context.QrViewLogs
+                    .Include(b => b.User)
+                    .Include(b => b.BookingDetail).ThenInclude(b=>b.Booking)
+                    .Where(op => op.BookingDetail.Booking.HotelId == hotelId)
+                    .Where(op => op.QrViewLogCreateDate >= startDate && op.QrViewLogCreateDate <= endDate)
+                    .ToListAsync();
+                if (check == null) { return null; }
+
+                var returnItem = _mapper.Map<IEnumerable<HostQrViewLogOutput>>(check);
+                return returnItem;
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

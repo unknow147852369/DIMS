@@ -9,6 +9,14 @@ namespace DIMSApis.Configtuations.AutoMap
     {
         public AutoMapper()
         {
+            CreateMap<DoorLog, HostDoorLogoutput>()
+                .ForMember(a => a.RoomName, option => option.MapFrom(tbl => tbl.Rooml.RoomName))
+                ;
+            CreateMap<QrViewLog, HostQrViewLogOutput>()
+                .ForMember(a => a.userName, option => option.MapFrom(tbl => tbl.User.UserName))
+                .ForMember(a => a.BookingId, option => option.MapFrom(tbl => tbl.BookingDetail.BookingId))
+                ;
+            //
             CreateMap<Booking,BookingInboundUserFirstOutput>()
                 .ForMember(a => a.InboundUsers, option => option.MapFrom(tbl => tbl.InboundUsers))
                 .ForMember(a => a.BookingDetails, option => option.MapFrom(tbl => tbl.BookingDetails))

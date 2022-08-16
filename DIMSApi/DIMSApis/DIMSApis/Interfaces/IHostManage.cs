@@ -35,6 +35,7 @@ namespace DIMSApis.Interfaces
         Task<HotelCateInfoOutput> GetAHotelAllInfo(int hotelId, int userId);
 
         Task<RoomDetailInfoOutput> GetADetailRoom(int userId, int RoomId, DateTime today);
+        Task<ABookingFullBookingDetailQrsOutput> GetADetailRoomQr(int userId, int bookingDetailId);
 
 
         Task<FullRoomMoneyDetailSumaryOutput> GetFullRoomMoneyDetailByFilter(int hotelID, DateTime startDate, DateTime endDate);
@@ -43,5 +44,11 @@ namespace DIMSApis.Interfaces
         Task<Pagination<Booking>> HostgetListBookingByPage<T>(int hotelID,int CurrentPage,int pageSize) where T : class;
 
         Task<ABookingFullOutput> HostGetABookingFullDetail(int bookingID);
+
+
+        Task<IEnumerable<HostDoorLogoutput>> HostGetDoorLog(int roomId,DateTime startDate , DateTime endDate);
+        Task<IEnumerable<HostQrViewLogOutput>> HostGetQrViewLog(int hotelId,DateTime startDate, DateTime endDate);
+
+
     }
 }

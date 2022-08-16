@@ -216,7 +216,14 @@ namespace DIMSApis.Controllers
             if (roomDetail == null) { return BadRequest(new DataRespone { Message = "Room not Found!" }); }
             return Ok(roomDetail);
         }
-
+        [HttpGet("Host-A-Detail-Room-Qr")]
+        public async Task<IActionResult> GetADetailRoomQr(int BookingDetailID)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _host.GetADetailRoomQr(userId, BookingDetailID);
+            if (check == null) { return BadRequest(new DataRespone { Message = "Booking not checkIn" }); }
+            return Ok(check);
+        }
         [HttpGet("Host-All-Hotel")]
         public async Task<IActionResult> GetListAllHotel()
         {
@@ -265,6 +272,24 @@ namespace DIMSApis.Controllers
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var check = await _host.HostGetABookingFullDetail(bookingID);
+            if (check == null) { return BadRequest(new DataRespone { Message = "No Data!" }); }
+            return Ok(check);
+        }
+
+        [HttpGet("Get-all-door-Log")]
+        public async Task<IActionResult> HostGetDoorLog(int roomId, DateTime startDate, DateTime endDate)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _host.HostGetDoorLog(roomId,startDate,endDate);
+            if (check == null) { return BadRequest(new DataRespone { Message = "No Data!" }); }
+            return Ok(check);
+        }
+
+        [HttpGet("Get-all-qr-view-Log")]
+        public async Task<IActionResult> HostGetQrViewLog(int hotelId, DateTime startDate, DateTime endDate)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var check = await _host.HostGetQrViewLog(hotelId,startDate,endDate);
             if (check == null) { return BadRequest(new DataRespone { Message = "No Data!" }); }
             return Ok(check);
         }

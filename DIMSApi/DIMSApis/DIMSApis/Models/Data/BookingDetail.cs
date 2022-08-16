@@ -9,6 +9,7 @@ namespace DIMSApis.Models.Data
         {
             BookingDetailMenus = new HashSet<BookingDetailMenu>();
             BookingDetailPrices = new HashSet<BookingDetailPrice>();
+            QrViewLogs = new HashSet<QrViewLog>();
         }
 
         public int BookingDetailId { get; set; }
@@ -25,5 +26,6 @@ namespace DIMSApis.Models.Data
         public virtual Qr? Qr { get; set; }
         public virtual ICollection<BookingDetailMenu> BookingDetailMenus { get; set; }
         public virtual ICollection<BookingDetailPrice> BookingDetailPrices { get; set; }
+        public virtual ICollection<QrViewLog> QrViewLogs { get; set; }
     }
 }

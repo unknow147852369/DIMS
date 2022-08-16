@@ -23,7 +23,6 @@ namespace DIMSApis.Models.Data
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<District> Districts { get; set; } = null!;
         public virtual DbSet<DoorLog> DoorLogs { get; set; } = null!;
-        public virtual DbSet<Facility> Facilities { get; set; } = null!;
         public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
         public virtual DbSet<Hotel> Hotels { get; set; } = null!;
         public virtual DbSet<HotelRequest> HotelRequests { get; set; } = null!;
@@ -35,6 +34,7 @@ namespace DIMSApis.Models.Data
         public virtual DbSet<Province> Provinces { get; set; } = null!;
         public virtual DbSet<Qr> Qrs { get; set; } = null!;
         public virtual DbSet<QrCheckUp> QrCheckUps { get; set; } = null!;
+        public virtual DbSet<QrViewLog> QrViewLogs { get; set; } = null!;
         public virtual DbSet<Room> Rooms { get; set; } = null!;
         public virtual DbSet<SpecialPrice> SpecialPrices { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
@@ -212,19 +212,6 @@ namespace DIMSApis.Models.Data
                     .WithMany(p => p.DoorLogs)
                     .HasForeignKey(d => d.RoomlId)
                     .HasConstraintName("FK_DoorLog_Rooms");
-            });
-
-            modelBuilder.Entity<Facility>(entity =>
-            {
-                entity.Property(e => e.FacilityId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("FacilityID");
-
-                entity.Property(e => e.FacilityImage).IsUnicode(false);
-
-                entity.Property(e => e.FacilityName).HasMaxLength(100);
-
-                entity.Property(e => e.Status).HasColumnName("status");
             });
 
             modelBuilder.Entity<Feedback>(entity =>
@@ -525,6 +512,31 @@ namespace DIMSApis.Models.Data
                     .WithOne(p => p.QrCheckUp)
                     .HasForeignKey<QrCheckUp>(d => d.BookingId)
                     .HasConstraintName("FK_QrCheckUps_Bookings");
+            });
+
+            modelBuilder.Entity<QrViewLog>(entity =>
+            {
+                entity.ToTable("QrViewLog");
+
+                entity.Property(e => e.QrViewLogId).HasColumnName("QrViewLogID");
+
+                entity.Property(e => e.BookingDetailId).HasColumnName("BookingDetailID");
+
+                entity.Property(e => e.Description).HasMaxLength(100);
+
+                entity.Property(e => e.QrViewLogCreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.HasOne(d => d.BookingDetail)
+                    .WithMany(p => p.QrViewLogs)
+                    .HasForeignKey(d => d.BookingDetailId)
+                    .HasConstraintName("FK_QrViewLog_BookingDetails");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.QrViewLogs)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_QrViewLog_Users");
             });
 
             modelBuilder.Entity<Room>(entity =>

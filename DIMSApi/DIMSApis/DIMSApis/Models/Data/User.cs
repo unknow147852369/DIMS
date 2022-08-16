@@ -11,6 +11,7 @@ namespace DIMSApis.Models.Data
             HotelRequests = new HashSet<HotelRequest>();
             Hotels = new HashSet<Hotel>();
             Otps = new HashSet<Otp>();
+            QrViewLogs = new HashSet<QrViewLog>();
         }
 
         public int UserId { get; set; }
@@ -32,5 +33,6 @@ namespace DIMSApis.Models.Data
         public virtual ICollection<HotelRequest> HotelRequests { get; set; }
         public virtual ICollection<Hotel> Hotels { get; set; }
         public virtual ICollection<Otp> Otps { get; set; }
+        public virtual ICollection<QrViewLog> QrViewLogs { get; set; }
     }
 }
