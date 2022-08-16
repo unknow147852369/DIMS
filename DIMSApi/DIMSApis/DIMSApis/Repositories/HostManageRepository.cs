@@ -885,6 +885,7 @@ namespace DIMSApis.Repositories
                 var check = await _context.QrViewLogs
                     .Include(b => b.User)
                     .Include(b => b.BookingDetail).ThenInclude(b=>b.Booking)
+                    .Include(b => b.BookingDetail).ThenInclude(b=>b.Room)
                     .Where(op => op.BookingDetail.Booking.HotelId == hotelId)
                     .Where(op => op.QrViewLogCreateDate >= startDate && op.QrViewLogCreateDate <= endDate)
                     .ToListAsync();

@@ -15,6 +15,7 @@ namespace DIMSApis.Configtuations.AutoMap
             CreateMap<QrViewLog, HostQrViewLogOutput>()
                 .ForMember(a => a.userName, option => option.MapFrom(tbl => tbl.User.UserName))
                 .ForMember(a => a.BookingId, option => option.MapFrom(tbl => tbl.BookingDetail.BookingId))
+                .ForMember(a => a.RoomName, option => option.MapFrom(tbl => tbl.BookingDetail.Room.RoomName))
                 ;
             //
             CreateMap<Booking,BookingInboundUserFirstOutput>()
