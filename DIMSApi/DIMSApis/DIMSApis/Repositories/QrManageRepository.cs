@@ -132,11 +132,11 @@ namespace DIMSApis.Repositories
             _generateqr.GetMainQrDetail(qrIn, out BookingId, out HotelId,out randomString);
             if (BookingId == "" || HotelId == "" || randomString =="")
             {
-                return null;
+                return "0";
             }
             if (!qrIn.HotelId.Equals(int.Parse(HotelId)))
             {
-                return null;
+                return "0";
             }
             var qrvertify = await _context.QrCheckUps
                 .Include(b => b.Booking).ThenInclude(b=>b.BookingDetails).ThenInclude(q=>q.Qr)

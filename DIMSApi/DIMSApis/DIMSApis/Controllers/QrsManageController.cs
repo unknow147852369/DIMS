@@ -35,9 +35,18 @@ namespace DIMSApis.Controllers
         public async Task<IActionResult> vertifyMainQrCheckIn(VertifyMainQrInput qrIn)
         {
             var qrcheck = await _qrmanage.vertifyMainQrCheckIn(qrIn);
-            if(qrcheck.Contains("your bookingID")) { return BadRequest(new DataRespone { Message = qrcheck }); }
-            if (qrcheck == null) { return BadRequest(new DataRespone { Message = "Wrong Main QR" }); }
-            return Ok(qrcheck);
+            if(qrcheck.Equals("1"))
+            {
+                return Ok(new DataRespone { Message = "Checkin success" });
+            }
+            else if (qrcheck.Equals("3"))
+            {
+                return Ok(new DataRespone { Message = "Checkin success" });
+            }
+            else
+            {
+                return BadRequest(new DataRespone { Message = "wrong info " + qrcheck });
+            }
         }
 
 
