@@ -350,7 +350,7 @@ namespace DIMSApis.Repositories
 
             d.ForEach(b => b.Status = false);
             e.ForEach(b => b.Status = false);
-            f.ForEach(b => b.Status = false);
+            f.ForEach(b => { b.Status = false;b.CheckOut = DateTime.Now; }) ;
             g.ForEach(b => b.Status = false);
 
             //foreach (var bb in b)

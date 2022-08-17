@@ -154,7 +154,7 @@ namespace DIMSApis.Repositories
                 .Where(op => op.Status == true && op.HotelId == hotelId)
                      .Where(a => a.BookingDetails.Where(op => op.Status.Value).All(op => 
                                                   !((op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date)
-                                                  )
+                                                  || (op.Booking.QrCheckUp.CheckOut == null))
                                                 ))
                                     .ToListAsync();
 
@@ -171,10 +171,12 @@ namespace DIMSApis.Repositories
                 {
                     var checkCheckIn = await _context.Bookings
                         .Include(q => q.QrCheckUp)
-                        .Where(op => op.BookingDetails.Where(op=>op.RoomId == result.RoomId
+                        .Where(op => op.BookingDetails.Where(op=>(op.RoomId == result.RoomId
                                                              && op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date
-                                                               && op.Status == true
+                                                               && op.Status == true)
+                                                               || (op.RoomId == result.RoomId && op.Booking.QrCheckUp.CheckOut == null)
                                                                ).Count()==1)
+                        .OrderBy(o=>o.StartDate)
                         .FirstOrDefaultAsync();
                     ;
                     result.BookingId = checkCheckIn.BookingId;
@@ -228,10 +230,12 @@ namespace DIMSApis.Repositories
                 {
                     var checkCheckIn = await _context.Bookings
                         .Include(q => q.QrCheckUp)
-                        .Where(op => op.BookingDetails.Where(op => op.RoomId == result.RoomId
+                        .Where(op => op.BookingDetails.Where(op => (op.RoomId == result.RoomId
                                                              && op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date
-                                                               && op.Status == true
+                                                               && op.Status == true)
+                                                               || (op.RoomId == result.RoomId && op.Booking.QrCheckUp.CheckOut == null)
                                                                ).Count() == 1)
+                        .OrderBy(o => o.StartDate)
                         .FirstOrDefaultAsync();
                     ;
                     result.BookingId = checkCheckIn.BookingId;
@@ -806,12 +810,8 @@ namespace DIMSApis.Repositories
                 .Include(tbl=>tbl.QrCheckUp)
                 .Where(op => op.HotelId == hotelID)
                 .OrderByDescending(o=>o.BookingId);
-             
+             await lsBooks.ForEachAsync(l =>l.EndDate =  l.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0)));
             var returnLS = await _pagination.GetPagination(lsBooks,CurrentPage,pageSize);
-            foreach (var booking in returnLS.Result)
-            {
-                booking.EndDate = booking.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0));
-            }
             return returnLS;
         }
 
