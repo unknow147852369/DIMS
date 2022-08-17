@@ -198,9 +198,7 @@ namespace DIMSApis.Models.Data
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
-                entity.Property(e => e.DoorCondition)
-                    .HasMaxLength(10)
-                    .IsFixedLength();
+                entity.Property(e => e.DoorCondition).HasMaxLength(50);
 
                 entity.Property(e => e.DoorQrContent)
                     .HasMaxLength(100)

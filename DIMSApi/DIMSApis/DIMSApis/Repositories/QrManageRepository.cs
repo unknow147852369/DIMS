@@ -140,7 +140,7 @@ namespace DIMSApis.Repositories
             }
             var qrvertify = await _context.QrCheckUps
                 .Include(b => b.Booking).ThenInclude(b=>b.BookingDetails).ThenInclude(q=>q.Qr)
-                .Where(op => op.BookingId.Equals(int.Parse(BookingId)) && op.QrCheckUpRandomString.Equals(randomString.Trim()))
+                .Where(op => op.BookingId.Equals(int.Parse(BookingId)) && op.QrCheckUpRandomString.Equals(randomString.Trim()) && op.QrContent.Equals(qrIn.QrContent))
                 .FirstOrDefaultAsync();
             if (qrvertify != null)
             {
@@ -202,35 +202,41 @@ namespace DIMSApis.Repositories
                 var condition = "";
                 string BookingId, RoomId, RandomString;
                 _generateqr.GetQrDetail(QrContent, out BookingId, out RoomId, out RandomString);
-                var qrvertify = await _context.Qrs
-                    .Include(b => b.BookingDetail).ThenInclude(r => r.Room)
-                    .Include(b => b.BookingDetail).ThenInclude(a => a.Booking)
-                    .Where(c => c.BookingDetail.BookingId.Equals(int.Parse(BookingId))
-                    && c.BookingDetail.RoomId.Equals(int.Parse(RoomId))
-                    && c.Status == true)
-                    .FirstOrDefaultAsync();
-                
-                if (qrvertify != null)
+                if (BookingId == "" || RoomId == "" || RandomString == "") { condition = "wrong infrom"; }
+                else
                 {
-                    if (qrvertify.BookingDetail.Booking.HotelId.Equals(HotelId)
-                        && qrvertify.BookingDetail.Room.RoomName.Equals(RoomName.Trim()))
+                    var qrvertify = await _context.Qrs
+                        .Include(b => b.BookingDetail).ThenInclude(r => r.Room)
+                        .Include(b => b.BookingDetail).ThenInclude(a => a.Booking)
+                        .Where(c => c.BookingDetail.BookingId.Equals(int.Parse(BookingId))
+                        && c.BookingDetail.RoomId.Equals(int.Parse(RoomId))
+                        && c.QrContent.Equals(QrContent.Trim())
+                        && c.Status == true)
+                        .FirstOrDefaultAsync();
+
+                    if (qrvertify != null)
                     {
-                        condition = "1";
+                        if (qrvertify.BookingDetail.Booking.HotelId.Equals(HotelId)
+                            && qrvertify.BookingDetail.Room.RoomName.Equals(RoomName.Trim()))
+                        {
+                            condition = "1";
+                        }
+                        else
+                        {
+                            condition = "0";
+                        }
                     }
-                    else
-                    {
-                        condition = "0";
-                    }
+                    else { condition = "wrong infrom"; }
                 }
-                else { condition = "wrong infrom"; }
-                var log = new DoorLog
-                {
-                    RoomlId = int.Parse(RoomId),
-                    CreateDate = DateTime.Now,
-                    DoorQrContent = QrContent,
-                    DoorCondition = condition,
-                    DoorLogStatus = true
-                };
+                var log = new DoorLog();
+                if(condition == "1") {
+                    log.RoomlId = int.Parse(RoomId) ;
+                }
+                log.CreateDate = DateTime.Now;
+                log.DoorQrContent = QrContent;
+                log.DoorCondition = condition;
+                log.DoorLogStatus = true;
+               
                 await _context.DoorLogs.AddAsync(log);
                 if (await _context.SaveChangesAsync() > 0)
                 {
