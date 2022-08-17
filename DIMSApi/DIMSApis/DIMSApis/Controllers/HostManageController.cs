@@ -277,10 +277,10 @@ namespace DIMSApis.Controllers
         }
 
         [HttpGet("Get-all-door-Log")]
-        public async Task<IActionResult> HostGetDoorLog(string RoomName, DateTime startDate, DateTime endDate)
+        public async Task<IActionResult> HostGetDoorLog(int roomId, DateTime startDate, DateTime endDate)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var check = await _host.HostGetDoorLog(RoomName, startDate,endDate);
+            var check = await _host.HostGetDoorLog(roomId, startDate,endDate);
             if (check == null) { return BadRequest(new DataRespone { Message = "No Data!" }); }
             return Ok(check);
         }

@@ -46,7 +46,7 @@ namespace DIMSApis.Interfaces
         Task<ABookingFullOutput> HostGetABookingFullDetail(int bookingID);
 
 
-        Task<IEnumerable<HostDoorLogoutput>> HostGetDoorLog(string RoomName, DateTime startDate , DateTime endDate);
+        Task<IEnumerable<HostDoorLogoutput>> HostGetDoorLog(int roomId, DateTime startDate , DateTime endDate);
         Task<IEnumerable<HostQrViewLogOutput>> HostGetQrViewLog(int hotelId,DateTime startDate, DateTime endDate);
 
 
