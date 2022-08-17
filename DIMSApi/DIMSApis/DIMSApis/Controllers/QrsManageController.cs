@@ -35,9 +35,12 @@ namespace DIMSApis.Controllers
         public async Task<IActionResult> vertifyMainQrCheckIn(VertifyMainQrInput qrIn)
         {
             var qrcheck = await _qrmanage.vertifyMainQrCheckIn(qrIn);
+            if(qrcheck.Contains("your bookingID")) { return BadRequest(new DataRespone { Message = qrcheck }); }
             if (qrcheck == null) { return BadRequest(new DataRespone { Message = "Wrong Main QR" }); }
             return Ok(qrcheck);
         }
+
+
 
         [HttpGet("check-Room-lock")]
         public async Task<IActionResult> getStringToCheckRoom(int hotelId, String roomName)
