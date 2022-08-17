@@ -140,7 +140,7 @@ namespace DIMSApis.Repositories
             }
             var qrvertify = await _context.QrCheckUps
                 .Include(b => b.Booking).ThenInclude(b=>b.BookingDetails).ThenInclude(q=>q.Qr)
-                .Where(op => op.BookingId.Equals(int.Parse(BookingId)) && op.QrCheckUpRandomString.Equals(randomString.Trim()) && op.QrContent.Equals(qrIn.QrContent))
+                .Where(op => op.BookingId.Equals(int.Parse(BookingId)) && op.QrCheckUpRandomString.Equals(randomString.Trim()) && op.QrContent.Equals(qrIn.QrContent) && op.Status ==false)
                 .FirstOrDefaultAsync();
             if (qrvertify != null)
             {
