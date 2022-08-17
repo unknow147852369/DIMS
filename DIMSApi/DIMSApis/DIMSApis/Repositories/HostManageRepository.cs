@@ -856,13 +856,13 @@ namespace DIMSApis.Repositories
             }
         }
 
-        public async Task<IEnumerable<HostDoorLogoutput>> HostGetDoorLog(string RoomName, DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<HostDoorLogoutput>> HostGetDoorLog(int roomId, DateTime startDate, DateTime endDate)
         {
             try
             {
                 var check = await _context.DoorLogs
                     .Include(b => b.Rooml)
-                    .Where(op => op.Rooml.RoomName.Equals(RoomName.Trim().ToLower()))
+                    .Where(op => op.RoomlId == roomId)
                     .Where(op =>op.CreateDate >= startDate && op.CreateDate<=endDate)
                     .ToListAsync();
                 if (check == null) { return null; }

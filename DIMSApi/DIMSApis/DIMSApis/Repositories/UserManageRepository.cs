@@ -343,15 +343,24 @@ namespace DIMSApis.Repositories
             var b = await _context.Rooms
                 .Include(a => a.Category)
                 .ToListAsync();
+            var d =await _context.Bookings.ToListAsync();
+            var e =await _context.BookingDetails.ToListAsync();
+            var f =await _context.QrCheckUps.ToListAsync();
+            var g =await _context.Qrs.ToListAsync();
 
-            foreach (var bb in b)
-            {
-                bb.RoomPrice = bb.Category.PriceDefault;
-            }
-            foreach (var aa in a)
-            {
-                aa.HotelNameNoMark = _other.RemoveMark(aa.HotelName);
-            }
+            d.ForEach(b => b.Status = false);
+            e.ForEach(b => b.Status = false);
+            f.ForEach(b => b.Status = false);
+            g.ForEach(b => b.Status = false);
+
+            //foreach (var bb in b)
+            //{
+            //    bb.RoomPrice = bb.Category.PriceDefault;
+            //}
+            //foreach (var aa in a)
+            //{
+            //    aa.HotelNameNoMark = _other.RemoveMark(aa.HotelName);
+            //}
 
             if (await _context.SaveChangesAsync() > 0)
                 return 3;
