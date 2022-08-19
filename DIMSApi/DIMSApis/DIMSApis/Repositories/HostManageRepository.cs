@@ -132,7 +132,8 @@ namespace DIMSApis.Repositories
                 .Include(bd => bd.BookingDetails.Where(op => (op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date)||(op.Booking.QrCheckUp.CheckOut == null)  && op.Status.Value)).ThenInclude(b => b.Booking).ThenInclude(ib => ib.InboundUsers)
                 .Include(bd => bd.BookingDetails.Where(op => (op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date) || (op.Booking.QrCheckUp.CheckOut == null) && op.Status.Value)).ThenInclude(b => b.Booking).ThenInclude(u => u.User)
                 .Include(c => c.Category)
-                .SingleOrDefaultAsync()
+                .OrderBy(o => o.StartDate)
+                        .FirstOrDefaultAsync();
             ;
 
             if (RoomDetail == null) { return null; }
