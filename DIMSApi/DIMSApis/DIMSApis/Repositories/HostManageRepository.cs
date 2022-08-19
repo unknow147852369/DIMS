@@ -128,14 +128,21 @@ namespace DIMSApis.Repositories
 
         public async Task<RoomDetailInfoOutput> GetADetailRoom(int userId, int RoomId, DateTime today)
         {
+            //var RoomDetail = await _context.Rooms.Where(op => op.RoomId == RoomId)
+            //    .Include(bd => bd.BookingDetails.Where(op => (op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date)||(op.Booking.QrCheckUp.CheckOut == null)  && op.Status.Value)).ThenInclude(b => b.Booking).ThenInclude(ib => ib.InboundUsers)
+            //    .Include(bd => bd.BookingDetails.Where(op => (op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date) || (op.Booking.QrCheckUp.CheckOut == null) && op.Status.Value)).ThenInclude(b => b.Booking).ThenInclude(u => u.User)
+            //    .Include(c => c.Category)
+            //     .FirstOrDefaultAsync();
+            //;
             var RoomDetail = await _context.Rooms.Where(op => op.RoomId == RoomId)
-                .Include(bd => bd.BookingDetails.Where(op => (op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date)||(op.Booking.QrCheckUp.CheckOut == null)  && op.Status.Value)).ThenInclude(b => b.Booking).ThenInclude(ib => ib.InboundUsers)
-                .Include(bd => bd.BookingDetails.Where(op => (op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date) || (op.Booking.QrCheckUp.CheckOut == null) && op.Status.Value)).ThenInclude(b => b.Booking).ThenInclude(u => u.User)
-                .Include(c => c.Category)
-                .OrderBy(o => o.StartDate)
-                        .FirstOrDefaultAsync();
+            .Include(bd => bd.BookingDetails).ThenInclude(b => b.Booking).ThenInclude(ib => ib.InboundUsers)
+            .Include(bd => bd.BookingDetails).ThenInclude(b => b.Booking).ThenInclude(u => u.User)
+            .Include(bd => bd.BookingDetails).ThenInclude(b => b.Booking).ThenInclude(u => u.QrCheckUp)
+            .Include(c => c.Category)
+            .Include(bd => bd.BookingDetails.Where(op => (op.StartDate.Value.Date <= today.Date && op.EndDate.Value.Date >= today.Date && op.Status.Value)
+                                                        || (op.Booking.QrCheckUp.CheckOut == null && op.Status.Value)).OrderBy(o=>o.StartDate))
+            .FirstOrDefaultAsync();
             ;
-
             if (RoomDetail == null) { return null; }
             var returnResult = _mapper.Map<RoomDetailInfoOutput>(RoomDetail);
             returnResult.EndDate = returnResult.EndDate.Value.AddDays(1).Add(new TimeSpan(12, 00, 0));
