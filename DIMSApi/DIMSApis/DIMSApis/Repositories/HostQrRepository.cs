@@ -2,7 +2,7 @@
 
 namespace DIMSApis.Repositories
 {
-    public class HostQrRepository:IHostQr
+    public class HostQrRepository : IHostQr
     {
     }
 }

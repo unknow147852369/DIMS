@@ -1,7 +1,6 @@
 ﻿using DIMSApis.Interfaces;
 using DIMSApis.Models.Helper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -20,7 +19,7 @@ namespace DIMSApis.Controllers
         }
 
         [HttpPut("User-get-new-Qr-room")]
-        public async Task<IActionResult> UserGetNewQrRoom(int bookingID,int bookingdetailID)
+        public async Task<IActionResult> UserGetNewQrRoom(int bookingID, int bookingdetailID)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var check = await _userqr.UserGetNewQrRoom(bookingID, bookingdetailID);

@@ -1,9 +1,7 @@
 ﻿using DIMSApis.Interfaces;
-using DIMSApis.Models.Data;
 using DIMSApis.Models.Helper;
 using DIMSApis.Models.Input;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -20,6 +18,7 @@ namespace DIMSApis.Controllers
         {
             _hotel = hotel;
         }
+
         [HttpGet("A-Full-Hotel-Detail")]
         public async Task<IActionResult> GetFullHotelDetail(int hotelId)
         {
@@ -28,6 +27,7 @@ namespace DIMSApis.Controllers
             if (check == null) { return BadRequest(new DataRespone { Message = "Empty" }); }
             return Ok(check);
         }
+
         //
 
         [HttpGet("List-Hotels")]
@@ -38,6 +38,7 @@ namespace DIMSApis.Controllers
             if (check == null) { return BadRequest(new DataRespone { Message = "Empty" }); }
             return Ok(check);
         }
+
         [HttpGet("List-Hotel-Requests")]
         public async Task<IActionResult> GetListHotelRequests()
         {
@@ -46,11 +47,12 @@ namespace DIMSApis.Controllers
             if (check == null) { return BadRequest(new DataRespone { Message = "Empty" }); }
             return Ok(check);
         }
+
         [HttpPost("Send-A-Hotel-Add-Request")]
         public async Task<IActionResult> SendAHotelAddRequest(HotelRequestAddInput newHotel)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var check = await _hotel.SendAHotelAddRequest(userId,newHotel);
+            var check = await _hotel.SendAHotelAddRequest(userId, newHotel);
             if (check.Equals("1"))
             {
                 return Ok(new DataRespone { Message = "Send request success" });
@@ -61,9 +63,10 @@ namespace DIMSApis.Controllers
             }
             else
             {
-                return BadRequest(new DataRespone { Message = "Send request fail " +check});
+                return BadRequest(new DataRespone { Message = "Send request fail " + check });
             }
         }
+
         [HttpPut("Send-A-Hotel-Update-Request")]
         public async Task<IActionResult> SendAHotelUpdateRequest(HotelRequestUpdateInput newHotel)
         {
@@ -82,6 +85,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Send request fail " + check });
             }
         }
+
         [HttpDelete("Remove-A-Hotel-Request")]
         public async Task<IActionResult> RemoveARequest(int hotelRequestId)
         {
@@ -100,7 +104,6 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Remove request fail " + check });
             }
         }
-
 
         //
         [HttpGet("List-A-Hotel-Photos")]
@@ -130,11 +133,12 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Update fail" });
             }
         }
+
         [HttpPost("Add-A-Hotel-Photos")]
         public async Task<IActionResult> AddAHotelPhotos(ICollection<NewHotelPhotosInput> newPhotos)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var HotelCate = await _hotel.AddAHotelPhotos( newPhotos);
+            var HotelCate = await _hotel.AddAHotelPhotos(newPhotos);
             if (HotelCate == null) { return BadRequest("Not Found"); }
             if (HotelCate.Equals("1"))
             {
@@ -149,6 +153,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Add fail " });
             }
         }
+
         [HttpDelete("Remove-A-Hotel-Photo")]
         public async Task<IActionResult> RemoveAHotelPhotos(int PhotoId)
         {
@@ -168,6 +173,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Remove fail" });
             }
         }
+
         //
 
         [HttpGet("List-A-Hotel-Cates")]
@@ -194,9 +200,10 @@ namespace DIMSApis.Controllers
             }
             else
             {
-                return BadRequest(new DataRespone { Message = "Update fail" } +check);
+                return BadRequest(new DataRespone { Message = "Update fail" } + check);
             }
         }
+
         [HttpPost("Add-A-Hotel-Cates")]
         public async Task<IActionResult> AddAHotelCates(ICollection<NewHotelCateInpput> newCates)
         {
@@ -216,6 +223,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Add fail" });
             }
         }
+
         [HttpDelete("Remove-A-Hotel-Cate")]
         public async Task<IActionResult> RemoveAHotelCate(int categoriID)
         {
@@ -232,9 +240,10 @@ namespace DIMSApis.Controllers
             }
             else
             {
-                return BadRequest(new DataRespone { Message = "Remove fail" +HotelCate} );
+                return BadRequest(new DataRespone { Message = "Remove fail" + HotelCate });
             }
         }
+
         //
         [HttpGet("List-A-cate-Photos")]
         public async Task<IActionResult> GetListCatePhotos(int hotelId)
@@ -246,10 +255,10 @@ namespace DIMSApis.Controllers
         }
 
         [HttpPut("Update-cate-MainPhoto")]
-        public async Task<IActionResult> UpdateCateMainPhoto(int hotelId,int cateId, int photoId)
+        public async Task<IActionResult> UpdateCateMainPhoto(int hotelId, int cateId, int photoId)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var check = await _hotel.UpdateCateMainPhoto(photoId, hotelId,cateId);
+            var check = await _hotel.UpdateCateMainPhoto(photoId, hotelId, cateId);
             if (check.Equals("1"))
             {
                 return Ok(new DataRespone { Message = "Update success" });
@@ -260,9 +269,10 @@ namespace DIMSApis.Controllers
             }
             else
             {
-                return BadRequest(new DataRespone { Message = "Update fail" +check });
+                return BadRequest(new DataRespone { Message = "Update fail" + check });
             }
         }
+
         [HttpPost("Add-A-cate-Photos")]
         public async Task<IActionResult> AddACatePhotos(NewCatePhotosInput newPhotos)
         {
@@ -279,9 +289,10 @@ namespace DIMSApis.Controllers
             }
             else
             {
-                return BadRequest(new DataRespone { Message = "Add fail " +check});
+                return BadRequest(new DataRespone { Message = "Add fail " + check });
             }
         }
+
         [HttpDelete("Remove-A-cate-Photo")]
         public async Task<IActionResult> RemoveACatePhotos(int PhotoId)
         {
@@ -298,9 +309,10 @@ namespace DIMSApis.Controllers
             }
             else
             {
-                return BadRequest(new DataRespone { Message = "Remove fail" +check });
+                return BadRequest(new DataRespone { Message = "Remove fail" + check });
             }
         }
+
         //
         [HttpGet("List-Rooms")]
         public async Task<IActionResult> GetListRoom(int hotelId)
@@ -329,6 +341,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Update fail" + check });
             }
         }
+
         [HttpPost("Add-Rooms")]
         public async Task<IActionResult> AddRooms(NewRoomFirstInput newRoom)
         {
@@ -348,6 +361,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Add fail " + check });
             }
         }
+
         [HttpDelete("Remove-A-Room")]
         public async Task<IActionResult> RemoveARoom(int RoomId)
         {
@@ -367,6 +381,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Remove fail" + check });
             }
         }
+
         //
         [HttpGet("List-Vouchers")]
         public async Task<IActionResult> GetListVouchers(int hotelId)
@@ -395,6 +410,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Update fail" + check });
             }
         }
+
         [HttpPost("Add-A-Voucher")]
         public async Task<IActionResult> AddVoucher(AhotelVoucherCreate newVoucher)
         {
@@ -414,6 +430,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Add fail " + check });
             }
         }
+
         [HttpDelete("Remove-A-Vocuher")]
         public async Task<IActionResult> RemoveAVoucher(int VoucherId)
         {
@@ -433,6 +450,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Remove fail" + check });
             }
         }
+
         //
         [HttpGet("List-SpecialPrices")]
         public async Task<IActionResult> GetListSpecialPrice(int hotelId)
@@ -461,6 +479,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Update fail" + check });
             }
         }
+
         [HttpPost("Add-A-SpecialPrice")]
         public async Task<IActionResult> AddVoucher(ICollection<NewCategorySpecialPriceSecondInput> newSpecialPrice)
         {
@@ -480,6 +499,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Add fail " + check });
             }
         }
+
         [HttpDelete("Remove-A-SpecialPrice")]
         public async Task<IActionResult> RemoveASpecialPrice(ICollection<newSpecialPriceIDInput> SpecialPrice)
         {

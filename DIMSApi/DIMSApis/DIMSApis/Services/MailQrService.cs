@@ -36,7 +36,7 @@ namespace DIMSApis.Services
 
         private string GetHtmlBody(string link, Booking bok, QrInput qri, string hotelName)
         {
-           string body = Material.MaterialMail.MailQrHtmlCode();
+            string body = Material.MaterialMail.MailQrHtmlCode();
             //string body = File.ReadAllText(@"Material/MailQR.html");
             body = body.Replace("#IMAGE-QR#", link);
             body = body.Replace("#Location 1#", $"Hotel:{hotelName}");

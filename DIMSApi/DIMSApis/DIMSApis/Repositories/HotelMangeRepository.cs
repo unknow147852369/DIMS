@@ -460,7 +460,7 @@ namespace DIMSApis.Repositories
                     var checkCateSpec = await _context.SpecialPrices
                     .Where(op => op.CategoryId == item.CategoryId && op.SpecialDate.Value.Date == item.SpecialDate.Value.Date)
                     .SingleOrDefaultAsync();
-                    if(checkCateSpec != null) { return "specialDate: " + item.SpecialDate+" &cate:"+item.CategoryId + " is wrong"; }
+                    if (checkCateSpec != null) { return "specialDate: " + item.SpecialDate + " &cate:" + item.CategoryId + " is wrong"; }
                 }
                 var returnSpec = _mapper.Map<ICollection<SpecialPrice>>(newSpecialPrice);
 
@@ -479,22 +479,20 @@ namespace DIMSApis.Repositories
         {
             try
             {
-
-
                 foreach (var item in newSpecialPrice)
                 {
                     var check = await _context.SpecialPrices
                                .Where(op => op.SpecialPriceId == item.SpecialPriceId)
                                .SingleOrDefaultAsync();
                     if (check == null) { return "SpecialPrice not exist in hotel"; }
-                    if(!(check.CategoryId == item.CategoryId && check.SpecialDate.Value.Date == item.SpecialDate.Value.Date))
+                    if (!(check.CategoryId == item.CategoryId && check.SpecialDate.Value.Date == item.SpecialDate.Value.Date))
                     {
                         var checkCateSpec = await _context.SpecialPrices
                             .Where(op => op.CategoryId == item.CategoryId && op.SpecialDate.Value.Date == item.SpecialDate.Value.Date)
                             .SingleOrDefaultAsync();
                         if (checkCateSpec != null) { return "specialDate: " + item.SpecialDate + " &cate:" + item.CategoryId + " is wrong"; }
                     }
-                   
+
                     _mapper.Map(item, check);
                     await _context.SaveChangesAsync();
                 }

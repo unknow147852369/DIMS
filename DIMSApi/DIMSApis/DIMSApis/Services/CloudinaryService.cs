@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace DIMSApis.Services
 {
-    public class CloudinaryService: ICloudinaryService
+    public class CloudinaryService : ICloudinaryService
     {
         private readonly CloudinarySettings _cloudinary;
 
@@ -37,7 +37,8 @@ namespace DIMSApis.Services
                 var returnUrl = cloudinary.Api.UrlImgUp.Transform(new Transformation().Crop("fill"))
                         .BuildUrl(String.Format("{0}.{1}", uploadResult.PublicId, uploadResult.Format));
                 return returnUrl;
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }

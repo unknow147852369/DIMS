@@ -23,11 +23,10 @@ namespace DIMSApis.Repositories
             _qrmail = qrmail;
         }
 
-        public async Task<string> UserGetNewQrRoom(int bookingID, int bookingdetailID )
+        public async Task<string> UserGetNewQrRoom(int bookingID, int bookingdetailID)
         {
             try
             {
-
                 var check = await _context.Bookings
                                .Include(h => h.Hotel)
                             .Include(q => q.QrCheckUp)
@@ -40,7 +39,6 @@ namespace DIMSApis.Repositories
                 {
                     return "booking info wrong!";
                 }
-
 
                 var ListRoom = _mapper.Map<IEnumerable<QrInput>>(check.BookingDetails);
                 var room = ListRoom.FirstOrDefault();

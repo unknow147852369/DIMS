@@ -10,6 +10,5 @@
         public DateTime? UserBirthday { get; set; }
         public string? UserAddress { get; set; }
         public bool? Status { get; set; }
-
     }
 }

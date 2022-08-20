@@ -118,6 +118,5 @@ namespace DIMSApis.Controllers
             if (districts == null) { return NotFound("not found"); }
             return Ok(districts);
         }
-
     }
 }

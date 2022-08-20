@@ -25,7 +25,5 @@
 
         public virtual ICollection<FullRoomMoneyDetailSecondOutput> BookingDetails { get; set; }
         public virtual ICollection<FullRoomMoneyDetailThirdOutput> InboundUsers { get; set; }
-
-
     }
 }

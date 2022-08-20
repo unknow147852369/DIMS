@@ -11,6 +11,5 @@
         public string? Description { get; set; }
         public DateTime? QrViewLogCreateDate { get; set; }
         public bool? QrViewLogStatus { get; set; }
-
     }
 }

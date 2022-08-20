@@ -15,7 +15,7 @@ namespace DIMSApis.Repositories
         private readonly IOtherService _other;
         private readonly IMailQrService _qrmail;
 
-        public QrManageRepository(IMailQrService qrmail,IOtherService other,fptdimsContext context, IMapper mapper, IGenerateQr generateqr)
+        public QrManageRepository(IMailQrService qrmail, IOtherService other, fptdimsContext context, IMapper mapper, IGenerateQr generateqr)
         {
             _context = context;
             _mapper = mapper;
@@ -24,15 +24,13 @@ namespace DIMSApis.Repositories
             _qrmail = qrmail;
         }
 
-
-
         public async Task<string> CheckInOnline(int hotelId, int BookingID)
         {
             var check = await _context.Bookings
-                               .Include(h=>h.Hotel)
+                               .Include(h => h.Hotel)
                             .Include(q => q.QrCheckUp)
                             .Include(q => q.BookingDetails).ThenInclude(q => q.Qr)
-                            .Include(q => q.BookingDetails).ThenInclude(r=>r.Room)
+                            .Include(q => q.BookingDetails).ThenInclude(r => r.Room)
                             .Where(op => op.BookingId == BookingID && op.HotelId == hotelId)
                             .SingleOrDefaultAsync();
 
@@ -66,7 +64,6 @@ namespace DIMSApis.Repositories
                 _mapper.Map(room, qrdetail);
                 qrdetail.StartDate = check.StartDate;
                 qrdetail.EndDate = check.EndDate;
-
 
                 await _context.Qrs.AddAsync(qrdetail);
             }
@@ -113,7 +110,7 @@ namespace DIMSApis.Repositories
                           .Include(r => r.Room)
                           .Include(q => q.Qr)
                           .Where(op => op.Status == true && op.Booking.HotelId == hotel && op.Room.RoomName.Equals(roomName.Trim().ToLower()))
-                          .Where(op=>op.Qr.Status.Value)
+                          .Where(op => op.Qr.Status.Value)
                           .Where(op => ((op.StartDate.Value.Date <= today && op.EndDate.Value >= today)))
                           .FirstOrDefaultAsync();
 
@@ -128,9 +125,9 @@ namespace DIMSApis.Repositories
 
         public async Task<string> vertifyMainQrCheckIn(VertifyMainQrInput qrIn)
         {
-            string BookingId, HotelId,randomString;
-            _generateqr.GetMainQrDetail(qrIn, out BookingId, out HotelId,out randomString);
-            if (BookingId == "" || HotelId == "" || randomString =="")
+            string BookingId, HotelId, randomString;
+            _generateqr.GetMainQrDetail(qrIn, out BookingId, out HotelId, out randomString);
+            if (BookingId == "" || HotelId == "" || randomString == "")
             {
                 return "0";
             }
@@ -139,8 +136,8 @@ namespace DIMSApis.Repositories
                 return "0";
             }
             var qrvertify = await _context.QrCheckUps
-                .Include(b => b.Booking).ThenInclude(b=>b.BookingDetails).ThenInclude(q=>q.Qr)
-                .Where(op => op.BookingId.Equals(int.Parse(BookingId)) && op.QrCheckUpRandomString.Equals(randomString.Trim()) && op.QrContent.Equals(qrIn.QrContent) && op.Status ==false)
+                .Include(b => b.Booking).ThenInclude(b => b.BookingDetails).ThenInclude(q => q.Qr)
+                .Where(op => op.BookingId.Equals(int.Parse(BookingId)) && op.QrCheckUpRandomString.Equals(randomString.Trim()) && op.QrContent.Equals(qrIn.QrContent) && op.Status == false)
                 .FirstOrDefaultAsync();
             if (qrvertify != null)
             {
@@ -182,7 +179,6 @@ namespace DIMSApis.Repositories
                     _mapper.Map(room, qrdetail);
                     qrdetail.StartDate = check.StartDate;
                     qrdetail.EndDate = check.EndDate;
-
 
                     await _context.Qrs.AddAsync(qrdetail);
                 }
@@ -229,21 +225,23 @@ namespace DIMSApis.Repositories
                     else { condition = "wrong infrom"; }
                 }
                 var log = new DoorLog();
-                if(condition == "1") {
-                    log.RoomlId = int.Parse(RoomId) ;
+                if (condition == "1")
+                {
+                    log.RoomlId = int.Parse(RoomId);
                 }
                 log.CreateDate = DateTime.Now;
                 log.DoorQrContent = QrContent;
                 log.DoorCondition = condition;
                 log.DoorLogStatus = true;
-               
+
                 await _context.DoorLogs.AddAsync(log);
                 if (await _context.SaveChangesAsync() > 0)
                 {
                     return condition;
                 }
                 return condition;
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return "wrong infrom";
             }

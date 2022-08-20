@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace DIMSApis.Models.Data
+﻿namespace DIMSApis.Models.Data
 {
     public partial class BookingDetailPrice
     {

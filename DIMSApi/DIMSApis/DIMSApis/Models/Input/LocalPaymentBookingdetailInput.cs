@@ -6,8 +6,8 @@ namespace DIMSApis.Models.Input
     {
         [Required(ErrorMessage = "Can't be empty")]
         public int RoomId { get; set; }
+
         [Required(ErrorMessage = "Can't be empty")]
         public double? TotalRoomPrice { get; set; }
-
     }
 }

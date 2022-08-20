@@ -6,7 +6,6 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using System.Globalization;
-using System.Text;
 
 namespace DIMSApis.Services
 {
@@ -34,11 +33,13 @@ namespace DIMSApis.Services
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
         }
+
         private string fomatCurrencyVN(double? value)
         {
             return string.Format(new CultureInfo("vi-VN"), "{0:#,##0 VND}", value * 1000);
         }
-       private async Task<string> GetHtmlBody(Booking bok, string qrMainLink)
+
+        private async Task<string> GetHtmlBody(Booking bok, string qrMainLink)
         {
             //string body = File.ReadAllText(@"Material/HotelBill.html");
             string body = Material.MaterialMail.HotelBillHtmlCode();

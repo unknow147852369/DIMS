@@ -37,6 +37,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "Send request fail " + check });
             }
         }
+
         [HttpPut("Acpect-A-Hotel-Update-Request")]
         public async Task<IActionResult> AcpectHotelUpdateRequest(int hotelRequestId, int pendingStatus)
         {
@@ -64,6 +65,7 @@ namespace DIMSApis.Controllers
             if (check == null) { return BadRequest(new DataRespone { Message = "Empty" }); }
             return Ok(check);
         }
+
         [HttpGet("List-Hotel-Update-Requests")]
         public async Task<IActionResult> GetListHotelUpdateRequests()
         {
@@ -72,7 +74,6 @@ namespace DIMSApis.Controllers
             if (check == null) { return BadRequest(new DataRespone { Message = "Empty" }); }
             return Ok(check);
         }
-
 
         [HttpPut("Admin-Acecpt-Host")]
         public async Task<IActionResult> AcecptHost(int userId)

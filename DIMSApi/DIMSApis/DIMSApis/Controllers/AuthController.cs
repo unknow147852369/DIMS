@@ -71,6 +71,7 @@ namespace DIMSApis.Controllers
             };
             return Ok(login);
         }
+
         [HttpPost("login-Host")]
         public async Task<IActionResult> LoginHost(LoginInput userIn)
         {
@@ -88,6 +89,7 @@ namespace DIMSApis.Controllers
             };
             return Ok(login);
         }
+
         [HttpPost("forgot-code-mail")]
         public async Task<IActionResult> ForgotCodeMailSend(ForgotCodeMailInput mail)
         {
@@ -117,10 +119,9 @@ namespace DIMSApis.Controllers
         [HttpPost("Register-hotel-manager-role")]
         public async Task<IActionResult> RegisterHotelManagerRole(RegisterInput user)
         {
-
             if (await _auth.HotelManagerExists(user.Email))
                 return BadRequest(new DataRespone { Message = "Email already exists" });
-            var check = await _auth.RegisterHotelManagerRole(user); 
+            var check = await _auth.RegisterHotelManagerRole(user);
             if (check.Equals("1"))
             {
                 return Ok(new DataRespone { Message = "create success" });
@@ -130,6 +131,5 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = "some thing went wrong" });
             }
         }
-
     }
 }

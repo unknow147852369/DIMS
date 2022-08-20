@@ -19,7 +19,7 @@ namespace DIMSApis.Controllers
         {
             _host = host;
         }
-       
+
         [HttpPut("Add-inbound-user-id")]
         public async Task<IActionResult> AddInboundUser(checkInInput ckIn)
         {
@@ -40,11 +40,11 @@ namespace DIMSApis.Controllers
         }
 
         [HttpPut("Checkout-Local")]
-        public async Task<IActionResult> CheckOut(int hotelId,int bookingID)
+        public async Task<IActionResult> CheckOut(int hotelId, int bookingID)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             if (bookingID == null) return BadRequest(new DataRespone { Message = "some feild is empty" });
-            var check = await _host.CheckOutLocal(hotelId,bookingID);
+            var check = await _host.CheckOutLocal(hotelId, bookingID);
             if (check.Equals("1"))
             {
                 return Ok("CheckOut Success!");
@@ -58,6 +58,7 @@ namespace DIMSApis.Controllers
                 return BadRequest(check);
             }
         }
+
         [HttpPut("Update-Clean-Status")]
         public async Task<IActionResult> CheckOut(int roomID)
         {
@@ -76,13 +77,15 @@ namespace DIMSApis.Controllers
                 return BadRequest("Not found");
             }
         }
+
         [HttpPut("Update-Item-Menu")]
         public async Task<IActionResult> UpdateItemMenu(int MenuID, ItemMenuInput item)
         {
-            var check = await _host.UpdateItemMenu(MenuID,item);
+            var check = await _host.UpdateItemMenu(MenuID, item);
             if (check != "1" && check != "3") { return BadRequest(new DataRespone { Message = "Update fail" }); }
             return Ok(new DataRespone { Message = "update Suceess" });
         }
+
         [HttpPost("Add-Item-Menu")]
         public async Task<IActionResult> AddItemMenu(ICollection<ItemMenuInput> item)
         {
@@ -90,6 +93,7 @@ namespace DIMSApis.Controllers
             if (check != "1" && check != "3") { return BadRequest(new DataRespone { Message = "Add fail" }); }
             return Ok(new DataRespone { Message = "Add Suceess" });
         }
+
         [HttpPost("Add-Problem-Extra-Fee")]
         public async Task<IActionResult> AddProblemForExtraFee(ICollection<ProblemExtraFeeInput> prEX)
         {
@@ -97,11 +101,12 @@ namespace DIMSApis.Controllers
             if (check != "1" && check != "3") { return BadRequest(new DataRespone { Message = "Add fail" }); }
             return Ok(new DataRespone { Message = "Add Suceess" });
         }
+
         [HttpGet("Get-list-Menu")]
         public async Task<IActionResult> GetListMenus(int hotelID)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            if(hotelID == null) return BadRequest(new DataRespone { Message = "some feild is emptyw" });
+            if (hotelID == null) return BadRequest(new DataRespone { Message = "some feild is emptyw" });
             var check = await _host.GetListMenu(hotelID);
             if (check == null) { return BadRequest(new DataRespone { Message = "Your hotel do not have any menu" }); }
             return Ok(check);
@@ -132,6 +137,7 @@ namespace DIMSApis.Controllers
             if (check == null) { return BadRequest(new DataRespone { Message = check }); }
             return Ok(check);
         }
+
         [HttpPost("Add-Item-For-Extrafee")]
         public async Task<IActionResult> AddItemForExtraFee(ICollection<ExtraFeeMenuDetailInput> chek)
         {
@@ -142,7 +148,7 @@ namespace DIMSApis.Controllers
         }
 
         [HttpDelete("Delete-Item-For-Extrafee")]
-        public async Task<IActionResult> DeleteItemForExtraFee(int BookingDetailId,int BookingDetailMenuId)
+        public async Task<IActionResult> DeleteItemForExtraFee(int BookingDetailId, int BookingDetailMenuId)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var check = await _host.DeleteItemForExtraFee(BookingDetailId, BookingDetailMenuId);
@@ -168,8 +174,6 @@ namespace DIMSApis.Controllers
                 return BadRequest(new DataRespone { Message = check });
             }
         }
-      
-
 
         [HttpGet("Host-A-Hotel-All-Room-Status-CheckOut")]
         public async Task<IActionResult> GetListAHotelAllRoomStatusCheckOut(int hotelId, DateTime today)
@@ -179,7 +183,6 @@ namespace DIMSApis.Controllers
             if (Hotel == null) { return BadRequest(new DataRespone { Message = "No Rooms Create!" }); }
             return Ok(Hotel);
         }
-
 
         [HttpGet("Host-A-Hotel-All-Room-Status-Today")]
         public async Task<IActionResult> GetListAHotelAllRoomStatusToday(int hotelId, DateTime today)
@@ -216,6 +219,7 @@ namespace DIMSApis.Controllers
             if (roomDetail == null) { return BadRequest(new DataRespone { Message = "Room not Found!" }); }
             return Ok(roomDetail);
         }
+
         [HttpGet("Host-A-Detail-Room-Qr")]
         public async Task<IActionResult> GetADetailRoomQr(int BookingDetailID)
         {
@@ -224,6 +228,7 @@ namespace DIMSApis.Controllers
             if (check == null) { return BadRequest(new DataRespone { Message = "Booking not checkIn" }); }
             return Ok(check);
         }
+
         [HttpGet("Host-All-Hotel")]
         public async Task<IActionResult> GetListAllHotel()
         {
@@ -241,10 +246,10 @@ namespace DIMSApis.Controllers
         }
 
         [HttpGet("Get-Money-Checkout-info-By-Filter")]
-        public async Task<IActionResult> GetFullRoomMoneyDetailByDate(int hotelId, DateTime startDate ,DateTime endDate)
+        public async Task<IActionResult> GetFullRoomMoneyDetailByDate(int hotelId, DateTime startDate, DateTime endDate)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var check = await _host.GetFullRoomMoneyDetailByFilter(hotelId, startDate,endDate);
+            var check = await _host.GetFullRoomMoneyDetailByFilter(hotelId, startDate, endDate);
             if (check == null && check.Bookings.Count() == 0) { return BadRequest(new DataRespone { Message = "No date to calculate!" }); }
             return Ok(check);
         }
@@ -259,7 +264,7 @@ namespace DIMSApis.Controllers
         }
 
         [HttpGet("Get-All-Book-By-Page")]
-        public async Task<IActionResult> HostgetListBookingByPage(int hotelId,int currentPage,int PageSize)
+        public async Task<IActionResult> HostgetListBookingByPage(int hotelId, int currentPage, int PageSize)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var check = await _host.HostgetListBookingByPage<Booking>(hotelId, currentPage, PageSize);
@@ -268,7 +273,7 @@ namespace DIMSApis.Controllers
         }
 
         [HttpGet("Get-A-Book-Full-Detail")]
-        public async Task<IActionResult> HostGetABookingFullDetail(int  bookingID)
+        public async Task<IActionResult> HostGetABookingFullDetail(int bookingID)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             var check = await _host.HostGetABookingFullDetail(bookingID);
@@ -280,7 +285,7 @@ namespace DIMSApis.Controllers
         public async Task<IActionResult> HostGetDoorLog(int roomId, DateTime startDate, DateTime endDate)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var check = await _host.HostGetDoorLog(roomId, startDate,endDate);
+            var check = await _host.HostGetDoorLog(roomId, startDate, endDate);
             if (check == null) { return BadRequest(new DataRespone { Message = "No Data!" }); }
             return Ok(check);
         }
@@ -289,7 +294,7 @@ namespace DIMSApis.Controllers
         public async Task<IActionResult> HostGetQrViewLog(int hotelId, DateTime startDate, DateTime endDate)
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var check = await _host.HostGetQrViewLog(hotelId,startDate,endDate);
+            var check = await _host.HostGetQrViewLog(hotelId, startDate, endDate);
             if (check == null) { return BadRequest(new DataRespone { Message = "No Data!" }); }
             return Ok(check);
         }

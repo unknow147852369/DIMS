@@ -6,7 +6,6 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using System.Globalization;
-using System.Text;
 
 namespace DIMSApis.Services
 {
@@ -34,6 +33,7 @@ namespace DIMSApis.Services
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
         }
+
         private string fomatCurrencyVN(double? value)
         {
             if (value.HasValue)
@@ -45,6 +45,7 @@ namespace DIMSApis.Services
                 return "";
             }
         }
+
         private async Task<string> GetHtmlBody(Booking bok)
         {
             //string body = File.ReadAllText(@"Material/HotelCheckOutBill.html");
@@ -96,7 +97,6 @@ namespace DIMSApis.Services
             }
             body = body.Replace("<!--#LOCATIONFEEDETAIL#-->", FeeDetail);
 
-
             body = body.Replace("#SUBTOTAL#", $"{fomatCurrencyVN(bok.SubTotal)}");
             if (bok.VoucherId != null)
             {
@@ -107,7 +107,6 @@ namespace DIMSApis.Services
                 body = body.Replace("#VOUCHER#", "");
             }
 
-           
             double rate = 0;
             if (bok.CurrencyRate == null)
             {
@@ -120,7 +119,7 @@ namespace DIMSApis.Services
                 body = body.Replace("#RATE#", "$" + rate);
                 body = body.Replace("#USD#", $"${Math.Round((double)(bok.TotalPrice * (1 / (rate)) * 1000), 2)}");
             }
-            
+
             body = body.Replace("#TOTAL#", $"{fomatCurrencyVN(bok.TotalPrice)}");
             body = body.Replace("#LOCATION5#", $"{fomatCurrencyVN(bok.TotalPrice)}");
 

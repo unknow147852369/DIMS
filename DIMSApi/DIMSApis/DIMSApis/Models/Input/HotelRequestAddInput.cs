@@ -10,6 +10,5 @@
         public bool? Status { get; set; }
         public int? Star { get; set; }
         public string? Evidence { get; set; }
-
     }
 }

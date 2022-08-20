@@ -1,7 +1,5 @@
 ﻿using DIMSApis.Interfaces;
 using DIMSApis.Models.Data;
-using DIMSApis.Models.Input;
-using Microsoft.AspNetCore.Mvc;
 using Stripe;
 
 namespace DIMSApis.Services
@@ -16,13 +14,11 @@ namespace DIMSApis.Services
 
             var customer = customers.Create(new CustomerCreateOptions
             {
-
                 Email = stripeMail,
                 Source = stripeToken,
             });
 
-
-            var amount = (long?)((bok.Deposit * (1 / bok.CurrencyRate) * 1000)*100);
+            var amount = (long?)((bok.Deposit * (1 / bok.CurrencyRate) * 1000) * 100);
             var chage = charges.Create(new ChargeCreateOptions
             {
                 Amount = amount,
@@ -36,7 +32,6 @@ namespace DIMSApis.Services
                     {"Deposit" , bok.Deposit.ToString() },
                     {"RealTotal",  bok.TotalPrice.ToString() },
                 },
-
             });
 
             if (chage.Status == "succeeded")

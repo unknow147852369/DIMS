@@ -1,6 +1,4 @@
-﻿using DIMSApis.Models.Input;
-
-namespace DIMSApis.Models.Output
+﻿namespace DIMSApis.Models.Output
 {
     public class BookingInboundUserFirstOutput
     {
@@ -11,6 +9,5 @@ namespace DIMSApis.Models.Output
         public DateTime? CreateDate { get; set; }
         public virtual ICollection<ABookingFullBookingDetailsOutput> BookingDetails { get; set; }
         public virtual ICollection<ABookingFullInboundUSersOutput> InboundUsers { get; set; }
-
     }
 }

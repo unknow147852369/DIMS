@@ -24,11 +24,9 @@
         public double? Deposit { get; set; }
         public bool? Status { get; set; }
 
-
         public virtual ABookingFullVoucher? Voucher { get; set; }
         public virtual ABookingFullQRcheckUpOutput? QrCheckUp { get; set; }
         public virtual ICollection<ABookingFullInboundUSersOutput> InboundUsers { get; set; }
         public virtual ICollection<ABookingFullBookingDetailsOutput> BookingDetails { get; set; }
-        
     }
 }

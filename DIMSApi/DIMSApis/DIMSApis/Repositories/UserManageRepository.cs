@@ -17,7 +17,7 @@ namespace DIMSApis.Repositories
         private readonly IMailQrService _qrmail;
         private string purpose1 = "ACTIVE ACCOUNT";
 
-        public UserManageRepository(IMailQrService qrmail,IGenerateQr generateqr, IMail mail, fptdimsContext context, IMapper mapper, IOtherService other)
+        public UserManageRepository(IMailQrService qrmail, IGenerateQr generateqr, IMail mail, fptdimsContext context, IMapper mapper, IOtherService other)
         {
             _context = context;
             _mapper = mapper;
@@ -107,7 +107,7 @@ namespace DIMSApis.Repositories
             }
             return null;
         }
-        
+
         public async Task<IEnumerable<Ward>> SearchWard(string ward)
         {
             var terms = _other.RemoveMark(ward);
@@ -239,7 +239,7 @@ namespace DIMSApis.Repositories
 
             if (lsCateRooms == null) { return null; }
 
-            var AHotel = await  _context.Hotels
+            var AHotel = await _context.Hotels
                 .Include(p => p.Vouchers.Where(op => op.EndDate.Value.Date >= DateTime.Now.Date))
                 .Include(p => p.Photos)
                 .Include(h => h.HotelType)
@@ -247,10 +247,8 @@ namespace DIMSApis.Repositories
                 .Include(w => w.WardNavigation)
                 .Include(d => d.DistrictNavigation)
                 .Include(pr => pr.ProvinceNavigation)
-                .Where(op => op.HotelId == hotelId )
+                .Where(op => op.HotelId == hotelId)
                 .SingleOrDefaultAsync();
-
-
 
             var result = await lsCateRooms.ToListAsync();
 
@@ -262,7 +260,6 @@ namespace DIMSApis.Repositories
             HotelDetail.LsCate = fullCateRoom;
 
             return HotelDetail;
-
         }
 
         public async Task<IEnumerable<District>> ListAllDistrict()
@@ -343,14 +340,14 @@ namespace DIMSApis.Repositories
             var b = await _context.Rooms
                 .Include(a => a.Category)
                 .ToListAsync();
-            var d =await _context.Bookings.ToListAsync();
-            var e =await _context.BookingDetails.ToListAsync();
-            var f =await _context.QrCheckUps.ToListAsync();
-            var g =await _context.Qrs.ToListAsync();
+            var d = await _context.Bookings.ToListAsync();
+            var e = await _context.BookingDetails.ToListAsync();
+            var f = await _context.QrCheckUps.ToListAsync();
+            var g = await _context.Qrs.ToListAsync();
 
             d.ForEach(b => b.Status = false);
             e.ForEach(b => b.Status = false);
-            f.ForEach(b => { b.Status = false;b.CheckOut = DateTime.Now; }) ;
+            f.ForEach(b => { b.Status = false; b.CheckOut = DateTime.Now; });
             g.ForEach(b => b.Status = false);
 
             //foreach (var bb in b)
@@ -375,14 +372,15 @@ namespace DIMSApis.Repositories
                     .Where(op => op.OtpEmail == email)
                     .FirstOrDefaultAsync();
                 var otpCode = _other.RandomString(6);
-                if (checkemail ==null)
+                if (checkemail == null)
                 {
-                    var newMail = new Otp{
+                    var newMail = new Otp
+                    {
                         OtpEmail = email,
                         CodeOtp = otpCode,
                         CreateDate = DateTime.Now,
                         Status = 1,
-                        Purpose ="RENEWQR",
+                        Purpose = "RENEWQR",
                     };
                     await _context.Otps.AddAsync(newMail);
                 }
@@ -393,10 +391,11 @@ namespace DIMSApis.Repositories
 
                 if (await _context.SaveChangesAsync() > 0)
                 {
-                   await _mail.SendEmailAsync(email, otpCode);
+                    await _mail.SendEmailAsync(email, otpCode);
                 }
                 return "1";
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return ex.Message;
             }
@@ -406,7 +405,6 @@ namespace DIMSApis.Repositories
         {
             try
             {
-
                 var checkcodel = await _context.Otps
                     .Where(op => op.OtpEmail == infoInput.email && op.Purpose == "RENEWQR" && op.CodeOtp == infoInput.OtpCode)
                     .FirstOrDefaultAsync();
@@ -414,13 +412,13 @@ namespace DIMSApis.Repositories
                 {
                     return "wrong OtpCode !";
                 }
-                
+
                 var check = await _context.Bookings
                                .Include(h => h.Hotel)
                             .Include(q => q.QrCheckUp)
                             .Include(q => q.BookingDetails).ThenInclude(q => q.Qr)
                             .Include(q => q.BookingDetails).ThenInclude(r => r.Room)
-                            .Where(op => op.BookingId == infoInput.BookingId && op.BookingDetails.All(r=>r.Room.RoomName.Equals(infoInput.RoomName)))
+                            .Where(op => op.BookingId == infoInput.BookingId && op.BookingDetails.All(r => r.Room.RoomName.Equals(infoInput.RoomName)))
                             .Where(op => op.QrCheckUp.CheckOut == null)
                             .SingleOrDefaultAsync();
                 if (check == null)
@@ -433,7 +431,7 @@ namespace DIMSApis.Repositories
                 var ListRoom = _mapper.Map<IEnumerable<QrInput>>(check.BookingDetails);
                 var room = ListRoom.FirstOrDefault();
                 var returndetail = check.BookingDetails.First();
-                if(returndetail.Qr.QrLimitNumber == 3)
+                if (returndetail.Qr.QrLimitNumber == 3)
                 {
                     return "You have reach limit to renew Qr 3 times";
                 }

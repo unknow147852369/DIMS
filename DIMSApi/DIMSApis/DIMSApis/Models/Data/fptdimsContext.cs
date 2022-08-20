@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace DIMSApis.Models.Data
 {
@@ -657,6 +654,6 @@ namespace DIMSApis.Models.Data
             OnModelCreatingPartial(modelBuilder);
         }
 
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+        private partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
