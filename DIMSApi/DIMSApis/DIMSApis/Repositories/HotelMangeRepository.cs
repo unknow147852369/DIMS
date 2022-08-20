@@ -13,20 +13,18 @@ namespace DIMSApis.Repositories
         private readonly IMapper _mapper;
         private readonly IOtherService _other;
         private readonly IGenerateQr _generateqr;
-        private readonly IFireBaseService _fireBase;
         private readonly IMailQrService _qrmail;
         private readonly IMailBillService _billmail;
 
         private string error = "";
 
-        public HotelMangeRepository(fptdimsContext context, IMapper mapper, IOtherService other, IMailBillService billmail, IMailQrService qrmail, IFireBaseService fireBase, IGenerateQr generateqr)
+        public HotelMangeRepository(fptdimsContext context, IMapper mapper, IOtherService other, IMailBillService billmail, IMailQrService qrmail, IGenerateQr generateqr)
         {
             _context = context;
             _mapper = mapper;
             _other = other;
             _billmail = billmail;
             _qrmail = qrmail;
-            _fireBase = fireBase;
             _generateqr = generateqr;
         }
 

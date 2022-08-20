@@ -13,7 +13,6 @@ namespace DIMSApis.Repositories
         private readonly IMapper _mapper;
         private readonly IStripePayment _stripe;
         private readonly IGenerateQr _generateqr;
-        private readonly IFireBaseService _fireBase;
         private readonly IMailQrService _qrmail;
         private readonly IMailBillService _billmail;
         private readonly IOtherService _other;
@@ -22,13 +21,12 @@ namespace DIMSApis.Repositories
         private string condition4 = "succeeded";
         private string error = "";
 
-        public BookingManageRepository(IMailBillService billmail, IMailQrService qrmail, IFireBaseService fireBase, fptdimsContext context, IMapper mapper, IStripePayment stripe, IGenerateQr generateqr, IOtherService other)
+        public BookingManageRepository(IMailBillService billmail, IMailQrService qrmail, fptdimsContext context, IMapper mapper, IStripePayment stripe, IGenerateQr generateqr, IOtherService other)
         {
             _context = context;
             _mapper = mapper;
             _stripe = stripe;
             _generateqr = generateqr;
-            _fireBase = fireBase;
             _qrmail = qrmail;
             _billmail = billmail;
             _other = other;

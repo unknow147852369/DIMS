@@ -15,7 +15,6 @@ namespace DIMSApis.Repositories
         private readonly IMail _mail;
         private readonly IOtherService _other;
         private readonly IGenerateQr _generateqr;
-        private readonly IFireBaseService _fireBase;
         private readonly IMailQrService _qrmail;
         private readonly IMailBillService _billmail;
         private readonly IMailCheckOut _checkoutmail;
@@ -23,14 +22,13 @@ namespace DIMSApis.Repositories
 
         private string error = "";
 
-        public HostManageRepository(IMail mail, IPaginationService pagination,IMailCheckOut checkoutmail, fptdimsContext context, IMapper mapper, IOtherService other, IMailBillService billmail, IMailQrService qrmail, IFireBaseService fireBase, IGenerateQr generateqr)
+        public HostManageRepository(IMail mail, IPaginationService pagination,IMailCheckOut checkoutmail, fptdimsContext context, IMapper mapper, IOtherService other, IMailBillService billmail, IMailQrService qrmail,  IGenerateQr generateqr)
         {
             _context = context;
             _mapper = mapper;
             _other = other;
             _billmail = billmail;
             _qrmail = qrmail;
-            _fireBase = fireBase;
             _generateqr = generateqr;
             _checkoutmail = checkoutmail;
             _pagination = pagination;
